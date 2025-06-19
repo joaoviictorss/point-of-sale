@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, startTransition, useEffect } from "react";
+import { useActionState, startTransition, useEffect, use } from "react";
 
 import Image from "next/image";
 import Link from "next/link";
@@ -16,8 +16,16 @@ import { Input, Logo } from "@/components";
 import { Button } from "@/components/Shadcn";
 
 import { SignupFormSchema, signUpSchema } from "@/lib/validations/auth/signUp";
+import { oAuthSignIn } from "@/actions/auth";
 
-const SignUp = () => {
+const SignUp = ({
+  searchParams,
+}: {
+  searchParams: Promise<{ oauthError?: string }>;
+}) => {
+  const resolvedSearchParams = use(searchParams);
+  const { oauthError } = resolvedSearchParams;
+
   const [state, action, isPending] = useActionState(signUp, undefined);
 
   const {
@@ -45,6 +53,12 @@ const SignUp = () => {
       toast.error(state.message);
     }
   }, [state]);
+
+  useEffect(() => {
+    if (oauthError) {
+      toast.error("Erro ao fazer login com Google. Tente novamente.");
+    }
+  }, [oauthError]);
 
   return (
     <main className="flex items-center p-3 h-screen">
@@ -111,7 +125,14 @@ const SignUp = () => {
                   {isPending ? "Criando conta..." : "Criar conta"}
                 </Button>
 
-                <Button size={"lg"} variant={"outline"} type="button">
+                <Button
+                  size={"lg"}
+                  variant={"outline"}
+                  type="button"
+                  onClick={async () => {
+                    await oAuthSignIn("GOOGLE");
+                  }}
+                >
                   <GoogleIcon />
                   Acessar com google
                 </Button>

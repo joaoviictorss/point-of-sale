@@ -13,6 +13,9 @@ import { findUserByCredentials, findUserByEmail } from "@/lib/prisma/user";
 import { createSession, deleteSession } from "@/lib/session";
 import { hasheAndSaltPassword } from "@/utils/password";
 import { redirect } from "next/navigation";
+import { OAuthProvider } from "@prisma/client";
+import { getOAuthClient } from "@/utils/oAuth";
+import { cookies } from "next/headers";
 
 export async function signUp(state: SignUpFormState, formData: signUpSchema) {
   const validatedFields = SignupFormSchema.safeParse(formData);
@@ -79,4 +82,9 @@ export async function signIn(state: SignInFormState, formData: signInSchema) {
 export async function logout() {
   await deleteSession();
   redirect("/sign-in");
+}
+
+export async function oAuthSignIn(provider: OAuthProvider) {
+  const oAuthClient = getOAuthClient(provider);
+  redirect(oAuthClient.createAuthUrl(await cookies()));
 }

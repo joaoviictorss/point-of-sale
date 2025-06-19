@@ -1,19 +1,26 @@
 "use client";
 
-import { startTransition, useActionState, useEffect } from "react";
+import { startTransition, useActionState, useEffect, use } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
 import { GoogleIcon } from "@/assets";
 import { Checkbox, Input, Logo } from "@/components";
 import { Button } from "@/components/Shadcn/button";
-import { signIn } from "@/actions/auth";
+import { oAuthSignIn, signIn } from "@/actions/auth";
 import { useForm, Controller } from "react-hook-form";
 import { SignInFormSchema, signInSchema } from "@/lib/validations/auth/signUp";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 
-const SignIn = () => {
+const SignIn = ({
+  searchParams,
+}: {
+  searchParams: Promise<{ oauthError?: string }>;
+}) => {
+  const resolvedSearchParams = use(searchParams);
+  const { oauthError } = resolvedSearchParams;
+
   const [state, action, isPending] = useActionState(signIn, undefined);
 
   const {
@@ -41,6 +48,12 @@ const SignIn = () => {
       toast.error(state.message);
     }
   }, [state]);
+
+  useEffect(() => {
+    if (oauthError) {
+      toast.error("Erro ao fazer login com Google. Tente novamente.");
+    }
+  }, [oauthError]);
 
   return (
     <main className="flex items-center p-3 h-screen">
@@ -107,7 +120,14 @@ const SignIn = () => {
                   {isPending ? "Entrando..." : "Entrar"}
                 </Button>
 
-                <Button size={"lg"} variant={"outline"} type="button">
+                <Button
+                  size={"lg"}
+                  variant={"outline"}
+                  type="button"
+                  onClick={async () => {
+                    await oAuthSignIn("GOOGLE");
+                  }}
+                >
                   <GoogleIcon />
                   Acessar com google
                 </Button>

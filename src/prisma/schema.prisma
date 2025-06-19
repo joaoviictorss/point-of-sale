@@ -14,10 +14,32 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  name      String?
-  password  String?
+  id       String  @id @default(uuid())
+  email    String  @unique
+  name     String?
+  password String?
+
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  userOAuthAccount userOAuthAccount[]
+}
+
+enum OAuthProvider {
+  GOOGLE
+}
+
+model userOAuthAccount {
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  provider          OAuthProvider
+  providerAccountId String
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@id([userId, provider, providerAccountId])
+  @@unique([providerAccountId])
+  @@unique([provider, providerAccountId]) // Adicione esta linha
+  @@index([provider, providerAccountId])
 }

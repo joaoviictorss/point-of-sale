@@ -52,3 +52,12 @@ export type SignInFormState =
       message?: string;
     }
   | undefined;
+
+export const resetPasswordFormSchema = z.object({
+  password: z
+    .string()
+    .min(8, { message: "Senha deve ter no mínimo 8 caracteres" })
+    .trim(),
+});
+
+export type resetPasswordSchema = z.infer<typeof resetPasswordFormSchema>;

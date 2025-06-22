@@ -1,5 +1,8 @@
 "use server";
 
+import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
+
 import {
   SignInFormSchema,
   SignInFormState,
@@ -8,14 +11,17 @@ import {
   SignUpFormState,
   signUpSchema,
 } from "@/lib/validations/auth/signUp";
+
 import { prisma } from "@/lib/prisma/client";
-import { findUserByCredentials, findUserByEmail } from "@/lib/prisma/user";
-import { createSession, deleteSession } from "@/lib/session";
-import { hasheAndSaltPassword } from "@/utils/password";
-import { redirect } from "next/navigation";
 import { OAuthProvider } from "@prisma/client";
-import { getOAuthClient } from "@/utils/oAuth";
-import { cookies } from "next/headers";
+
+import { createSession, deleteSession } from "@/lib/session";
+import {
+  hasheAndSaltPassword,
+  getOAuthClient,
+  findUserByCredentials,
+  findUserByEmail,
+} from "@/utils";
 
 export async function signUp(state: SignUpFormState, formData: signUpSchema) {
   const validatedFields = SignupFormSchema.safeParse(formData);

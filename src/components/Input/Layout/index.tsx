@@ -13,7 +13,7 @@ export const Input = ({
   ...rest
 }: IInputData) => {
   return (
-    <div className="flex flex-col gap-1">
+    <div className="flex flex-col gap-1 items-start">
       {label && (
         <Label
           htmlFor={id}

@@ -1,17 +1,25 @@
 "use client";
 
 import { startTransition, useActionState, useEffect, use } from "react";
+
 import Image from "next/image";
 import Link from "next/link";
 
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+
 import { GoogleIcon } from "@/assets";
+import { toast } from "sonner";
+
+import { oAuthSignIn, signIn } from "@/actions/auth";
+
+import { SignInFormSchema, signInSchema } from "@/lib/validations/auth/signUp";
+
+import { useDialog } from "@/hooks";
+
 import { Checkbox, Input, Logo } from "@/components";
 import { Button } from "@/components/Shadcn/button";
-import { oAuthSignIn, signIn } from "@/actions/auth";
-import { useForm, Controller } from "react-hook-form";
-import { SignInFormSchema, signInSchema } from "@/lib/validations/auth/signUp";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { toast } from "sonner";
+import { ResetPasswordModal } from "./components/reset-password-modal";
 
 const SignIn = ({
   searchParams,
@@ -28,6 +36,7 @@ const SignIn = ({
     handleSubmit,
     control,
     formState: { errors },
+    getValues,
   } = useForm<signInSchema>({
     resolver: zodResolver(SignInFormSchema),
     defaultValues: {
@@ -54,6 +63,8 @@ const SignIn = ({
       toast.error("Erro ao fazer login com Google. Tente novamente.");
     }
   }, [oauthError]);
+
+  const resetPasswordDialog = useDialog();
 
   return (
     <main className="flex items-center p-3 h-screen">
@@ -108,12 +119,13 @@ const SignIn = ({
                     )}
                   />
 
-                  <Link
-                    href={"/forgot-password"}
-                    className="text-primary hover:text-primary/90 transition-colors duration-75 text-sm"
+                  <span
+                    // href={"/forgot-password"}
+                    className="text-primary hover:text-primary/90 transition-colors duration-75 text-sm cursor-pointer"
+                    onClick={resetPasswordDialog.openDialog}
                   >
                     Esqueci minha senha
-                  </Link>
+                  </span>
                 </div>
 
                 <Button size={"lg"} type="submit" disabled={isPending}>
@@ -154,6 +166,11 @@ const SignIn = ({
           className="object-cover rounded-lg"
         />
       </div>
+
+      <ResetPasswordModal
+        dialog={resetPasswordDialog}
+        email={getValues("email")}
+      />
     </main>
   );
 };

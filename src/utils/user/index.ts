@@ -1,5 +1,5 @@
 import { comparePassword } from "@/utils/password";
-import { prisma } from "./client";
+import { prisma } from "@/lib/prisma/client";
 
 export const findUserByCredentials = async (
   email: string,
@@ -34,3 +34,16 @@ export const findUserByEmail = async (email: string) => {
 
   return user;
 };
+
+export async function updateUserPassword(
+  userId: string,
+  hashedPassword: string
+) {
+  return await prisma.user.update({
+    where: { id: userId },
+    data: {
+      password: hashedPassword,
+      updatedAt: new Date(),
+    },
+  });
+}

@@ -1,10 +1,11 @@
-import { prisma } from "@/lib/prisma/client";
-import { createSession } from "@/lib/session";
-import { getOAuthClient } from "@/utils/oAuth";
-import { OAuthProvider } from "@prisma/client";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { NextRequest } from "next/server";
+
+import { prisma } from "@/lib/prisma/client";
+import { createSession } from "@/lib/session";
+import { getOAuthClient } from "@/utils";
+import { OAuthProvider } from "@prisma/client";
 
 export async function GET(
   request: NextRequest,

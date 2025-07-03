@@ -120,7 +120,6 @@ const SignIn = ({
                   />
 
                   <span
-                    // href={"/forgot-password"}
                     className="text-primary hover:text-primary/90 transition-colors duration-75 text-sm cursor-pointer"
                     onClick={resetPasswordDialog.openDialog}
                   >

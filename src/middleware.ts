@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { decrypt } from "@/lib/session";
 import { cookies } from "next/headers";
 
-const protectedRoutes = ["/"];
+const protectedRoutes = ["/", "/sales", "/stock", "/analytics"];
 const publicRoutes = ["/sign-in", "/sign-up", "/reset-password"];
 const authRoutes = ["/sign-in", "/sign-up", "/reset-password"];
 
@@ -19,16 +19,20 @@ export default async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL("/sign-in", req.nextUrl));
   }
 
+  if (path === "/" && session?.userId) {
+    return NextResponse.redirect(new URL("/sales", req.nextUrl));
+  }
+
   if (
     isPublicRoute &&
     session?.userId &&
     !req.nextUrl.pathname.startsWith("/")
   ) {
-    return NextResponse.redirect(new URL("/", req.nextUrl));
+    return NextResponse.redirect(new URL("/sales", req.nextUrl));
   }
 
   if (isAuthRoute && !!session?.userId) {
-    return NextResponse.redirect(new URL("/", req.nextUrl));
+    return NextResponse.redirect(new URL("/sales", req.nextUrl));
   }
 
   return NextResponse.next();

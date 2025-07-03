@@ -10,7 +10,7 @@ import { toast } from "sonner";
 
 import { Input, Modal } from "@/components";
 
-import { UseDialogReturn } from "@/hooks/useDialog";
+import { UseDialogReturn } from "@/hooks/use-dialog";
 import { requestPasswordReset } from "@/services/reset-password";
 
 const ResetPasswordSchema = z.object({

@@ -1,6 +1,6 @@
 import "server-only";
 // Garante que este código seja executado apenas no servidor, protegendo o SESSION_SECRET
-import { JWTPayload, SignJWT, jwtVerify } from "jose";
+import { type JWTPayload, jwtVerify, SignJWT } from "jose";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
@@ -18,7 +18,7 @@ const cookie = {
   duration: 24 * 60 * 60 * 1000, // 24 horas
 } as const;
 
-export async function encrypt(payload: JWTPayload) {
+export function encrypt(payload: JWTPayload) {
   return new SignJWT(payload)
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
@@ -32,7 +32,7 @@ export async function decrypt(session: string | undefined = "") {
       algorithms: ["HS256"],
     });
     return payload;
-  } catch (error) {
+  } catch {
     return null;
   }
 }
@@ -57,7 +57,7 @@ export async function updateSession() {
   const session = (await cookies()).get(cookie.name)?.value;
   const payload = await decrypt(session);
 
-  if (!session || !payload) {
+  if (!(session && payload)) {
     return null;
   }
 

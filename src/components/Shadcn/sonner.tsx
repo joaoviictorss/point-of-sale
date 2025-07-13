@@ -6,14 +6,19 @@ import {
   ExclamationTriangleIcon,
 } from "@heroicons/react/24/solid";
 import { useTheme } from "next-themes";
-import { Toaster as Sonner, ToasterProps } from "sonner";
+import { Toaster as Sonner, type ToasterProps } from "sonner";
 
 const Toaster = ({ ...props }: ToasterProps) => {
   const { theme = "system" } = useTheme();
 
   return (
     <Sonner
-      theme={theme as ToasterProps["theme"]}
+      icons={{
+        success: <CheckCircleIcon className="text-success" />,
+        warning: <ExclamationTriangleIcon className="text-warning" />,
+        error: <ExclamationCircleIcon className="text-error" />,
+      }}
+      position="top-center"
       style={
         {
           "--normal-bg": "var(--popover)",
@@ -21,12 +26,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
           "--normal-border": "var(--border)",
         } as React.CSSProperties
       }
-      position="top-center"
-      icons={{
-        success: <CheckCircleIcon className="text-success" />,
-        warning: <ExclamationTriangleIcon className="text-warning" />,
-        error: <ExclamationCircleIcon className="text-error" />,
-      }}
+      theme={theme as ToasterProps["theme"]}
       toastOptions={{
         classNames: {},
       }}

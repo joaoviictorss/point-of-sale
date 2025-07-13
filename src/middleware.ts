@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from "next/server";
-import { decrypt } from "@/lib/session";
 import { cookies } from "next/headers";
+import { type NextRequest, NextResponse } from "next/server";
+import { decrypt } from "@/lib/session";
 
 const protectedRoutes = ["/", "/sales", "/stock", "/analytics"];
 const publicRoutes = ["/sign-in", "/sign-up", "/reset-password"];

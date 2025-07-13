@@ -1,23 +1,27 @@
-import { NextResponse } from "next/server";
+import type { NextResponse } from "next/server";
 
 import { resetPasswordFormSchema } from "@/lib/validations/auth/signUp";
-
-import { ApiResponse } from "@/types/auth/data";
-
+import type {
+  ApiErrorResponse,
+  ApiSuccessResponse,
+} from "@/types/http/index.ts";
+import type { ResetPasswordResponse } from "@/types/http/reset-password";
 import {
-  findUserByEmail,
-  updateUserPassword,
-  findResetToken,
-  updateResetPasswordToken,
-  hasheAndSaltPassword,
-  isTokenExpired,
   createErrorResponse,
   createSuccessResponse,
+  findResetToken,
+  findUserByEmail,
+  hasheAndSaltPassword,
+  isTokenExpired,
+  updateResetPasswordToken,
+  updateUserPassword,
 } from "@/utils";
 
 export async function POST(
   request: Request
-): Promise<NextResponse<ApiResponse>> {
+): Promise<
+  NextResponse<ApiSuccessResponse<ResetPasswordResponse> | ApiErrorResponse>
+> {
   try {
     const body = await request.json();
     const { token, password } = body;
@@ -37,8 +41,7 @@ export async function POST(
     if (!passwordValidation.success) {
       return createErrorResponse(
         "Senha não atende aos critérios de segurança",
-        400,
-        { errors: passwordValidation.error.errors }
+        400
       );
     }
 
@@ -67,12 +70,8 @@ export async function POST(
 
     await updateResetPasswordToken(resetToken.id, { used: true });
 
-    return createSuccessResponse("Senha redefinida com sucesso", null, {
-      userId: user.id,
-    });
-  } catch (error) {
-    console.error("Erro na redefinição de senha:", error);
-
+    return createSuccessResponse("Senha redefinida com sucesso", null, 200);
+  } catch {
     return createErrorResponse(
       "Erro interno do servidor. Tente novamente mais tarde",
       500

@@ -1,22 +1,22 @@
 "use client";
 
-import { useActionState, startTransition, useEffect, use } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 import Image from "next/image";
 import Link from "next/link";
-
-import { toast } from "sonner";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { startTransition, use, useActionState, useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 import { signUp } from "@/actions";
+import { oAuthSignIn } from "@/actions/auth";
 import { GoogleIcon } from "@/assets";
-
 import { Input, Logo } from "@/components";
 import { Button } from "@/components/Shadcn";
-
-import { SignupFormSchema, signUpSchema } from "@/lib/validations/auth/signUp";
-import { oAuthSignIn } from "@/actions/auth";
+import {
+  SignupFormSchema,
+  type signUpSchema,
+} from "@/lib/validations/auth/signUp";
 
 const SignUp = ({
   searchParams,
@@ -42,7 +42,7 @@ const SignUp = ({
     },
   });
 
-  const onSubmit = async (data: signUpSchema) => {
+  const onSubmit = (data: signUpSchema) => {
     startTransition(() => {
       action(data);
     });
@@ -61,10 +61,10 @@ const SignUp = ({
   }, [oauthError]);
 
   return (
-    <main className="flex items-center p-3 h-screen">
-      <div className="w-full flex items-center justify-center flex-col ">
-        <div className="flex flex-col max-w-[420px] w-full px-4 sm:px-0">
-          <div className="flex flex-col gap-8 md:gap-12 w-full">
+    <main className="flex h-screen items-center p-3">
+      <div className="flex w-full flex-col items-center justify-center ">
+        <div className="flex w-full max-w-[420px] flex-col px-4 sm:px-0">
+          <div className="flex w-full flex-col gap-8 md:gap-12">
             <Logo />
             <div className="flex flex-col gap-8">
               <div className="flex flex-col gap-2">
@@ -75,8 +75,8 @@ const SignUp = ({
               </div>
 
               <form
-                onSubmit={handleSubmit(onSubmit)}
                 className="flex flex-col gap-5"
+                onSubmit={handleSubmit(onSubmit)}
               >
                 <Input
                   id="email"
@@ -121,17 +121,17 @@ const SignUp = ({
                   required
                 />
 
-                <Button size={"lg"} type="submit" disabled={isPending}>
+                <Button disabled={isPending} size={"lg"} type="submit">
                   {isPending ? "Criando conta..." : "Criar conta"}
                 </Button>
 
                 <Button
-                  size={"lg"}
-                  variant={"outline"}
-                  type="button"
                   onClick={async () => {
                     await oAuthSignIn("GOOGLE");
                   }}
+                  size={"lg"}
+                  type="button"
+                  variant={"outline"}
                 >
                   <GoogleIcon />
                   Acessar com google
@@ -139,7 +139,7 @@ const SignUp = ({
 
                 <div className="flex items-center justify-center gap-1">
                   <span className="text-text-muted">Ja tem uma conta? </span>
-                  <Link href={"/sign-in"} className="text-primary">
+                  <Link className="text-primary" href={"/sign-in"}>
                     Acesse aqui
                   </Link>
                 </div>
@@ -149,12 +149,12 @@ const SignUp = ({
         </div>
       </div>
 
-      <div className="w-full relative h-full hidden lg:block">
+      <div className="relative hidden h-full w-full lg:block">
         <Image
-          src={"/hero-login.png"}
           alt="Hero Login"
+          className="rounded-lg object-cover"
           fill
-          className="object-cover rounded-lg"
+          src={"/hero-login.png"}
         />
       </div>
     </main>

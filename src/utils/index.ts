@@ -1,36 +1,17 @@
-import { comparePassword, hasheAndSaltPassword } from "./password";
-import { createErrorResponse, createSuccessResponse } from "./http";
-import {
-  isTokenExpired,
-  verifyToken,
-  getRecentResetRequests,
+export { createErrorResponse, createSuccessResponse } from "./http";
+export { getOAuthClient, OAuthClient } from "./oAuth";
+export { comparePassword, hasheAndSaltPassword } from "./password";
+export {
   createResetToken,
   findResetToken,
+  getRecentResetRequests,
+  isTokenExpired,
   updateResetPasswordToken,
+  verifyToken,
 } from "./reset-password";
-import {
+export { requestPasswordReset } from "./send-password-reset-email";
+export {
   findUserByCredentials,
   findUserByEmail,
   updateUserPassword,
 } from "./user";
-import { requestPasswordReset } from "./send-password-reset-email";
-import { OAuthClient, getOAuthClient } from "./oAuth";
-
-export {
-  comparePassword,
-  hasheAndSaltPassword,
-  verifyToken,
-  isTokenExpired,
-  createErrorResponse,
-  createSuccessResponse,
-  getRecentResetRequests,
-  createResetToken,
-  findResetToken,
-  updateResetPasswordToken,
-  findUserByCredentials,
-  findUserByEmail,
-  updateUserPassword,
-  requestPasswordReset,
-  getOAuthClient,
-  OAuthClient,
-};

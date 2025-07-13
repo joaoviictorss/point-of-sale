@@ -1,5 +1,5 @@
-import { comparePassword } from "@/utils/password";
 import { prisma } from "@/lib/prisma/client";
+import { comparePassword } from "@/utils/password";
 
 export const findUserByCredentials = async (
   email: string,
@@ -9,7 +9,7 @@ export const findUserByCredentials = async (
     where: { email },
   });
 
-  if (!user || !user.password) {
+  if (!user?.password) {
     return null;
   }
   const isPasswordValid = await comparePassword(password, user.password);

@@ -1,24 +1,21 @@
 "use client";
 
-import { startTransition, useActionState, useEffect, use } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 import Image from "next/image";
 import Link from "next/link";
-
-import { useForm, Controller } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-
-import { GoogleIcon } from "@/assets";
+import { startTransition, use, useActionState, useEffect } from "react";
+import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
-
 import { oAuthSignIn, signIn } from "@/actions/auth";
-
-import { SignInFormSchema, signInSchema } from "@/lib/validations/auth/signUp";
-
-import { useDialog } from "@/hooks";
-
+import { GoogleIcon } from "@/assets";
 import { Checkbox, Input, Logo } from "@/components";
 import { Button } from "@/components/Shadcn/button";
+import { useDialog } from "@/hooks";
+import {
+  SignInFormSchema,
+  type signInSchema,
+} from "@/lib/validations/auth/signUp";
 import { ResetPasswordModal } from "./components/reset-password-modal";
 
 const SignIn = ({
@@ -46,7 +43,7 @@ const SignIn = ({
     },
   });
 
-  const onSubmit = async (data: signInSchema) => {
+  const onSubmit = (data: signInSchema) => {
     startTransition(() => {
       action(data);
     });
@@ -67,10 +64,10 @@ const SignIn = ({
   const resetPasswordDialog = useDialog();
 
   return (
-    <main className="flex items-center p-3 h-screen">
-      <div className="w-full flex items-center justify-center flex-col">
-        <div className="flex flex-col max-w-[420px] w-full px-4 sm:px-0">
-          <div className="flex flex-col gap-8 md:gap-12 sm:min-w-[420px] w-full">
+    <main className="flex h-screen items-center p-3">
+      <div className="flex w-full flex-col items-center justify-center">
+        <div className="flex w-full max-w-[420px] flex-col px-4 sm:px-0">
+          <div className="flex w-full flex-col gap-8 sm:min-w-[420px] md:gap-12">
             <Logo />
             <div className="flex flex-col gap-8">
               <div className="flex flex-col gap-2">
@@ -81,8 +78,8 @@ const SignIn = ({
               </div>
 
               <form
-                onSubmit={handleSubmit(onSubmit)}
                 className="flex flex-col gap-5"
+                onSubmit={handleSubmit(onSubmit)}
               >
                 <Input
                   id="email"
@@ -107,37 +104,36 @@ const SignIn = ({
 
                 <div className="flex items-center justify-between sm:flex-row">
                   <Controller
-                    name="keepConnected"
                     control={control}
+                    name="keepConnected"
                     render={({ field }) => (
                       <Checkbox
+                        checked={field.value}
                         id="keepConnected"
                         label="Permanecer conectado"
-                        checked={field.value}
                         onCheckedChange={field.onChange}
                       />
                     )}
                   />
 
-                  <span
-                    className="text-primary hover:text-primary/90 transition-colors duration-75 text-sm cursor-pointer"
-                    onClick={resetPasswordDialog.openDialog}
-                  >
-                    Esqueci minha senha
-                  </span>
+                  <Button asChild onClick={resetPasswordDialog.openDialog}>
+                    <span className="cursor-pointer text-primary text-sm transition-colors duration-75 hover:text-primary/90">
+                      Esqueci minha senha
+                    </span>
+                  </Button>
                 </div>
 
-                <Button size={"lg"} type="submit" disabled={isPending}>
+                <Button disabled={isPending} size={"lg"} type="submit">
                   {isPending ? "Entrando..." : "Entrar"}
                 </Button>
 
                 <Button
-                  size={"lg"}
-                  variant={"outline"}
-                  type="button"
                   onClick={async () => {
                     await oAuthSignIn("GOOGLE");
                   }}
+                  size={"lg"}
+                  type="button"
+                  variant={"outline"}
                 >
                   <GoogleIcon />
                   Acessar com google
@@ -147,7 +143,7 @@ const SignIn = ({
                   <span className="text-text-muted">
                     Ainda não tem uma conta?
                   </span>
-                  <Link href={"/sign-up"} className="text-primary">
+                  <Link className="text-primary" href={"/sign-up"}>
                     Cadastre-se
                   </Link>
                 </div>
@@ -157,12 +153,12 @@ const SignIn = ({
         </div>
       </div>
 
-      <div className="w-full relative h-full hidden lg:block">
+      <div className="relative hidden h-full w-full lg:block">
         <Image
-          src={"/hero-login.png"}
           alt="Hero Login"
+          className="rounded-lg object-cover"
           fill
-          className="object-cover rounded-lg"
+          src={"/hero-login.png"}
         />
       </div>
 

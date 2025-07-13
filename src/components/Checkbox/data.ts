@@ -1,5 +1,5 @@
-import { ComponentProps } from "react";
-import { Checkbox as ShadCheckbox } from "@/components/Shadcn/checkbox";
+import type { ComponentProps } from "react";
+import type { Checkbox as ShadCheckbox } from "@/components/Shadcn/checkbox";
 
 export interface ICheckboxProps extends ComponentProps<typeof ShadCheckbox> {
   label?: string;

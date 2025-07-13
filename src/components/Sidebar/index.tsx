@@ -1,28 +1,26 @@
 "use client";
 
 import {
+  ChartPieIcon,
+  CircleStackIcon,
+  ClipboardDocumentListIcon,
+  ShoppingBagIcon,
+} from "@heroicons/react/24/outline";
+import Image from "next/image";
+import { usePathname, useRouter } from "next/navigation";
+import { Logo } from "@/components";
+import {
   Sidebar as ShadcnSidebar,
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
+  SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarHeader,
-  SidebarTrigger,
   SidebarProvider,
+  SidebarTrigger,
 } from "@/components/Shadcn/sidebar";
-
-import { Logo } from "@/components";
-
-import {
-  ShoppingBagIcon,
-  ClipboardDocumentListIcon,
-  CircleStackIcon,
-  ChartPieIcon,
-} from "@heroicons/react/24/outline";
-import { usePathname, useRouter } from "next/navigation";
-import Image from "next/image";
 
 const items = [
   {
@@ -62,20 +60,20 @@ export function Sidebar({
         <SidebarGroup className="p-0">
           <SidebarGroupContent className="w-full items-center justify-center">
             <SidebarHeader
-              className={`border-b border-border flex items-center justify-center h-[6.75rem] ${isOpen ? "p-6" : "p-0"}`}
+              className={`flex h-[6.75rem] items-center justify-center border-border border-b ${isOpen ? "p-6" : "p-0"}`}
               onClick={() => onOpenChange(!isOpen)}
             >
-              <Logo variant="small" showText={isOpen} />
+              <Logo showText={isOpen} variant="small" />
             </SidebarHeader>
             <SidebarMenu className={`${isOpen ? "p-6" : "p-0"}`}>
               {items.map((item) => (
                 <SidebarMenuItem key={item.url}>
                   <SidebarMenuButton
                     asChild
-                    size={"lg"}
                     isActive={item.url === pathname}
+                    size={"lg"}
                   >
-                    <a href={item.url} className="">
+                    <a className="" href={item.url}>
                       <item.icon />
                       <span>{item.title}</span>
                     </a>

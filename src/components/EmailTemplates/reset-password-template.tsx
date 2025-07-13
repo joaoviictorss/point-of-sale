@@ -1,5 +1,3 @@
-import * as React from "react";
-
 interface IResetPasswordEmailTemplateProps {
   firstName?: string;
   resetPasswordUrl: string;
@@ -15,7 +13,7 @@ export const ResetPasswordEmailTemplate = ({
 }: IResetPasswordEmailTemplateProps) => {
   const currentYear = new Date().getFullYear();
   const userName = firstName?.trim() || "Usuário";
-  const logoUrl = process.env.NEXT_PUBLIC_APP_URL + "/logo.png";
+  const logoUrl = `${process.env.NEXT_PUBLIC_APP_URL}/logo.png`;
 
   const styles = {
     container: {
@@ -117,17 +115,19 @@ export const ResetPasswordEmailTemplate = ({
   };
 
   return (
+    // biome-ignore lint/a11y/useSemanticElements: Template para email nao suporta o component main
     <div
-      style={styles.container}
-      role="main"
       aria-label="Email de redefinição de senha"
+      role="main"
+      style={styles.container}
     >
       {/* Header */}
       <header style={styles.header}>
         <div style={styles.logoContainer}>
+          {/** biome-ignore lint/performance/noImgElement: Template para email nao suporta o component Image do next.js */}
           <img
-            src={logoUrl}
             alt={`Logo da ${companyName}`}
+            src={logoUrl}
             style={styles.logo}
           />
         </div>
@@ -149,11 +149,12 @@ export const ResetPasswordEmailTemplate = ({
 
         {/* Call to Action */}
         <div style={styles.buttonContainer}>
+          {/** biome-ignore lint/a11y/useSemanticElements: Template para email nao suporta o component Link do next.js */}
           <a
-            href={resetPasswordUrl}
-            style={styles.button}
-            role="button"
             aria-label="Redefinir minha senha"
+            href={resetPasswordUrl}
+            role="button"
+            style={styles.button}
           >
             Redefinir Minha Senha
           </a>

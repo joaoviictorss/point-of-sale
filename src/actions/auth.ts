@@ -1,29 +1,27 @@
 "use server";
 
-import { redirect } from "next/navigation";
+import type { OAuthProvider } from "@prisma/client";
 import { cookies } from "next/headers";
-
-import {
-  SignInFormSchema,
-  SignInFormState,
-  signInSchema,
-  SignupFormSchema,
-  SignUpFormState,
-  signUpSchema,
-} from "@/lib/validations/auth/signUp";
+import { redirect } from "next/navigation";
 
 import { prisma } from "@/lib/prisma/client";
-import { OAuthProvider } from "@prisma/client";
-
 import { createSession, deleteSession } from "@/lib/session";
 import {
-  hasheAndSaltPassword,
-  getOAuthClient,
+  SignInFormSchema,
+  type SignInFormState,
+  type SignUpFormState,
+  SignupFormSchema,
+  type signInSchema,
+  type signUpSchema,
+} from "@/lib/validations/auth/signUp";
+import {
   findUserByCredentials,
   findUserByEmail,
+  getOAuthClient,
+  hasheAndSaltPassword,
 } from "@/utils";
 
-export async function signUp(state: SignUpFormState, formData: signUpSchema) {
+export async function signUp(_: SignUpFormState, formData: signUpSchema) {
   const validatedFields = SignupFormSchema.safeParse(formData);
 
   if (!validatedFields.success) {
@@ -62,7 +60,7 @@ export async function signUp(state: SignUpFormState, formData: signUpSchema) {
   redirect("/sales");
 }
 
-export async function signIn(state: SignInFormState, formData: signInSchema) {
+export async function signIn(_: SignInFormState, formData: signInSchema) {
   const validatedFields = SignInFormSchema.safeParse(formData);
 
   if (!validatedFields.success) {

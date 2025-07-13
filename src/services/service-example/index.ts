@@ -1,17 +1,20 @@
 import { httpApi } from "@/infra/http/httpApi";
+import type { ApiErrorResponse, ApiSuccessResponse } from "@/types/http";
 
-interface IExampleService {
-  exampleAtribute: string;
-}
+export type ExempleResponse = ApiSuccessResponse<{
+  exampleResponse: string;
+}>;
 
-export const exampleService = async ({ exampleAtribute }: IExampleService) => {
+export async function ExempleService(data: string): Promise<ExempleResponse> {
   try {
-    const { data } = await httpApi.post(`/request/example`, {
-      exampleAtribute,
+    const response = await httpApi.post<ExempleResponse>("/route-example", {
+      data,
     });
 
-    return Promise.resolve({ data });
-  } catch (err) {
-    return Promise.reject(err);
+    return response.data;
+  } catch (error) {
+    throw new Error(
+      (error as ApiErrorResponse).message || "Erro na requisição"
+    );
   }
-};
+}

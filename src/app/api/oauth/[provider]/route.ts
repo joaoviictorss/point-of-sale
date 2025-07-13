@@ -1,11 +1,10 @@
+import { OAuthProvider } from "@prisma/client";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { NextRequest } from "next/server";
-
+import type { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma/client";
 import { createSession } from "@/lib/session";
 import { getOAuthClient } from "@/utils";
-import { OAuthProvider } from "@prisma/client";
 
 export async function GET(
   request: NextRequest,
@@ -29,8 +28,7 @@ export async function GET(
     const oAuthUser = await oAuthClient.fetchUser(code, state, await cookies());
     const user = await connectUserToAccount(oAuthUser, provider);
     await createSession(user.id, true);
-  } catch (error) {
-    console.error(error);
+  } catch {
     redirect(
       `/sign-in?oauthError=${encodeURIComponent(
         "Falha ao conectar, tente novamente."

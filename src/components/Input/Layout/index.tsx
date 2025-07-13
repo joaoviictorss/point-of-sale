@@ -1,7 +1,7 @@
-import { Label } from "@/components/Shadcn/label";
-import { IInputData } from "../data";
 import { Input as ShadInput } from "@/components/Shadcn/input";
+import { Label } from "@/components/Shadcn/label";
 import { cn } from "@/lib/utils";
+import type { IInputData } from "../data";
 
 export const Input = ({
   id,
@@ -13,11 +13,11 @@ export const Input = ({
   ...rest
 }: IInputData) => {
   return (
-    <div className="flex flex-col gap-1 items-start">
+    <div className="flex flex-col items-start gap-1">
       {label && (
         <Label
-          htmlFor={id}
           className={`${error && "text-error"} flex flex-row gap-1`}
+          htmlFor={id}
         >
           {label}
           {required && <span className="text-error">*</span>}
@@ -25,9 +25,9 @@ export const Input = ({
       )}
 
       <ShadInput
+        className={cn(`${error && "border-error"}`, className)}
         id={id}
         placeholder={placeholder}
-        className={cn(`${error && "border-error"}`, className)}
         {...rest}
       />
 
@@ -35,7 +35,7 @@ export const Input = ({
         className={`h-0 overflow-hidden transition-all duration-150 ${error && "h-[1rem]"}`}
       >
         <div
-          className={`opacity-0 text-xs ${error && "text-error opacity-100"}`}
+          className={`text-xs opacity-0 ${error && "text-error opacity-100"}`}
         >
           {error}
         </div>

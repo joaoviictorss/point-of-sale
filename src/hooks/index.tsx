@@ -1,4 +1,2 @@
-import { useDialog } from "./use-dialog";
-import { useIsMobile } from "./use-mobile";
-
-export { useDialog, useIsMobile };
+export { useDialog } from "./use-dialog";
+export { useIsMobile } from "./use-mobile";

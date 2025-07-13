@@ -1,22 +1,20 @@
 import { httpApi } from "@/infra/http/httpApi";
-import { ApiResponse } from "@/types/auth/data";
+import type { ApiErrorResponse } from "@/types/http";
+import type { RequesResetPasswordResponse } from "@/types/http/reset-password";
 
 export async function requestPasswordReset(
   email: string
-): Promise<ApiResponse> {
+): Promise<RequesResetPasswordResponse> {
   try {
-    const response = await httpApi.post<ApiResponse>("/auth/request-password-reset", {
-      email,
-    });
+    const response: RequesResetPasswordResponse = await httpApi.post(
+      "/auth/request-password-reset",
+      { email }
+    );
 
-    const result: ApiResponse = response.data;
-
-    if (!result.success) {
-      throw new Error(result.message || result.error || "Erro na requisição");
-    }
-
-    return result;
-  } catch (error: any) {
-    throw new Error(error.message || "Erro na requisição");
+    return response;
+  } catch (error) {
+    throw new Error(
+      (error as ApiErrorResponse).message || "Erro na requisição"
+    );
   }
 }

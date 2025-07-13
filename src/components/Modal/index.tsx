@@ -1,4 +1,5 @@
-import React from "react";
+import { XMarkIcon } from "@heroicons/react/24/solid";
+import type React from "react";
 import {
   Dialog,
   DialogContent,
@@ -7,9 +8,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/Shadcn/dialog";
-import { Button } from "../Shadcn";
-import { XMarkIcon } from "@heroicons/react/24/solid";
 import { cn } from "@/lib/utils";
+import { Button } from "../Shadcn";
 
 export interface DialogAction {
   label: string;
@@ -118,18 +118,18 @@ export const Modal = ({
   };
 
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
+    <Dialog onOpenChange={handleOpenChange} open={open}>
       <DialogContent
         className={`${sizeClasses[size]} ${className}`}
-        onPointerDownOutside={handleOverlayClick}
         onEscapeKeyDown={handleEscapeKey}
+        onPointerDownOutside={handleOverlayClick}
         showCloseButton={false}
       >
         {/* Header */}
         {(title || description || showCloseButton) && (
           <DialogHeader
             className={cn(
-              "flex items-start justify-between flex-col gap-2",
+              "flex flex-col items-start justify-between gap-2",
               headerClassName
             )}
           >
@@ -141,10 +141,10 @@ export const Modal = ({
             )}
             {showCloseButton && (
               <Button
-                variant="ghost"
-                size="sm"
-                className="size p-0 absolute right-3 top-3"
+                className="size absolute top-3 right-3 p-0"
                 onClick={handleClose}
+                size="sm"
+                variant="ghost"
               >
                 <XMarkIcon className="h-4 w-4" />
                 <span className="sr-only">Fechar</span>
@@ -162,19 +162,19 @@ export const Modal = ({
             {footerContent ? (
               footerContent
             ) : (
-              <div className="flex gap-2 justify-end">
+              <div className="flex justify-end gap-2">
                 {actions.map(
-                  ({ shouldRender = true, ...action }, index) =>
+                  ({ shouldRender = true, ...action }) =>
                     shouldRender && (
                       <Button
-                        key={index}
-                        variant={action.variant || "default"}
-                        onClick={action.onClick}
-                        disabled={action.disabled || action.loading}
                         className="min-w-[80px]"
+                        disabled={action.disabled || action.loading}
+                        key={action.label}
+                        onClick={action.onClick}
+                        variant={action.variant || "default"}
                       >
                         {action.loading ? (
-                          <div className="animate-spin rounded-full size-4 border-2 border-b-transparent" />
+                          <div className="size-4 animate-spin rounded-full border-2 border-b-transparent" />
                         ) : (
                           action.label
                         )}

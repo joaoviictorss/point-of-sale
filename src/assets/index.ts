@@ -1,3 +1,1 @@
-import { GoogleIcon } from "./svgs/google-icon";
-
-export { GoogleIcon };
+export { GoogleIcon } from "./svgs/google-icon";

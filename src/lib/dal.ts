@@ -1,10 +1,12 @@
 import { cache } from "react";
-import { verifySession } from "./session";
 import { prisma } from "./prisma/client";
+import { verifySession } from "./session";
 
 export const getUser = cache(async () => {
   const session = await verifySession();
-  if (!session) return null;
+  if (!session) {
+    return null;
+  }
 
   try {
     const user = await prisma.user.findUnique({
@@ -19,8 +21,7 @@ export const getUser = cache(async () => {
     });
 
     return user;
-  } catch (error) {
-    console.log("Failed to fetch user");
+  } catch {
     return null;
   }
 });

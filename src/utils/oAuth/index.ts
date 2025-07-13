@@ -1,7 +1,7 @@
-import { z } from "zod";
+import type { OAuthProvider } from "@prisma/client";
 import crypto from "crypto";
-import { OAuthProvider } from "@prisma/client";
-import { ReadonlyRequestCookies } from "next/dist/server/web/spec-extension/adapters/request-cookies";
+import type { ReadonlyRequestCookies } from "next/dist/server/web/spec-extension/adapters/request-cookies";
+import { z } from "zod";
 import { createGoogleOAuthClient } from "./google";
 
 const STATE_COOKIE_KEY = "oAuthState";
@@ -66,7 +66,6 @@ export class OAuthClient<T> {
     const state = createState(cookies);
     const codeVerifier = createCodeVerifier(cookies);
 
-    console.log("redirectUrl", this.redirectUrl.toString());
     const url = new URL(this.urls.auth);
     url.searchParams.set("client_id", this.clientId);
     url.searchParams.set("redirect_uri", this.redirectUrl.toString());
@@ -87,7 +86,9 @@ export class OAuthClient<T> {
     cookies: Pick<ReadonlyRequestCookies, "get">
   ) {
     const isValidState = await validateState(state, cookies);
-    if (!isValidState) throw new InvalidStateError();
+    if (!isValidState) {
+      throw new InvalidStateError();
+    }
 
     const { accessToken, tokenType } = await this.fetchToken(
       code,
@@ -103,7 +104,9 @@ export class OAuthClient<T> {
       .then((rawData) => {
         const { data, success, error } =
           this.userInfo.schema.safeParse(rawData);
-        if (!success) throw new InvalidUserError(error);
+        if (!success) {
+          throw new InvalidUserError(error);
+        }
 
         return data;
       });
@@ -130,7 +133,9 @@ export class OAuthClient<T> {
       .then((res) => res.json())
       .then((rawData) => {
         const { data, success, error } = this.tokenSchema.safeParse(rawData);
-        if (!success) throw new InvalidTokenError(error);
+        if (!success) {
+          throw new InvalidTokenError(error);
+        }
 
         return {
           accessToken: data.access_token,
@@ -207,6 +212,8 @@ function validateState(
 
 function getCodeVerifier(cookies: Pick<ReadonlyRequestCookies, "get">) {
   const codeVerifier = cookies.get(CODE_VERIFIER_COOKIE_KEY)?.value;
-  if (codeVerifier == null) throw new InvalidCodeVerifierError();
+  if (codeVerifier == null) {
+    throw new InvalidCodeVerifierError();
+  }
   return codeVerifier;
 }

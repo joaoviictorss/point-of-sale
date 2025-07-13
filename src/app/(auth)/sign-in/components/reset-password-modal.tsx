@@ -1,16 +1,13 @@
-import { useEffect, useState } from "react";
-
-import { z } from "zod";
-import { useForm } from "react-hook-form";
+import { ClockIcon, EnvelopeIcon } from "@heroicons/react/24/solid";
 import { zodResolver } from "@hookform/resolvers/zod";
-
-import { EnvelopeIcon, ClockIcon } from "@heroicons/react/24/solid";
-
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { z } from "zod";
 
 import { Input, Modal } from "@/components";
 
-import { UseDialogReturn } from "@/hooks/use-dialog";
+import type { UseDialogReturn } from "@/hooks/use-dialog";
 import { requestPasswordReset } from "@/services/reset-password";
 
 const ResetPasswordSchema = z.object({
@@ -30,10 +27,6 @@ export const ResetPasswordModal = ({
 }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [modalState, setModalState] = useState<ModalState>("form");
-  const [rateLimitInfo, setRateLimitInfo] = useState<{
-    email?: string;
-    retryAfter?: number;
-  }>({});
 
   const {
     handleSubmit,
@@ -51,7 +44,6 @@ export const ResetPasswordModal = ({
     closeDialog();
     reset();
     setModalState("form");
-    setRateLimitInfo({});
   };
 
   const onSubmit = async (data: ResetPasswordSchema) => {
@@ -61,19 +53,10 @@ export const ResetPasswordModal = ({
       await requestPasswordReset(data.email);
 
       setModalState("success");
-    } catch (error: any) {
-      if (error.status === 429) {
-        setModalState("rate-limited");
-        setRateLimitInfo({
-          email: data.email,
-          retryAfter: error.retryAfter || 5,
-        });
-        toast.error(
-          "Pedido de redefinição de senha já foi enviado recentemente. Aguarde e tente novamente mais tarde."
-        );
-      } else {
-        toast.error("Erro ao enviar email de recuperação, tente novamente.");
-      }
+    } catch {
+      toast.error(
+        "Pedido de redefinição de senha já foi enviado recentemente. Aguarde e tente novamente mais tarde."
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -81,7 +64,6 @@ export const ResetPasswordModal = ({
 
   const handleTryAgain = () => {
     setModalState("form");
-    setRateLimitInfo({});
   };
 
   const getModalContent = () => {
@@ -93,7 +75,7 @@ export const ResetPasswordModal = ({
             "Verifique seu e-mail para redefinir sua senha. Se não encontrar o email, verifique sua caixa de spam.",
           content: (
             <div className="flex flex-col items-center justify-center space-y-4">
-              <div className="flex items-center justify-center size-20 rounded-full bg-success/10 text-success">
+              <div className="flex size-20 items-center justify-center rounded-full bg-success/10 text-success">
                 <EnvelopeIcon className="size-10" />
               </div>
             </div>
@@ -113,10 +95,11 @@ export const ResetPasswordModal = ({
       case "rate-limited":
         return {
           title: "Muitas tentativas",
-          description: `Você ja fez um pedido de recuperação de senha. Aguarde ${rateLimitInfo.retryAfter} minutos antes de tentar novamente.`,
+          description:
+            "Você ja fez um pedido de recuperação de senha. Aguarde alguns minutos antes de tentar novamente.",
           content: (
-            <div className="flex flex-col items-center justify-center space-y-4 mb-4">
-              <div className="flex items-center justify-center size-20 rounded-full bg-error/10 text-error">
+            <div className="mb-4 flex flex-col items-center justify-center space-y-4">
+              <div className="flex size-20 items-center justify-center rounded-full bg-error/10 text-error">
                 <ClockIcon className="size-10" />
               </div>
             </div>
@@ -145,12 +128,12 @@ export const ResetPasswordModal = ({
           content: (
             <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
               <Input
-                label="E-mail"
-                id="email"
-                type="email"
-                placeholder="Digite seu e-mail"
-                error={errors.email?.message}
                 disabled={isSubmitting}
+                error={errors.email?.message}
+                id="email"
+                label="E-mail"
+                placeholder="Digite seu e-mail"
+                type="email"
                 {...register("email")}
               />
             </form>
@@ -184,14 +167,14 @@ export const ResetPasswordModal = ({
 
   return (
     <Modal
-      open={open}
-      onOpenChange={setOpen}
-      title={title}
-      description={description}
-      size="md"
       actions={actions}
-      onClose={onClose}
+      description={description}
       headerClassName="w-full flex"
+      onClose={onClose}
+      onOpenChange={setOpen}
+      open={open}
+      size="md"
+      title={title}
     >
       {content}
     </Modal>

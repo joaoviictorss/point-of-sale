@@ -1,5 +1,5 @@
-import { ResetPasswordEmailTemplate } from "@/components/EmailTemplates/reset-password-template";
 import { Resend } from "resend";
+import { ResetPasswordEmailTemplate } from "@/components/EmailTemplates/reset-password-template";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -22,7 +22,6 @@ export const requestPasswordReset = async (
     });
 
     if (error) {
-      console.error("Erro do Resend:", error);
       throw new Error(`Falha ao enviar email: ${error.message}`);
     }
 
@@ -30,10 +29,8 @@ export const requestPasswordReset = async (
       throw new Error("Resend retornou dados vazios");
     }
 
-    console.log("Email enviado com sucesso:", data);
     return data;
   } catch (error) {
-    console.error("Erro ao enviar email:", error);
-    throw error;
+    throw new Error(`Falha ao enviar email: ${error}`);
   }
 };

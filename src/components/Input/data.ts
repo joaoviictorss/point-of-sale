@@ -1,4 +1,4 @@
-import { ComponentProps } from "react";
+import type { ComponentProps } from "react";
 
 export interface IInputProps extends ComponentProps<"input"> {
   label?: string;

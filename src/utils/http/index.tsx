@@ -1,31 +1,20 @@
-import { ApiResponse } from "@/types/auth/data";
 import { NextResponse } from "next/server";
+import type {
+  ApiErrorResponse,
+  ApiSuccessResponse,
+} from "@/types/http/index.ts";
 
-export function createSuccessResponse(
+export function createSuccessResponse<T>(
   message: string,
-  data?: any,
-  meta?: Record<string, any>
-): NextResponse<ApiResponse> {
-  return NextResponse.json({
-    success: true,
-    message,
-    data,
-    meta,
-  });
+  data: T,
+  status = 200
+): NextResponse<ApiSuccessResponse<T>> {
+  return NextResponse.json({ message, data }, { status });
 }
 
 export function createErrorResponse(
   message: string,
-  status: number,
-  meta?: Record<string, any>
-): NextResponse<ApiResponse> {
-  return NextResponse.json(
-    {
-      success: false,
-      message,
-      error: message,
-      meta,
-    },
-    { status }
-  );
+  status = 400
+): NextResponse<ApiErrorResponse> {
+  return NextResponse.json({ message }, { status });
 }

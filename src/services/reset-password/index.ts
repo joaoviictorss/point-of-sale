@@ -1,4 +1,2 @@
-import { requestPasswordReset } from "./request-reset-password";
-import { resetPassword } from "./reset-password";
-
-export { requestPasswordReset, resetPassword };
+export { requestPasswordReset } from "./request-reset-password";
+export { resetPassword } from "./reset-password";

@@ -116,7 +116,12 @@ const SignIn = ({
                     )}
                   />
 
-                  <Button asChild onClick={resetPasswordDialog.openDialog}>
+                  <Button
+                    asChild
+                    className="hover:no-underline"
+                    onClick={resetPasswordDialog.openDialog}
+                    variant={"link"}
+                  >
                     <span className="cursor-pointer text-primary text-sm transition-colors duration-75 hover:text-primary/90">
                       Esqueci minha senha
                     </span>

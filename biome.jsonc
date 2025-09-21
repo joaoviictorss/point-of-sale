@@ -6,7 +6,8 @@
   "linter": {
     "rules": {
       "nursery": {
-        "noUnknownAtRule": "off"
+        "noUnknownAtRule": "off",
+        "useSortedClasses": "warn"
       },
       "performance": {
         "noNamespaceImport": "off"

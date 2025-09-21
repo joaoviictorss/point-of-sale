@@ -6,8 +6,7 @@ import {
   ClipboardDocumentListIcon,
   ShoppingBagIcon,
 } from "@heroicons/react/24/outline";
-import Image from "next/image";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { Logo } from "@/components";
 import {
   Sidebar as ShadcnSidebar,
@@ -18,8 +17,6 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarProvider,
-  SidebarTrigger,
 } from "@/components/Shadcn/sidebar";
 
 const items = [
@@ -55,17 +52,19 @@ export function Sidebar({
   const pathname = usePathname();
 
   return (
-    <ShadcnSidebar collapsible="icon">
+    <ShadcnSidebar collapsible="offcanvas">
       <SidebarContent>
-        <SidebarGroup className="p-0">
+        <SidebarGroup>
           <SidebarGroupContent className="w-full items-center justify-center">
             <SidebarHeader
-              className={`flex h-[6.75rem] items-center justify-center border-border border-b ${isOpen ? "p-6" : "p-0"}`}
+              className={
+                "flex items-center justify-center border-border border-b p-6"
+              }
               onClick={() => onOpenChange(!isOpen)}
             >
-              <Logo showText={isOpen} variant="small" />
+              <Logo variant="small" />
             </SidebarHeader>
-            <SidebarMenu className={`${isOpen ? "p-6" : "p-0"}`}>
+            <SidebarMenu className={"p-6"}>
               {items.map((item) => (
                 <SidebarMenuItem key={item.url}>
                   <SidebarMenuButton
@@ -80,10 +79,10 @@ export function Sidebar({
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      </SidebarContent>
+            </SidebarMenu>{" "}
+          </SidebarGroupContent>{" "}
+        </SidebarGroup>{" "}
+      </SidebarContent>{" "}
     </ShadcnSidebar>
   );
 }

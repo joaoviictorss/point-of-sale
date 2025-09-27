@@ -23,6 +23,7 @@ model User {
   createdAt        DateTime           @default(now())
   updatedAt        DateTime           @updatedAt
   userOAuthAccount userOAuthAccount[]
+  orders           Order[]
 }
 
 enum OAuthProvider {
@@ -54,4 +55,89 @@ model resetPasswordToken {
   ipAddress String?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
+}
+
+enum OrderStatus {
+  PENDING
+  COMPLETED
+  CANCELLED
+}
+
+enum PaymentMethod {
+  CASH
+  CREDIT_CARD
+  DEBIT_CARD
+  PIX
+  BANK_TRANSFER
+}
+
+model Order {
+  id            String        @id @default(uuid())
+  totalAmount   Int
+  discount      Int           @default(0)
+  tax           Int           @default(0)
+  finalAmount   Int
+  status        OrderStatus   @default(PENDING)
+  paymentMethod PaymentMethod
+  notes         String?
+
+  employeeId String
+  employee   User        @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  items      OrderItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model OrderItem {
+  id         String @id @default(uuid())
+  quantity   Float
+  unitPrice  Int
+  discount   Int    @default(0)
+  totalPrice Int
+
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([orderId])
+  @@index([productId])
+}
+
+enum ProductType {
+  UNIT
+  WEIGHT
+  VOLUME
+}
+
+enum StockUnit {
+  UNITS
+  GRAMS
+  KILOGRAMS
+  LITERS
+  MILLILITERS
+}
+
+model Product {
+  id          String      @id @default(uuid())
+  name        String
+  costPrice   Int
+  salePrice   Int
+  imageUrl    String?
+  category    String
+  productType ProductType @default(UNIT)
+  stock       Float
+  stockUnit   StockUnit   @default(UNITS)
+  minStock    Float?
+  maxStock    Float?
+
+  orderItems OrderItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

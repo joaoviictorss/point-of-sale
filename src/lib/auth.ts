@@ -20,6 +20,7 @@ export async function getCurrentUser(): Promise<User | null> {
         id: true,
         email: true,
         name: true,
+        imageUrl: true,
         createdAt: true,
         updatedAt: true,
       },

@@ -18,6 +18,7 @@ model User {
   email    String  @unique
   name     String?
   password String?
+  imageUrl String?
 
   createdAt        DateTime           @default(now())
   updatedAt        DateTime           @updatedAt
@@ -40,7 +41,7 @@ model userOAuthAccount {
 
   @@id([userId, provider, providerAccountId])
   @@unique([providerAccountId])
-  @@unique([provider, providerAccountId]) // Adicione esta linha
+  @@unique([provider, providerAccountId])
   @@index([provider, providerAccountId])
 }
 

@@ -40,7 +40,12 @@ export async function GET(
 }
 
 function connectUserToAccount(
-  { id, email, name }: { id: string; email: string; name: string },
+  {
+    id,
+    email,
+    name,
+    imageUrl,
+  }: { id: string; email: string; name: string; imageUrl?: string },
   provider: OAuthProvider
 ) {
   return prisma.$transaction(async (trx) => {
@@ -54,6 +59,7 @@ function connectUserToAccount(
         data: {
           name,
           email,
+          imageUrl,
         },
         select: { id: true },
       });

@@ -57,7 +57,7 @@ export async function signUp(_: SignUpFormState, formData: signUpSchema) {
   }
 
   await createSession(user.id);
-  redirect("/sales");
+  redirect("/vendas");
 }
 
 export async function signIn(_: SignInFormState, formData: signInSchema) {
@@ -80,7 +80,7 @@ export async function signIn(_: SignInFormState, formData: signInSchema) {
   }
 
   await createSession(user.id, keepConnected);
-  redirect("/sales");
+  redirect("/vendas");
 }
 
 export async function logout() {

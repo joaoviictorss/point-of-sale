@@ -54,8 +54,8 @@ const ResetPassword = ({ searchParams }: PageProps) => {
   };
 
   return (
-    <main className="relative flex h-screen flex-col items-center justify-center p-6">
-      <header className="fixed top-0 flex w-full items-center justify-end border-border border-b p-6 sm:justify-between">
+    <main className="relative flex h-screen flex-col items-center justify-center p-4">
+      <header className="fixed top-0 flex w-full items-center justify-end border-border border-b p-4 sm:justify-between">
         <Link className="hidden sm:block" href={"/sign-in"}>
           <Logo />
         </Link>

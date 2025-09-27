@@ -22,22 +22,22 @@ import {
 const items = [
   {
     title: "Vendas",
-    url: "/sales",
+    url: "/vendas",
     icon: ShoppingBagIcon,
   },
   {
     title: "Produtos",
-    url: "/products",
+    url: "/produtos",
     icon: ClipboardDocumentListIcon,
   },
   {
     title: "Estoque",
-    url: "/stock",
+    url: "/estoque",
     icon: CircleStackIcon,
   },
   {
     title: "Relatórios",
-    url: "/analytics",
+    url: "/relatorios",
     icon: ChartPieIcon,
   },
 ];
@@ -58,13 +58,13 @@ export function Sidebar({
           <SidebarGroupContent className="w-full items-center justify-center">
             <SidebarHeader
               className={
-                "flex items-center justify-center border-border border-b p-6"
+                "flex items-start justify-center border-border border-b p-4"
               }
               onClick={() => onOpenChange(!isOpen)}
             >
               <Logo variant="small" />
             </SidebarHeader>
-            <SidebarMenu className={"p-6"}>
+            <SidebarMenu className={"p-4"}>
               {items.map((item) => (
                 <SidebarMenuItem key={item.url}>
                   <SidebarMenuButton

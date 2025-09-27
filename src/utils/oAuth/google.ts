@@ -26,7 +26,7 @@ export function createGoogleOAuthClient() {
         id: user.id,
         name: user.name,
         email: user.email,
-        // picture: user.picture,
+        imageUrl: user.picture,
       }),
     },
   });

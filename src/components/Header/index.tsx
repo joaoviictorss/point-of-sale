@@ -1,29 +1,26 @@
 "use client";
 
-import { Bars3Icon } from "@heroicons/react/24/outline";
 import { usePathname } from "next/navigation";
-import { Button } from "@/components/Shadcn";
 import { useSidebar } from "../Shadcn/sidebar";
 
 export const Header = () => {
   const pathname = usePathname();
-  const { toggleSidebar } = useSidebar();
 
   const headerTitle = [
     {
-      href: "/sales",
+      href: "/vendas",
       title: "Suas vendas",
     },
     {
-      href: "/products",
+      href: "/produtos",
       title: "Seus produtos",
     },
     {
-      href: "/stock",
+      href: "/estoque",
       title: "Seu estoque",
     },
     {
-      href: "/analytics",
+      href: "/relatorios",
       title: "Relatórios",
     },
   ] as const;
@@ -31,10 +28,10 @@ export const Header = () => {
   const currentHeaderTitle = headerTitle.find((item) => item.href === pathname);
 
   return (
-    <header className="flex w-full items-center justify-between border-border border-b p-6">
-      <Button onClick={toggleSidebar}>
-        <Bars3Icon />
-      </Button>
+    <header className="flex w-full items-center justify-between border-border border-b p-4">
+      <span className="font-semibold text-2xl">
+        {currentHeaderTitle ? currentHeaderTitle.title : "VNS - Admin"}
+      </span>
 
       <div className="h-[60px] w-[60px] bg-accent" />
     </header>

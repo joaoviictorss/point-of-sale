@@ -47,7 +47,12 @@ export class OAuthClient<T> {
     };
     userInfo: {
       schema: z.ZodSchema<T>;
-      parser: (data: T) => { id: string; email: string; name: string };
+      parser: (data: T) => {
+        id: string;
+        email: string;
+        name: string;
+        imageUrl?: string;
+      };
     };
   }) {
     this.provider = provider;

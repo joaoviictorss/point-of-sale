@@ -11,7 +11,7 @@ import { Button } from "@/components/Shadcn";
 import {
   resetPasswordFormSchema,
   type resetPasswordSchema,
-} from "@/lib/validations/auth/signUp";
+} from "@/lib/validations/auth/sign-up";
 
 import { resetPassword } from "@/services/reset-password";
 

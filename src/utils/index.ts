@@ -1,3 +1,4 @@
+export { slugify } from "./functions";
 export { createErrorResponse, createSuccessResponse } from "./http";
 export { getOAuthClient, OAuthClient } from "./oAuth";
 export { comparePassword, hasheAndSaltPassword } from "./password";

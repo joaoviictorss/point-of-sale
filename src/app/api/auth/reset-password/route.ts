@@ -1,6 +1,6 @@
 import type { NextResponse } from "next/server";
 
-import { resetPasswordFormSchema } from "@/lib/validations/auth/signUp";
+import { resetPasswordFormSchema } from "@/lib/validations/auth/sign-up";
 import type {
   ApiErrorResponse,
   ApiSuccessResponse,

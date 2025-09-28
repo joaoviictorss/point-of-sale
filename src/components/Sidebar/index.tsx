@@ -50,6 +50,13 @@ export function Sidebar({
   onOpenChange: (open: boolean) => void;
 }) {
   const pathname = usePathname();
+  const organizationId = pathname.split("/")[1];
+
+  const isActiveRoute = (itemUrl: string) => {
+    return organizationId
+      ? pathname === `/${organizationId}${itemUrl}`
+      : pathname === itemUrl;
+  };
 
   return (
     <ShadcnSidebar collapsible="offcanvas">
@@ -69,10 +76,16 @@ export function Sidebar({
                 <SidebarMenuItem key={item.url}>
                   <SidebarMenuButton
                     asChild
-                    isActive={item.url === pathname}
+                    isActive={isActiveRoute(item.url)}
                     size={"lg"}
                   >
-                    <a className="" href={item.url}>
+                    <a
+                      href={
+                        organizationId
+                          ? `/${organizationId}${item.url}`
+                          : item.url
+                      }
+                    >
                       <item.icon />
                       <span>{item.title}</span>
                     </a>

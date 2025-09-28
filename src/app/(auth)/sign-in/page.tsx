@@ -15,7 +15,7 @@ import { useDialog } from "@/hooks";
 import {
   SignInFormSchema,
   type signInSchema,
-} from "@/lib/validations/auth/signUp";
+} from "@/lib/validations/auth/sign-up";
 import { ResetPasswordModal } from "./components/reset-password-modal";
 
 const SignIn = ({

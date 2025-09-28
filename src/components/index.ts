@@ -1,6 +1,7 @@
-export { Checkbox } from "./Checkbox";
-export { Input } from "./Input";
-export { Logo } from "./Logo";
-export { Modal } from "./Modal";
-export { Sidebar } from "./Sidebar";
-
+export { Checkbox } from "./checkbox";
+export { Header } from "./header";
+export { Input } from "./input";
+export { Logo } from "./logo";
+export { Modal } from "./modal";
+export { Sidebar } from "./sidebar";
+export { SidebarWrapper } from "./sidebar-wrapper";

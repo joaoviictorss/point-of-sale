@@ -13,7 +13,7 @@ import {
   SignupFormSchema,
   type signInSchema,
   type signUpSchema,
-} from "@/lib/validations/auth/signUp";
+} from "@/lib/validations/auth/sign-up";
 import {
   findUserByCredentials,
   findUserByEmail,
@@ -57,7 +57,7 @@ export async function signUp(_: SignUpFormState, formData: signUpSchema) {
   }
 
   await createSession(user.id);
-  redirect("/vendas");
+  redirect("/");
 }
 
 export async function signIn(_: SignInFormState, formData: signInSchema) {
@@ -80,7 +80,7 @@ export async function signIn(_: SignInFormState, formData: signInSchema) {
   }
 
   await createSession(user.id, keepConnected);
-  redirect("/vendas");
+  redirect("/");
 }
 
 export async function logout() {

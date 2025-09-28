@@ -4,7 +4,7 @@ import { UserIcon } from "lucide-react";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { logout } from "@/actions/auth";
-import { useUser } from "@/contexts/UserContext";
+import { useUser } from "@/contexts/user-context";
 import {
   DropdownMenu,
   DropdownMenuContent,

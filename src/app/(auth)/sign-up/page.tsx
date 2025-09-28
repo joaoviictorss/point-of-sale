@@ -16,7 +16,7 @@ import { Button } from "@/components/Shadcn";
 import {
   SignupFormSchema,
   type signUpSchema,
-} from "@/lib/validations/auth/signUp";
+} from "@/lib/validations/auth/sign-up";
 
 const SignUp = ({
   searchParams,

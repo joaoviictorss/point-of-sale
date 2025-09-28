@@ -51,7 +51,7 @@ export async function DELETE(
     const { organizationId } = await params;
 
     if (!userId) {
-      return new NextResponse("Não autenticado", { status: 401 });
+      return createErrorResponse("Não autenticado", 401);
     }
 
     if (!organizationId) {

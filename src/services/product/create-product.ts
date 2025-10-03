@@ -3,17 +3,16 @@ import type {
   CreateProductRequest,
   CreateProductResponse,
 } from "@/types/api/product";
-import type { ApiErrorResponse } from "@/types/http";
+import type { ApiErrorResponse, ApiSuccessResponse } from "@/types/http";
 
 export async function createProduct(
   organizationSlug: string,
   data: CreateProductRequest
-): Promise<CreateProductResponse> {
+): Promise<ApiSuccessResponse<CreateProductResponse>> {
   try {
-    const response = await httpApi.post<CreateProductResponse>(
-      `/organizations/${organizationSlug}/products`,
-      data
-    );
+    const response = await httpApi.post<
+      ApiSuccessResponse<CreateProductResponse>
+    >(`/organizations/${organizationSlug}/products`, data);
 
     return response.data;
   } catch (error) {

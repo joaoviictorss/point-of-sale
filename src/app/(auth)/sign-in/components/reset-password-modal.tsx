@@ -7,7 +7,7 @@ import { z } from "zod";
 
 import { Input, Modal } from "@/components";
 
-import type { UseDialogReturn } from "@/hooks/use-dialog";
+import type { UseDialogReturn } from "@/hooks";
 import { requestPasswordReset } from "@/services/reset-password";
 
 const ResetPasswordSchema = z.object({

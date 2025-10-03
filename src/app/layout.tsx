@@ -4,6 +4,7 @@ import "./globals.css";
 import { OrganizationModal } from "@/components/organization-modal";
 import { Toaster } from "@/components/Shadcn/sonner";
 import { OrganizationModalProvider } from "@/providers/organization-modal-provider";
+import { QueryClientProviderWrapper } from "@/providers/query-client-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,12 +31,14 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <OrganizationModalProvider>
-          <OrganizationModal canClose={false} />
+        <QueryClientProviderWrapper>
+          <OrganizationModalProvider>
+            <OrganizationModal canClose={false} />
 
-          {children}
-        </OrganizationModalProvider>
-        <Toaster />
+            {children}
+          </OrganizationModalProvider>
+          <Toaster />
+        </QueryClientProviderWrapper>
       </body>
     </html>
   );

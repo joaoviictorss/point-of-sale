@@ -8,7 +8,7 @@ import * as z from "zod";
 import { Input } from "@/components/input";
 import { Modal } from "@/components/modal";
 import { Button } from "@/components/Shadcn/button";
-import { useOrganizationModal } from "@/hooks/use-organization-modal";
+import { useOrganizationModal } from "@/hooks";
 import { createOrganization } from "@/services/organization";
 
 const formSchema = z.object({

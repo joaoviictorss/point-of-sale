@@ -1,15 +1,15 @@
 import { httpApi } from "@/infra/http/httpApi";
 import type { DeleteProductResponse } from "@/types/api/product";
-import type { ApiErrorResponse } from "@/types/http";
+import type { ApiErrorResponse, ApiSuccessResponse } from "@/types/http";
 
 export async function deleteProduct(
   organizationSlug: string,
   productId: string
-): Promise<DeleteProductResponse> {
+): Promise<ApiSuccessResponse<DeleteProductResponse>> {
   try {
-    const response = await httpApi.delete<DeleteProductResponse>(
-      `/organizations/${organizationSlug}/products/${productId}`
-    );
+    const response = await httpApi.delete<
+      ApiSuccessResponse<DeleteProductResponse>
+    >(`/organizations/${organizationSlug}/products/${productId}`);
 
     return response.data;
   } catch (error) {

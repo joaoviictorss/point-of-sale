@@ -37,7 +37,7 @@ export type SignUpFormState =
 
 export const SignInFormSchema = z.object({
   email: z.string().email({ message: "Email inválido" }).trim(),
-  password: z.string(),
+  password: z.string().min(1, { message: "Senha é obrigatória" }),
   keepConnected: z.boolean().optional(),
 });
 

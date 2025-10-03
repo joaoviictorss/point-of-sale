@@ -3,18 +3,17 @@ import type {
   UpdateProductRequest,
   UpdateProductResponse,
 } from "@/types/api/product";
-import type { ApiErrorResponse } from "@/types/http";
+import type { ApiErrorResponse, ApiSuccessResponse } from "@/types/http";
 
 export async function updateProduct(
   organizationSlug: string,
   productId: string,
   data: UpdateProductRequest
-): Promise<UpdateProductResponse> {
+): Promise<ApiSuccessResponse<UpdateProductResponse>> {
   try {
-    const response = await httpApi.patch<UpdateProductResponse>(
-      `/organizations/${organizationSlug}/products/${productId}`,
-      data
-    );
+    const response = await httpApi.patch<
+      ApiSuccessResponse<UpdateProductResponse>
+    >(`/organizations/${organizationSlug}/products/${productId}`, data);
 
     return response.data;
   } catch (error) {

@@ -1,6 +1,6 @@
 import { httpApi } from "@/infra/http/httpApi";
 import type { GetProductsResponse } from "@/types/api/product";
-import type { ApiErrorResponse } from "@/types/http";
+import type { ApiErrorResponse, ApiSuccessResponse } from "@/types/http";
 
 export interface GetProductsParams {
   cursor?: string;
@@ -15,7 +15,7 @@ export interface GetProductsParams {
 export async function getProducts(
   organizationSlug: string,
   params?: GetProductsParams
-): Promise<GetProductsResponse> {
+): Promise<ApiSuccessResponse<GetProductsResponse>> {
   try {
     const searchParams = new URLSearchParams();
 
@@ -44,7 +44,8 @@ export async function getProducts(
     const queryString = searchParams.toString();
     const url = `/organizations/${organizationSlug}/products${queryString ? `?${queryString}` : ""}`;
 
-    const response = await httpApi.get<GetProductsResponse>(url);
+    const response =
+      await httpApi.get<ApiSuccessResponse<GetProductsResponse>>(url);
 
     return response.data;
   } catch (error) {

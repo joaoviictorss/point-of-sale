@@ -1,13 +1,13 @@
 import { httpApi } from "@/infra/http/httpApi";
 import type { GetProductResponse } from "@/types/api/product";
-import type { ApiErrorResponse } from "@/types/http";
+import type { ApiErrorResponse, ApiSuccessResponse } from "@/types/http";
 
 export async function getProduct(
   organizationSlug: string,
   productId: string
-): Promise<GetProductResponse> {
+): Promise<ApiSuccessResponse<GetProductResponse>> {
   try {
-    const response = await httpApi.get<GetProductResponse>(
+    const response = await httpApi.get<ApiSuccessResponse<GetProductResponse>>(
       `/organizations/${organizationSlug}/products/${productId}`
     );
 

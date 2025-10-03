@@ -5,6 +5,7 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { logout } from "@/actions/auth";
 import { useUser } from "@/contexts/user-context";
+import { navigationItems } from "@/utils/constants";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,31 +17,18 @@ export const Header = () => {
   const pathname = usePathname();
   const { user } = useUser();
 
-  const headerTitle = [
-    {
-      href: "/vendas",
-      title: "Suas vendas",
-    },
-    {
-      href: "/produtos",
-      title: "Seus produtos",
-    },
-    {
-      href: "/estoque",
-      title: "Seu estoque",
-    },
-    {
-      href: "/relatorios",
-      title: "Relatórios",
-    },
-  ] as const;
-
-  const currentHeaderTitle = headerTitle.find((item) => item.href === pathname);
+  const currentHeaderTitle = navigationItems.find((item) => {
+    const organizationId = pathname.split("/")[1];
+    const fullPath = organizationId
+      ? `/${organizationId}${item.url}`
+      : item.url;
+    return pathname === fullPath;
+  });
 
   return (
     <header className="flex w-full items-center justify-between border-border border-b p-4">
       <span className="font-semibold text-2xl">
-        {currentHeaderTitle ? currentHeaderTitle.title : "VNS - Admin"}
+        {currentHeaderTitle ? currentHeaderTitle.headerTitle : "VNS - Admin"}
       </span>
       <div className="flex h-[60px] items-center justify-center p-4">
         <DropdownMenu>

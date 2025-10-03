@@ -55,7 +55,22 @@ export type Product = {
   updatedAt: string;
 };
 
-export type GetProductsResponse = Product[];
+export interface PaginationInfo {
+  hasNextPage: boolean;
+  hasPrevPage: boolean;
+  nextCursor: string | null;
+  prevCursor: string | null;
+  limit: number;
+  count: number;
+  totalDocs: number;
+  total?: number;
+}
+
+export interface GetProductsResponse {
+  docs: Product[];
+  pagination: PaginationInfo;
+}
+
 export type GetProductResponse = Product;
 export type UpdateProductResponse = Product;
 export type DeleteProductResponse = null;

@@ -1,11 +1,5 @@
 "use client";
 
-import {
-  ChartPieIcon,
-  CircleStackIcon,
-  ClipboardDocumentListIcon,
-  ShoppingBagIcon,
-} from "@heroicons/react/24/outline";
 import { usePathname } from "next/navigation";
 import { Logo } from "@/components";
 import {
@@ -18,29 +12,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/Shadcn/sidebar";
-
-const items = [
-  {
-    title: "Vendas",
-    url: "/vendas",
-    icon: ShoppingBagIcon,
-  },
-  {
-    title: "Produtos",
-    url: "/produtos",
-    icon: ClipboardDocumentListIcon,
-  },
-  {
-    title: "Estoque",
-    url: "/estoque",
-    icon: CircleStackIcon,
-  },
-  {
-    title: "Relatórios",
-    url: "/relatorios",
-    icon: ChartPieIcon,
-  },
-];
+import { navigationItems } from "@/utils/constants";
 
 export function Sidebar({
   isOpen,
@@ -72,7 +44,7 @@ export function Sidebar({
               <Logo variant="small" />
             </SidebarHeader>
             <SidebarMenu className={"p-4"}>
-              {items.map((item) => (
+              {navigationItems.map((item) => (
                 <SidebarMenuItem key={item.url}>
                   <SidebarMenuButton
                     asChild
@@ -92,10 +64,10 @@ export function Sidebar({
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
-            </SidebarMenu>{" "}
-          </SidebarGroupContent>{" "}
-        </SidebarGroup>{" "}
-      </SidebarContent>{" "}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
     </ShadcnSidebar>
   );
 }

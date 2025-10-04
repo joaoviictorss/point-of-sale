@@ -90,7 +90,10 @@ export async function GET(
     const { organizationSlug } = await params;
     const { searchParams } = new URL(req.url);
 
-    const cursor = searchParams.get("cursor");
+    const page = Math.max(
+      Number.parseInt(searchParams.get("page") || "1", 10),
+      1
+    );
     const limit = Math.min(
       Number.parseInt(searchParams.get("limit") || "20", 10),
       100
@@ -118,41 +121,38 @@ export async function GET(
       ...(category && { category }),
       ...(productType && { productType }),
       ...(search && { name: { contains: search, mode: "insensitive" } }),
-      ...(cursor && { id: { [order === "asc" ? "gt" : "lt"]: cursor } }),
     };
+
+    const total = await prisma.product.count({ where });
+    const offset = (page - 1) * limit;
 
     const products = await prisma.product.findMany({
       where,
-      take: limit + 1,
+      take: limit,
+      skip: offset,
       orderBy: {
         id: order,
       },
     });
 
-    const hasNextPage = products.length > limit;
-    const items = hasNextPage ? products.slice(0, -1) : products;
-
-    const nextCursor = hasNextPage ? items.at(-1)?.id : null;
-    const prevCursor = items.length > 0 ? items[0]?.id : null;
-
-    const hasPrevPage = !!cursor;
-
-    const total = await prisma.product.count({ where: { organizationSlug } });
+    const totalPages = Math.ceil(total / limit);
+    const hasNextPage = page < totalPages;
+    const hasPrevPage = page > 1;
 
     const paginationInfo = {
+      page,
+      limit,
+      totalPages,
+      totalDocs: total,
       hasNextPage,
       hasPrevPage,
-      nextCursor,
-      prevCursor,
-      limit,
-      count: items.length,
-      totalDocs: total,
+      count: products.length,
     };
 
     return createSuccessResponse(
       "Produtos listados com sucesso",
       {
-        docs: items,
+        docs: products,
         pagination: paginationInfo,
       },
       200

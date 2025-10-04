@@ -3,13 +3,12 @@ import type { GetProductsResponse } from "@/types/api/product";
 import type { ApiErrorResponse, ApiSuccessResponse } from "@/types/http";
 
 export interface GetProductsParams {
-  cursor?: string;
+  page?: number;
   limit?: number;
   order?: "asc" | "desc";
   category?: string;
   productType?: string;
   search?: string;
-  includeTotal?: boolean;
 }
 
 export async function getProducts(
@@ -19,8 +18,8 @@ export async function getProducts(
   try {
     const searchParams = new URLSearchParams();
 
-    if (params?.cursor) {
-      searchParams.set("cursor", params.cursor);
+    if (params?.page) {
+      searchParams.set("page", params.page.toString());
     }
     if (params?.limit) {
       searchParams.set("limit", params.limit.toString());
@@ -36,9 +35,6 @@ export async function getProducts(
     }
     if (params?.search) {
       searchParams.set("search", params.search);
-    }
-    if (params?.includeTotal) {
-      searchParams.set("includeTotal", "true");
     }
 
     const queryString = searchParams.toString();

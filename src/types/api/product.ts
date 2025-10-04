@@ -56,14 +56,13 @@ export type Product = {
 };
 
 export interface PaginationInfo {
+  page: number;
+  limit: number;
+  totalPages: number;
+  totalDocs: number;
   hasNextPage: boolean;
   hasPrevPage: boolean;
-  nextCursor: string | null;
-  prevCursor: string | null;
-  limit: number;
   count: number;
-  totalDocs: number;
-  total?: number;
 }
 
 export interface GetProductsResponse {

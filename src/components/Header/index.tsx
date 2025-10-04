@@ -26,7 +26,7 @@ export const Header = () => {
   });
 
   return (
-    <header className="flex w-full items-center justify-between border-border border-b p-4">
+    <header className="sticky top-0 z-10 flex w-full items-center justify-between border-border border-b bg-white p-4">
       <span className="font-semibold text-2xl">
         {currentHeaderTitle ? currentHeaderTitle.headerTitle : "VNS - Admin"}
       </span>

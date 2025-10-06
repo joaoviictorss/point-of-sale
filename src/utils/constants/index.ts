@@ -33,3 +33,17 @@ export const navigationItems = [
 ] as const;
 
 export type NavigationItem = (typeof navigationItems)[number];
+
+export const stockUnitOptions = [
+  { label: "Unidades", value: "UNITS" },
+  { label: "Gramas", value: "GRAMS" },
+  { label: "Quilogramas", value: "KILOGRAMS" },
+  { label: "Litros", value: "LITERS" },
+  { label: "Mililitros", value: "MILLILITERS" },
+];
+
+export const productTypeOptions = [
+  { label: "Unidade", value: "UNIT" },
+  { label: "Peso", value: "WEIGHT" },
+  { label: "Volume", value: "VOLUME" },
+];

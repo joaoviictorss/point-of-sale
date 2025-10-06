@@ -18,6 +18,7 @@ export async function POST(
     const { organizationSlug } = await params;
 
     const {
+      code,
       name,
       costPrice,
       salePrice,
@@ -32,6 +33,10 @@ export async function POST(
 
     if (!userId) {
       return createErrorResponse("Não autenticado", 401);
+    }
+
+    if (!code) {
+      return createErrorResponse("Código é obrigatório", 400);
     }
 
     if (!name) {
@@ -57,6 +62,7 @@ export async function POST(
 
     const product = await prisma.product.create({
       data: {
+        code,
         name,
         costPrice,
         salePrice,

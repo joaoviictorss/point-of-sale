@@ -3,7 +3,7 @@ import { getProduct } from "@/services/product/get-product";
 
 interface UseProductParams {
   organizationSlug: string;
-  productId: string;
+  productId?: string;
   enabled?: boolean;
 }
 
@@ -14,7 +14,7 @@ export function useProduct({
 }: UseProductParams) {
   return useQuery({
     queryKey: ["product", organizationSlug, productId],
-    queryFn: () => getProduct(organizationSlug, productId),
+    queryFn: () => getProduct(organizationSlug, productId as string),
     enabled: enabled && !!organizationSlug && !!productId,
   });
 }

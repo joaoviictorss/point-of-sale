@@ -27,7 +27,7 @@ export default async function Layout({
   return (
     <UserProvider initialUser={user}>
       <SidebarWrapper>
-        <main className="flex w-full flex-col">
+        <main className="h-full min-h-svh w-full">
           <Header />
           {children}
         </main>

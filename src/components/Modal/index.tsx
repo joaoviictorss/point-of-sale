@@ -34,10 +34,24 @@ export interface CustomDialogProps {
   // Conteúdo
   title?: string;
   description?: string;
-  children: React.ReactNode;
+  children?: React.ReactNode;
 
   // Configurações visuais
-  size?: "sm" | "md" | "lg" | "xl" | "full";
+  size?:
+    | "sm"
+    | "md"
+    | "lg"
+    | "xl"
+    | "2xl"
+    | "3xl"
+    | "4xl"
+    | "5xl"
+    | "6xl"
+    | "7xl"
+    | "8xl"
+    | "9xl"
+    | "10xl"
+    | "full";
   showCloseButton?: boolean;
   closeOnEscape?: boolean;
   closeOnOverlayClick?: boolean;
@@ -64,6 +78,15 @@ const sizeClasses = {
   md: "sm:max-w-md",
   lg: "sm:max-w-lg",
   xl: "sm:max-w-xl",
+  "2xl": "sm:max-w-2xl",
+  "3xl": "sm:max-w-3xl",
+  "4xl": "sm:max-w-4xl",
+  "5xl": "sm:max-w-5xl",
+  "6xl": "sm:max-w-6xl",
+  "7xl": "sm:max-w-7xl",
+  "8xl": "sm:max-w-8xl",
+  "9xl": "sm:max-w-9xl",
+  "10xl": "sm:max-w-10xl",
   full: "sm:max-w-[90vw]",
 };
 

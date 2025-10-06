@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import {
   createProduct,
   deleteProduct,
@@ -25,9 +26,11 @@ export function useProductMutations({
       queryClient.invalidateQueries({
         queryKey: ["products", organizationSlug],
       });
+      toast.success("Produto criado com sucesso");
     },
     onError: (error) => {
-      // TODO: Implementar toast de erro
+      const errorMessage = error.message ?? "Erro ao criar produto";
+      toast.error(errorMessage);
       throw error;
     },
   });
@@ -47,9 +50,11 @@ export function useProductMutations({
       queryClient.invalidateQueries({
         queryKey: ["product", organizationSlug, productId],
       });
+      toast.success("Produto atualizado com sucesso");
     },
     onError: (error) => {
-      // TODO: Implementar toast de erro
+      const errorMessage = error.message || "Erro ao atualizar produto";
+      toast.error(errorMessage);
       throw error;
     },
   });
@@ -61,9 +66,11 @@ export function useProductMutations({
       queryClient.invalidateQueries({
         queryKey: ["products", organizationSlug],
       });
+      toast.success("Produto deletado com sucesso");
     },
     onError: (error) => {
-      // TODO: Implementar toast de erro
+      const errorMessage = error.message || "Erro ao deletar produto";
+      toast.error(errorMessage);
       throw error;
     },
   });

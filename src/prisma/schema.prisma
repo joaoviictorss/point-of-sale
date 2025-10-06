@@ -164,6 +164,7 @@ enum StockUnit {
 
 model Product {
   id          String      @id @default(uuid())
+  code        String      @unique
   name        String
   costPrice   Int         @default(0)
   salePrice   Int         @default(0)

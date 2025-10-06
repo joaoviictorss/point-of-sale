@@ -1,6 +1,7 @@
 import type { ProductType, StockUnit } from "@prisma/client";
 
 export interface CreateProductRequest {
+  code: string;
   name: string;
   costPrice?: number;
   salePrice?: number;
@@ -15,6 +16,7 @@ export interface CreateProductRequest {
 
 export type CreateProductResponse = {
   id: string;
+  code: string;
   name: string;
   costPrice: number;
   salePrice: number;
@@ -26,6 +28,7 @@ export type CreateProductResponse = {
 };
 
 export interface UpdateProductRequest {
+  code?: string;
   name?: string;
   costPrice?: number;
   salePrice?: number;
@@ -40,6 +43,7 @@ export interface UpdateProductRequest {
 
 export type Product = {
   id: string;
+  code: string;
   name: string;
   costPrice: number;
   salePrice: number;

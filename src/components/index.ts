@@ -1,4 +1,5 @@
 export { Checkbox } from "./checkbox";
+export { FileUpload } from "./file-input";
 export { Header } from "./header";
 export { Input } from "./input";
 export { Logo } from "./logo";

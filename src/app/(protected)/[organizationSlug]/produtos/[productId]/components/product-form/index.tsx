@@ -1,5 +1,5 @@
 import type { UseFormReturn } from "react-hook-form";
-import { Input, Select } from "@/components";
+import { FileUpload, Input, Select } from "@/components";
 import type { ProductFormSchema } from "@/lib/validations/product";
 import { productTypeOptions, stockUnitOptions } from "@/utils/constants";
 import { applyCurrencyMask, removeCurrencyMask } from "@/utils/functions";
@@ -209,17 +209,7 @@ export function ProductForm({ form, loading, onSubmit }: ProductFormProps) {
         <h2 className="font-semibold text-lg">Mídia</h2>
 
         <div>
-          <Input
-            disabled={loading}
-            error={errors.imageUrl?.message}
-            label="URL da Imagem"
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setValue("imageUrl", e.target.value)
-            }
-            placeholder="https://exemplo.com/imagem.jpg"
-            type="url"
-            value={(watch("imageUrl") as string) || ""}
-          />
+          <FileUpload />
         </div>
       </div>
     </form>

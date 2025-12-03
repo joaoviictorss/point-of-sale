@@ -38,6 +38,23 @@ export const ProductFormSchema = z.object({
     .number()
     .min(0, "Estoque máximo deve ser maior ou igual a 0")
     .default(0),
+  media: z
+    .array(
+      z.union([
+        z.object({
+          id: z.string(),
+          url: z.string(),
+          publicId: z.string(),
+          alt: z.string().optional(),
+        }),
+        z.object({
+          id: z.string(),
+          file: z.instanceof(File),
+          preview: z.string().optional(),
+        }),
+      ])
+    )
+    .default([]),
 });
 
 export type ProductFormSchema = z.infer<typeof ProductFormSchema>;

@@ -13,7 +13,7 @@ import { Input, Modal } from "@/components";
 import { Button } from "@/components/Shadcn";
 import { Table } from "@/components/table";
 import type { TableColumn } from "@/components/table/data";
-import { useProductMutations, useProducts } from "@/hooks";
+import { useProducts } from "@/hooks";
 import type { Product } from "@/types/api/product";
 import { applyCurrencyMask } from "@/utils/functions";
 
@@ -49,8 +49,9 @@ const ProductsPage = () => {
   };
 
   const {
-    data: products,
+    data,
     isFetching,
+    deleteProduct,
     // currentPage,
     // totalPages,
     // hasNextPage,
@@ -64,10 +65,6 @@ const ProductsPage = () => {
     searchTerm,
     page: 1,
     limit: 2,
-  });
-
-  const { deleteProduct } = useProductMutations({
-    organizationSlug,
   });
 
   const columns: TableColumn<Product>[] = [
@@ -177,7 +174,7 @@ const ProductsPage = () => {
 
       <Table<Product>
         columns={columns}
-        data={products?.docs ?? []}
+        data={data?.docs ?? []}
         loading={isFetching}
         rowKey="id"
       />

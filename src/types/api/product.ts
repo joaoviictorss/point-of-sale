@@ -1,11 +1,11 @@
-import type { ProductType, StockUnit } from "@prisma/client";
+import type { Media, ProductType, StockUnit } from "@prisma/client";
 
 export interface CreateProductRequest {
   code: string;
   name: string;
   costPrice?: number;
   salePrice?: number;
-  imageUrl: string;
+  media: string[];
   category: string;
   productType: ProductType;
   stock: number;
@@ -20,7 +20,7 @@ export type CreateProductResponse = {
   name: string;
   costPrice: number;
   salePrice: number;
-  imageUrl: string;
+  media: Media[];
   category: string;
   productType: ProductType;
   createdAt: string;
@@ -55,6 +55,7 @@ export type Product = {
   minStock: number | null;
   maxStock: number | null;
   organizationSlug: string;
+  media: Media[];
   createdAt: string;
   updatedAt: string;
 };

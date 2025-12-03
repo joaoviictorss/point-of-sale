@@ -1,30 +1,18 @@
-import type { ChangeEvent, ComponentProps, DragEvent, ReactNode } from "react";
+import type { FileWithPath } from "react-dropzone";
 
-export interface FileWithProgress {
+export interface FileWithPreview {
   id: string;
-  file: File;
-  progress: number;
-  uploaded: boolean;
+  file: FileWithPath;
   preview?: string;
 }
 
-export interface IFileInputProps extends ComponentProps<"input"> {
-  label?: string;
-  error?: string;
-  icon?: ReactNode;
-  iconPosition?: "left" | "right";
-  files: FileWithProgress[];
-  onFileSelect: (e: ChangeEvent<HTMLInputElement>) => void;
-  onRemoveFile: (id: string) => void;
-  onUpload: () => void;
-  onClear: () => void;
-  uploading?: boolean;
+export interface FileInputProps {
+  files: FileWithPreview[];
+  setFiles: (files: FileWithPreview[]) => void;
   disabled?: boolean;
-  isDragging?: boolean;
-  onDragEnter?: (e: DragEvent) => void;
-  onDragLeave?: (e: DragEvent) => void;
-  onDragOver?: (e: DragEvent) => void;
-  onDrop?: (e: DragEvent) => void;
+  className?: string;
+  error?: string;
+  accept?: {
+    [key: string]: string[];
+  };
 }
-
-export interface IFileInputData extends IFileInputProps {}

@@ -12,13 +12,16 @@ import type { UseFormReturn } from "react-hook-form";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { Modal } from "@/components";
+import type { FileWithPreview } from "@/components/file-input/data";
 import { Button } from "@/components/Shadcn";
 import { Card, CardContent } from "@/components/Shadcn/card";
-import { useProduct, useProductMutations } from "@/hooks";
+import { useProducts } from "@/hooks";
 import type { ProductFormSchema as ProductFormType } from "@/lib/validations/product";
 import { ProductFormSchema } from "@/lib/validations/product";
-import { ProductForm } from "./components/product-form";
-import { ProductPreview } from "./components/product-preview";
+import { createMedia, updateMedia } from "@/services/media";
+import type { CreateProductRequest } from "@/types/api/product";
+import { ProductForm } from "./_components/product-form";
+import { ProductPreview } from "./_components/product-preview";
 
 export default function ProductPage() {
   const { organizationSlug, productId } = useParams<{
@@ -34,12 +37,13 @@ export default function ProductPage() {
   const isEdit = !isCreate;
 
   const {
-    data: productResponse,
-    isFetching,
-    error,
-  } = useProduct({
+    productData: productResponse,
+    isFetchingProduct: isFetching,
+    productError: error,
+  } = useProducts({
     organizationSlug,
     productId: isEdit ? productId : undefined,
+    enabled: isEdit,
   });
 
   const form = useForm({
@@ -56,6 +60,7 @@ export default function ProductPage() {
       stockUnit: "UNITS" as const,
       minStock: 0,
       maxStock: 0,
+      media: [],
     },
   });
 
@@ -77,13 +82,29 @@ export default function ProductPage() {
         stockUnit: productResponse.data.stockUnit,
         minStock: productResponse.data.minStock || undefined,
         maxStock: productResponse.data.maxStock || undefined,
+        media: productResponse.data.media || [],
       });
     }
   }, [productResponse, reset, isEdit]);
 
-  const { updateProduct, createProduct, deleteProduct } = useProductMutations({
+  const { updateProduct, createProduct, deleteProduct } = useProducts({
     organizationSlug,
   });
+
+  const handleCreateProduct = async (values: CreateProductRequest) => {
+    const createdProduct = await createProduct.mutateAsync(values);
+
+    // Atualizar medias com o productId
+    if (createdProduct.data?.id && allMediaIds.length > 0) {
+      await Promise.all(
+        allMediaIds.map((mediaId) =>
+          updateMedia(organizationSlug, mediaId, {
+            productId: createdProduct.data.id,
+          })
+        )
+      );
+    }
+  };
 
   const onSubmit = async (values: ProductFormType) => {
     try {
@@ -100,10 +121,12 @@ export default function ProductPage() {
           data: values,
         });
       } else {
-        await createProduct.mutateAsync(values);
+        await handleCreateProduct(values);
       }
 
       router.push(`/${organizationSlug}/produtos`);
+    } catch {
+      // Erro já foi tratado acima ou será tratado pelo toast
     } finally {
       setLoading(false);
     }

@@ -1,62 +1,68 @@
 import { ArrowUpTrayIcon } from "@heroicons/react/24/outline";
-import { CheckCircle2, Trash2, Upload, X } from "lucide-react";
+import { Trash2, X } from "lucide-react";
 import Image from "next/image";
+import type { DropzoneInputProps, DropzoneRootProps } from "react-dropzone";
 import { Input } from "@/components/input";
 import { Button } from "@/components/Shadcn/button";
 import { cn } from "@/lib/utils";
-import { formatFileSize, getFileIcon } from "..";
-import type { IFileInputData } from "../data";
+import { formatFileSize, getFileIcon } from "@/utils/constants";
+import type { FileWithPreview } from "../data";
 
-export const FileInput = ({
-  label,
-  error,
-  icon,
-  iconPosition = "left",
-  className,
+interface FileInputLayoutProps {
+  files: FileWithPreview[];
+  getRootProps: <T extends DropzoneRootProps = DropzoneRootProps>(
+    props?: T
+  ) => T;
+  getInputProps: () => DropzoneInputProps;
+  isDragActive: boolean;
+  disabled?: boolean;
+  className?: string;
+  error?: string;
+  onRemoveFile: (fileId: string) => void;
+  onClear: () => void;
+}
+
+export const FileInputLayout = ({
   files,
-  onFileSelect,
-  onRemoveFile,
-  onUpload,
-  onClear,
-  uploading = false,
+  getRootProps,
+  getInputProps,
+  isDragActive,
   disabled = false,
-  isDragging = false,
-  onDragEnter,
-  onDragLeave,
-  onDragOver,
-  onDrop,
-  ...rest
-}: IFileInputData) => {
+  className,
+  error,
+  onRemoveFile,
+  onClear,
+}: FileInputLayoutProps) => {
+  const rootProps = getRootProps();
+  const inputProps = getInputProps();
+
   return (
-    <div className="flex flex-col">
+    <div className={cn("flex flex-col", className)}>
       <Input
-        className={cn("hidden", className)}
-        disabled={disabled || uploading}
-        error={error}
-        icon={icon}
-        iconPosition={iconPosition}
-        id={"input-file"}
-        label={label}
+        className="hidden"
+        disabled={disabled}
+        id="input-file"
         multiple
-        onChange={(e) => onFileSelect(e)}
         type="file"
-        {...rest}
+        {...inputProps}
       />
 
       <div className="flex flex-col gap-4">
         <button
+          {...rootProps}
           className={cn(
             "group relative cursor-pointer overflow-hidden rounded-2xl border-2 border-dashed p-8 text-center transition-all duration-300",
-            isDragging
+            isDragActive
               ? "scale-[1.02] border-primary bg-gradient-to-br from-primary/15 to-primary/5 shadow-lg shadow-primary/20"
               : "border-border bg-gradient-to-br from-background to-muted/20 hover:border-primary hover:bg-gradient-to-br hover:from-primary/10 hover:to-primary/5 hover:shadow-md",
-            (disabled || uploading) && "cursor-not-allowed opacity-50"
+            disabled && "cursor-not-allowed opacity-50",
+            error && "border-destructive"
           )}
-          onClick={() => document.getElementById("input-file")?.click()}
-          onDragEnter={onDragEnter}
-          onDragLeave={onDragLeave}
-          onDragOver={onDragOver}
-          onDrop={onDrop}
+          disabled={disabled}
+          onClick={(e) => {
+            e.stopPropagation();
+            document.getElementById("input-file")?.click();
+          }}
           onKeyDown={(e) => {
             if (e.key === "Enter" || e.key === " ") {
               e.preventDefault();
@@ -71,24 +77,18 @@ export const FileInput = ({
           <div className="relative flex flex-col items-center gap-4">
             <div
               className={cn(
-                "flex h-16 w-16 items-center justify-center rounded-full transition-all duration-300",
-                isDragging
-                  ? "scale-125 bg-gradient-to-br from-primary to-primary/80 shadow-lg shadow-primary/50"
-                  : "bg-gradient-to-br from-primary/20 to-primary/10 group-hover:from-primary/30 group-hover:to-primary/20"
+                "flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-primary/20 to-primary/10 transition-all duration-300"
               )}
             >
               <ArrowUpTrayIcon
                 className={cn(
-                  "h-8 w-8 transition-all duration-300",
-                  isDragging
-                    ? "scale-110 text-primary-foreground"
-                    : "text-primary group-hover:scale-110"
+                  "h-8 w-8 text-primary transition-all duration-300"
                 )}
               />
             </div>
             <div className="space-y-2">
               <p className="bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text font-semibold text-lg text-transparent">
-                {isDragging
+                {isDragActive
                   ? "Solte os arquivos aqui"
                   : "Arraste e solte seus arquivos"}
               </p>
@@ -99,6 +99,8 @@ export const FileInput = ({
           </div>
         </button>
 
+        {error && <p className="text-destructive text-sm">{error}</p>}
+
         {files.length > 0 && (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
@@ -108,18 +110,7 @@ export const FileInput = ({
               </span>
               <div className="flex items-center gap-2">
                 <Button
-                  className="gap-2 rounded-lg font-medium shadow-md transition-all duration-200 hover:shadow-lg"
-                  disabled={files.length === 0 || uploading}
-                  onClick={onUpload}
-                  type="button"
-                  variant="default"
-                >
-                  <Upload size={20} />
-                  <span>{uploading ? "Salvando..." : "Salvar"}</span>
-                </Button>
-                <Button
-                  className="gap-2 rounded-lg font-medium shadow-sm transition-all duration-200 hover:shadow-md"
-                  disabled={files.length === 0 || uploading}
+                  disabled={files.length === 0 || disabled}
                   onClick={onClear}
                   type="button"
                   variant="outline"
@@ -133,7 +124,6 @@ export const FileInput = ({
             <div className="grid gap-3 md:grid-cols-2">
               {files.map((file) => {
                 const Icon = getFileIcon(file.file.type);
-                const isCompleted = file.uploaded;
 
                 return (
                   <div
@@ -166,13 +156,11 @@ export const FileInput = ({
                           {formatFileSize(file.file.size)}
                         </p>
                       </div>
-                      {/* Status & Remove */}
+                      {/* Remove Button */}
                       <div className="flex items-center gap-1">
-                        {isCompleted && (
-                          <CheckCircle2 className="h-5 w-5 text-success" />
-                        )}
                         <Button
                           className="h-8 w-8 hover:bg-destructive/10 hover:text-destructive"
+                          disabled={disabled}
                           onClick={() => onRemoveFile(file.id)}
                           size="icon"
                           variant="ghost"
@@ -181,20 +169,6 @@ export const FileInput = ({
                         </Button>
                       </div>
                     </div>
-                    {/* Progress Bar - Only show while uploading */}
-                    {uploading && !isCompleted && (
-                      <div className="space-y-1">
-                        <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
-                          <div
-                            className="h-full bg-foreground/60 transition-all duration-300"
-                            style={{ width: `${file.progress}%` }}
-                          />
-                        </div>
-                        <p className="text-right text-muted-foreground text-xs">
-                          {Math.round(file.progress)}%
-                        </p>
-                      </div>
-                    )}
                   </div>
                 );
               })}

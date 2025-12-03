@@ -1,5 +1,7 @@
-import type { UseFormReturn } from "react-hook-form";
-import { FileUpload, Input, Select } from "@/components";
+import { useMemo } from "react";
+import { Controller, type UseFormReturn } from "react-hook-form";
+import { Input, Select } from "@/components";
+import { FileInput, type FileWithPreview } from "@/components/file-input";
 import type { ProductFormSchema } from "@/lib/validations/product";
 import { productTypeOptions, stockUnitOptions } from "@/utils/constants";
 import { applyCurrencyMask, removeCurrencyMask } from "@/utils/functions";
@@ -14,9 +16,19 @@ export function ProductForm({ form, loading, onSubmit }: ProductFormProps) {
   const {
     watch,
     setValue,
+    control,
     formState: { errors },
     handleSubmit,
   } = form;
+
+  const mediaValue = watch("media");
+  const filesFromForm = useMemo<FileWithPreview[]>(() => {
+    if (!mediaValue || mediaValue.length === 0) {
+      return [];
+    }
+    return mediaValue as FileWithPreview[];
+  }, [mediaValue]);
+
   return (
     <form id="product-form" onSubmit={handleSubmit(onSubmit)}>
       <div className="">
@@ -209,7 +221,23 @@ export function ProductForm({ form, loading, onSubmit }: ProductFormProps) {
         <h2 className="font-semibold text-lg">Mídia</h2>
 
         <div>
-          <FileUpload />
+          <Controller
+            control={control}
+            name="media"
+            render={({ field }) => {
+              return (
+                <FileInput
+                  accept={{
+                    "image/*": [],
+                  }}
+                  disabled={loading}
+                  error={errors.media?.message}
+                  files={filesFromForm}
+                  setFiles={field.onChange}
+                />
+              );
+            }}
+          />
         </div>
       </div>
     </form>

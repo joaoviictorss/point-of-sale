@@ -1,17 +1,33 @@
-import { useQuery } from "@tanstack/react-query";
-import { getOrganizations } from "@/services/organization/get-organizations";
+import {
+  useMutation,
+  useQueryClient,
+  useSuspenseQuery,
+} from "@tanstack/react-query";
+import { toast } from "sonner";
+import { useTRPC } from "@/trpc/client";
 
-interface UseOrganizationsParams {
-  enabled?: boolean;
-}
+export const useSuspenseOrganizations = () => {
+  const trpc = useTRPC();
 
-export function useOrganizations({
-  enabled = true,
-}: UseOrganizationsParams = {}) {
-  return useQuery({
-    queryKey: ["organizations"],
-    queryFn: getOrganizations,
-    enabled,
-    staleTime: 5 * 60 * 1000, // Organizações mudam menos frequentemente
-  });
-}
+  return useSuspenseQuery(
+    trpc.organization.getOrganizationsFromUser.queryOptions()
+  );
+};
+
+export const useCreateOrganization = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.organization.create.mutationOptions({
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: ["organizations"],
+        });
+      },
+      onError: (error) => {
+        toast.error(error.message);
+      },
+    })
+  );
+};

@@ -9,13 +9,14 @@ import { Input } from "@/components/input";
 import { Modal } from "@/components/modal";
 import { Button } from "@/components/Shadcn/button";
 import { useOrganizationModal } from "@/hooks";
-import { createOrganization } from "@/services/organization";
+import { useCreateOrganization } from "@/hooks/organization/use-organizations";
 
 const formSchema = z.object({
   name: z.string().min(1, "O nome da organização é obrigatório"),
 });
 
 export const OrganizationModal = ({ canClose }: { canClose: boolean }) => {
+  const createOrganizationMutation = useCreateOrganization();
   const organizationModal = useOrganizationModal();
   const [loading, setLoading] = useState(false);
 
@@ -27,16 +28,17 @@ export const OrganizationModal = ({ canClose }: { canClose: boolean }) => {
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    try {
-      setLoading(true);
-      const data = await createOrganization(values);
-
-      window.location.assign(`/${data.slug}/vendas`);
-    } catch {
-      toast.error("Algo deu errado :(");
-    } finally {
-      setLoading(false);
-    }
+    setLoading(true);
+    await createOrganizationMutation.mutateAsync(values, {
+      onSuccess: (data) => {
+        toast.success("Organização criada com sucesso");
+        window.location.assign(`/${data.slug}/vendas`);
+      },
+      onError: (error) => {
+        toast.error(error.message);
+      },
+    });
+    setLoading(false);
   };
 
   return (

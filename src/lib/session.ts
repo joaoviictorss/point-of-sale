@@ -73,7 +73,7 @@ export async function verifySession() {
     redirect("/sign-in");
   }
 
-  return { isAuth: true, userId: session.userId };
+  return { isAuth: true, userId: session.userId as string };
 }
 
 export async function deleteSession() {

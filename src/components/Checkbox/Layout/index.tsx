@@ -1,7 +1,7 @@
-import { Checkbox as ShadCheckbox } from "@/components/Shadcn/checkbox";
-import { Label } from "@/components/Shadcn/label";
-import { cn } from "@/lib/utils";
-import type { ICheckboxData } from "../data";
+import { Checkbox as ShadCheckbox } from '@/components/Shadcn/checkbox';
+import { Label } from '@/components/Shadcn/label';
+import { cn } from '@/lib/utils';
+import type { ICheckboxData } from '../data';
 
 export const Checkbox = ({ id, label, className, ...rest }: ICheckboxData) => {
   return (

@@ -1,9 +1,9 @@
-import { httpApi } from "@/infra/http/httpApi";
+import { httpApi } from '@/infra/http/httpApi';
 import type {
   CreateProductRequest,
   CreateProductResponse,
-} from "@/types/api/product";
-import type { ApiErrorResponse, ApiSuccessResponse } from "@/types/http";
+} from '@/types/api/product';
+import type { ApiErrorResponse, ApiSuccessResponse } from '@/types/http';
 
 export async function createProduct(
   organizationSlug: string,
@@ -17,7 +17,7 @@ export async function createProduct(
     return response.data;
   } catch (error) {
     throw new Error(
-      (error as ApiErrorResponse).message || "Erro ao criar produto"
+      (error as ApiErrorResponse).message || 'Erro ao criar produto'
     );
   }
 }

@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { ReactNode } from 'react';
 
 export interface TableColumn<T = Record<string, unknown>> {
   key: string;
@@ -6,7 +6,7 @@ export interface TableColumn<T = Record<string, unknown>> {
   dataIndex?: keyof T;
   render?: (value: unknown, record: T, index: number) => ReactNode;
   width?: string | number;
-  align?: "left" | "center" | "right";
+  align?: 'left' | 'center' | 'right';
 }
 
 export interface ITableProps<T = Record<string, unknown>> {

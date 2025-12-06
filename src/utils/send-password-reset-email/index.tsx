@@ -1,5 +1,5 @@
-import { Resend } from "resend";
-import { ResetPasswordEmailTemplate } from "@/components/email-templates/reset-password-template";
+import { Resend } from 'resend';
+import { ResetPasswordEmailTemplate } from '@/components/email-templates/reset-password-template';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -8,13 +8,13 @@ export const requestPasswordReset = async (
   resetToken: string,
   firstName?: string
 ) => {
-  const resetUrl = `${process.env.NEXT_PUBLIC_APP_URL}/reset-password?token=${resetToken}`;
+  const resetUrl = `${process.env.VERCEL_URL}/reset-password?token=${resetToken}`;
 
   try {
     const { data, error } = await resend.emails.send({
-      from: "onboarding@resend.dev",
+      from: 'onboarding@resend.dev',
       to: [email],
-      subject: "Recuperação de Senha",
+      subject: 'Recuperação de Senha',
       react: ResetPasswordEmailTemplate({
         firstName,
         resetPasswordUrl: resetUrl,
@@ -26,7 +26,7 @@ export const requestPasswordReset = async (
     }
 
     if (!data) {
-      throw new Error("Resend retornou dados vazios");
+      throw new Error('Resend retornou dados vazios');
     }
 
     return data;

@@ -1,10 +1,10 @@
-import { useMemo } from "react";
-import { Controller, type UseFormReturn } from "react-hook-form";
-import { Input, Select } from "@/components";
-import { FileInput, type FileWithPreview } from "@/components/file-input";
-import type { ProductFormSchema } from "@/lib/validations/product";
-import { productTypeOptions, stockUnitOptions } from "@/utils/constants";
-import { applyCurrencyMask, removeCurrencyMask } from "@/utils/functions";
+import { useMemo } from 'react';
+import { Controller, type UseFormReturn } from 'react-hook-form';
+import { Input, Select } from '@/components';
+import { FileInput, type FileWithPreview } from '@/components/file-input';
+import type { ProductFormSchema } from '@/lib/validations/product';
+import { productTypeOptions, stockUnitOptions } from '@/utils/constants';
+import { applyCurrencyMask, removeCurrencyMask } from '@/utils/functions';
 
 interface ProductFormProps {
   form: UseFormReturn<ProductFormSchema>;
@@ -21,7 +21,7 @@ export function ProductForm({ form, loading, onSubmit }: ProductFormProps) {
     handleSubmit,
   } = form;
 
-  const mediaValue = watch("media");
+  const mediaValue = watch('media');
   const filesFromForm = useMemo<FileWithPreview[]>(() => {
     if (!mediaValue || mediaValue.length === 0) {
       return [];
@@ -38,11 +38,11 @@ export function ProductForm({ form, loading, onSubmit }: ProductFormProps) {
             error={errors.code?.message}
             label="Código do Produto"
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setValue("code", e.target.value)
+              setValue('code', e.target.value)
             }
             placeholder="Digite o código do produto"
             required
-            value={watch("code") as string}
+            value={watch('code') as string}
           />
         </div>
 
@@ -56,11 +56,11 @@ export function ProductForm({ form, loading, onSubmit }: ProductFormProps) {
                 error={errors.name?.message}
                 label="Nome do Produto"
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setValue("name", e.target.value)
+                  setValue('name', e.target.value)
                 }
                 placeholder="Nome do produto"
                 required
-                value={watch("name") as string}
+                value={watch('name') as string}
               />
             </div>
 
@@ -70,11 +70,11 @@ export function ProductForm({ form, loading, onSubmit }: ProductFormProps) {
                 error={errors.category?.message}
                 label="Categoria"
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setValue("category", e.target.value)
+                  setValue('category', e.target.value)
                 }
                 placeholder="Eletrônicos"
                 required
-                value={watch("category") as string}
+                value={watch('category') as string}
               />
             </div>
           </div>
@@ -84,12 +84,12 @@ export function ProductForm({ form, loading, onSubmit }: ProductFormProps) {
               error={errors.productType?.message}
               label="Tipo de Produto"
               onValueChange={(value: string) =>
-                setValue("productType", value as "UNIT" | "WEIGHT" | "VOLUME")
+                setValue('productType', value as 'UNIT' | 'WEIGHT' | 'VOLUME')
               }
               options={productTypeOptions}
               placeholder="Selecione o tipo"
               required
-              value={watch("productType") as string}
+              value={watch('productType') as string}
             />
           </div>
         </div>
@@ -106,13 +106,13 @@ export function ProductForm({ form, loading, onSubmit }: ProductFormProps) {
               label="Preço de Custo (R$)"
               onChange={(e) => {
                 setValue(
-                  "costPrice",
+                  'costPrice',
                   Number(removeCurrencyMask(e.target.value))
                 );
               }}
               placeholder="R$ 0,00"
               type="text"
-              value={applyCurrencyMask(watch("costPrice") as number)}
+              value={applyCurrencyMask(watch('costPrice') as number)}
             />
           </div>
 
@@ -123,14 +123,14 @@ export function ProductForm({ form, loading, onSubmit }: ProductFormProps) {
               label="Preço de Venda (R$)"
               onChange={(e) => {
                 setValue(
-                  "salePrice",
+                  'salePrice',
                   Number(removeCurrencyMask(e.target.value))
                 );
               }}
               placeholder="R$ 0,00"
               required
               type="text"
-              value={applyCurrencyMask(watch("salePrice") as number)}
+              value={applyCurrencyMask(watch('salePrice') as number)}
             />
           </div>
         </div>
@@ -147,12 +147,12 @@ export function ProductForm({ form, loading, onSubmit }: ProductFormProps) {
               label="Estoque Atual"
               min="0"
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setValue("stock", Number(e.target.value))
+                setValue('stock', Number(e.target.value))
               }
               placeholder="0"
               required
               type="number"
-              value={watch("stock") as number}
+              value={watch('stock') as number}
             />
           </div>
 
@@ -163,19 +163,19 @@ export function ProductForm({ form, loading, onSubmit }: ProductFormProps) {
               label="Unidade de Estoque"
               onValueChange={(value: string) =>
                 setValue(
-                  "stockUnit",
+                  'stockUnit',
                   value as
-                    | "UNITS"
-                    | "GRAMS"
-                    | "KILOGRAMS"
-                    | "LITERS"
-                    | "MILLILITERS"
+                    | 'UNITS'
+                    | 'GRAMS'
+                    | 'KILOGRAMS'
+                    | 'LITERS'
+                    | 'MILLILITERS'
                 )
               }
               options={stockUnitOptions}
               placeholder="Selecione a unidade"
               required
-              value={watch("stockUnit") as string}
+              value={watch('stockUnit') as string}
             />
           </div>
 
@@ -187,13 +187,13 @@ export function ProductForm({ form, loading, onSubmit }: ProductFormProps) {
               min="0"
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 setValue(
-                  "minStock",
-                  e.target.value === "" ? 0 : Number(e.target.value)
+                  'minStock',
+                  e.target.value === '' ? 0 : Number(e.target.value)
                 )
               }
               placeholder="0"
               type="number"
-              value={(watch("minStock") as number) || ""}
+              value={(watch('minStock') as number) || ''}
             />
           </div>
 
@@ -205,13 +205,13 @@ export function ProductForm({ form, loading, onSubmit }: ProductFormProps) {
               min="0"
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 setValue(
-                  "maxStock",
-                  e.target.value === "" ? 0 : Number(e.target.value)
+                  'maxStock',
+                  e.target.value === '' ? 0 : Number(e.target.value)
                 )
               }
               placeholder="0"
               type="number"
-              value={(watch("maxStock") as number) || ""}
+              value={(watch('maxStock') as number) || ''}
             />
           </div>
         </div>
@@ -228,7 +228,7 @@ export function ProductForm({ form, loading, onSubmit }: ProductFormProps) {
               return (
                 <FileInput
                   accept={{
-                    "image/*": [],
+                    'image/*': [],
                   }}
                   disabled={loading}
                   error={errors.media?.message}

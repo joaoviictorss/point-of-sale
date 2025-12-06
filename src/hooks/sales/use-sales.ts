@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery } from '@tanstack/react-query';
 
 // TODO: Implementar serviço de vendas
 // import { getSales } from "@/services/sales/get-sales";
@@ -17,11 +17,11 @@ export function useSales({
   page = 1,
 }: UseSalesParams) {
   return useQuery({
-    queryKey: ["sales", organizationSlug, { limit, page }],
+    queryKey: ['sales', organizationSlug, { limit, page }],
     queryFn: () => {
       // TODO: Implementar quando o serviço estiver pronto
       // return getSales(organizationSlug, { limit, page });
-      throw new Error("Serviço de vendas não implementado ainda");
+      throw new Error('Serviço de vendas não implementado ainda');
     },
     enabled: enabled && !!organizationSlug,
   });

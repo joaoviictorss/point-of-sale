@@ -1,4 +1,4 @@
-import type { ApiSuccessResponse } from "@/types/http";
+import type { ApiSuccessResponse } from '@/types/http';
 
 export type ResetPasswordResponse = ApiSuccessResponse<{
   userId: string;

@@ -1,10 +1,10 @@
-import axios from "axios";
+import axios from 'axios';
 
 export const httpApi = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL,
+  baseURL: process.env.VERCEL_URL,
   timeout: 10_000,
   headers: {
-    "Content-Type": "application/json",
+    'Content-Type': 'application/json',
   },
   withCredentials: true,
 });
@@ -24,15 +24,15 @@ httpApi.interceptors.response.use(
 
     // Se é um erro de rede ou timeout
     if (
-      axiosError.code === "ECONNABORTED" ||
-      axiosError.message === "Network Error"
+      axiosError.code === 'ECONNABORTED' ||
+      axiosError.message === 'Network Error'
     ) {
       throw new Error(
-        "Erro de conexão. Verifique sua internet e tente novamente."
+        'Erro de conexão. Verifique sua internet e tente novamente.'
       );
     }
 
     // Erro genérico
-    throw new Error(axiosError.message || "Erro inesperado. Tente novamente.");
+    throw new Error(axiosError.message || 'Erro inesperado. Tente novamente.');
   }
 );

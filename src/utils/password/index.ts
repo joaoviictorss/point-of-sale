@@ -1,4 +1,4 @@
-import bcrypt from "bcrypt";
+import bcrypt from 'bcrypt';
 
 export const hasheAndSaltPassword = async (password: string) => {
   const saltRounds = 10;

@@ -1,22 +1,22 @@
-import { ClockIcon, EnvelopeIcon } from "@heroicons/react/24/solid";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { toast } from "sonner";
-import { z } from "zod";
+import { ClockIcon, EnvelopeIcon } from '@heroicons/react/24/solid';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import { z } from 'zod';
 
-import { Input, Modal } from "@/components";
+import { Input, Modal } from '@/components';
 
-import type { UseDialogReturn } from "@/hooks";
-import { requestPasswordReset } from "@/services/reset-password";
+import type { UseDialogReturn } from '@/hooks';
+import { requestPasswordReset } from '@/services/reset-password';
 
 const ResetPasswordSchema = z.object({
-  email: z.string().email({ message: "Email inválido" }).trim(),
+  email: z.string().email({ message: 'Email inválido' }).trim(),
 });
 
 type ResetPasswordSchema = z.infer<typeof ResetPasswordSchema>;
 
-type ModalState = "form" | "success" | "rate-limited";
+type ModalState = 'form' | 'success' | 'rate-limited';
 
 export const ResetPasswordModal = ({
   dialog: { closeDialog, open, setOpen },
@@ -26,7 +26,7 @@ export const ResetPasswordModal = ({
   email?: string;
 }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [modalState, setModalState] = useState<ModalState>("form");
+  const [modalState, setModalState] = useState<ModalState>('form');
 
   const {
     handleSubmit,
@@ -43,7 +43,7 @@ export const ResetPasswordModal = ({
   const onClose = () => {
     closeDialog();
     reset();
-    setModalState("form");
+    setModalState('form');
   };
 
   const onSubmit = async (data: ResetPasswordSchema) => {
@@ -52,10 +52,10 @@ export const ResetPasswordModal = ({
 
       await requestPasswordReset(data.email);
 
-      setModalState("success");
+      setModalState('success');
     } catch {
       toast.error(
-        "Pedido de redefinição de senha já foi enviado recentemente. Aguarde e tente novamente mais tarde."
+        'Pedido de redefinição de senha já foi enviado recentemente. Aguarde e tente novamente mais tarde.'
       );
     } finally {
       setIsSubmitting(false);
@@ -63,16 +63,16 @@ export const ResetPasswordModal = ({
   };
 
   const handleTryAgain = () => {
-    setModalState("form");
+    setModalState('form');
   };
 
   const getModalContent = () => {
     switch (modalState) {
-      case "success":
+      case 'success':
         return {
-          title: "Abra seu email",
+          title: 'Abra seu email',
           description:
-            "Verifique seu e-mail para redefinir sua senha. Se não encontrar o email, verifique sua caixa de spam.",
+            'Verifique seu e-mail para redefinir sua senha. Se não encontrar o email, verifique sua caixa de spam.',
           content: (
             <div className="flex flex-col items-center justify-center space-y-4">
               <div className="flex size-20 items-center justify-center rounded-full bg-success/10 text-success">
@@ -82,21 +82,21 @@ export const ResetPasswordModal = ({
           ),
           actions: [
             {
-              label: "Fechar",
+              label: 'Fechar',
               onClick: onClose,
-              variant: "default" as const,
+              variant: 'default' as const,
               disabled: false,
             },
           ],
-          subtitleClassName: "text-center",
-          headerClassName: "text-center w-full flex items-center",
+          subtitleClassName: 'text-center',
+          headerClassName: 'text-center w-full flex items-center',
         };
 
-      case "rate-limited":
+      case 'rate-limited':
         return {
-          title: "Muitas tentativas",
+          title: 'Muitas tentativas',
           description:
-            "Você ja fez um pedido de recuperação de senha. Aguarde alguns minutos antes de tentar novamente.",
+            'Você ja fez um pedido de recuperação de senha. Aguarde alguns minutos antes de tentar novamente.',
           content: (
             <div className="mb-4 flex flex-col items-center justify-center space-y-4">
               <div className="flex size-20 items-center justify-center rounded-full bg-error/10 text-error">
@@ -106,15 +106,15 @@ export const ResetPasswordModal = ({
           ),
           actions: [
             {
-              label: "Fechar",
+              label: 'Fechar',
               onClick: onClose,
-              variant: "outline" as const,
+              variant: 'outline' as const,
               disabled: false,
             },
             {
-              label: "Tentar novamente",
+              label: 'Tentar novamente',
               onClick: handleTryAgain,
-              variant: "default" as const,
+              variant: 'default' as const,
               disabled: false,
             },
           ],
@@ -122,9 +122,9 @@ export const ResetPasswordModal = ({
 
       default:
         return {
-          title: "Esqueceu a senha?",
+          title: 'Esqueceu a senha?',
           description:
-            "Digite seu e-mail e te enviaremos as instruções para redefinir a senha.",
+            'Digite seu e-mail e te enviaremos as instruções para redefinir a senha.',
           content: (
             <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
               <Input
@@ -134,23 +134,23 @@ export const ResetPasswordModal = ({
                 label="E-mail"
                 placeholder="Digite seu e-mail"
                 type="email"
-                {...register("email")}
+                {...register('email')}
               />
             </form>
           ),
           actions: [
             {
-              label: "Fechar",
+              label: 'Fechar',
               onClick: onClose,
-              variant: "outline" as const,
+              variant: 'outline' as const,
               disabled: isSubmitting,
             },
             {
-              label: isSubmitting ? "Enviando..." : "Enviar",
+              label: isSubmitting ? 'Enviando...' : 'Enviar',
               onClick: () => {
                 handleSubmit(onSubmit)();
               },
-              variant: "default" as const,
+              variant: 'default' as const,
               loading: isSubmitting,
               disabled: isSubmitting,
             },

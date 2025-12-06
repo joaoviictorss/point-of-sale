@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   createContext,
@@ -6,9 +6,9 @@ import {
   useContext,
   useEffect,
   useState,
-} from "react";
-import { getUserData } from "@/actions/user";
-import type { User, UserSession } from "@/types/user";
+} from 'react';
+import { getUserData } from '@/actions/user';
+import type { User, UserSession } from '@/types/user';
 
 const UserContext = createContext<UserSession | null>(null);
 
@@ -57,7 +57,7 @@ export function useUser(): UserSession {
   const context = useContext(UserContext);
 
   if (!context) {
-    throw new Error("useUser must be used within a UserProvider");
+    throw new Error('useUser must be used within a UserProvider');
   }
 
   return context;

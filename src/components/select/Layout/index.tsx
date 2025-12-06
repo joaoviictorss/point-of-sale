@@ -1,13 +1,13 @@
-import { Label } from "@/components/Shadcn/label";
+import { Label } from '@/components/Shadcn/label';
 import {
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
   Select as ShadSelect,
-} from "@/components/Shadcn/select";
-import { cn } from "@/lib/utils";
-import type { ISelectData } from "../data";
+} from '@/components/Shadcn/select';
+import { cn } from '@/lib/utils';
+import type { ISelectData } from '../data';
 
 export const Select = ({
   id,
@@ -26,7 +26,7 @@ export const Select = ({
     <div className="flex flex-col items-start">
       {label && (
         <Label
-          className={`${error && "text-error"} mb-1 flex flex-row gap-1`}
+          className={`${error && 'text-error'} mb-1 flex flex-row gap-1`}
           htmlFor={id}
         >
           {label}
@@ -42,7 +42,7 @@ export const Select = ({
           {...rest}
         >
           <SelectTrigger
-            className={cn("w-full", error && "border-error", className)}
+            className={cn('w-full', error && 'border-error', className)}
             id={id}
           >
             <SelectValue placeholder={placeholder} />
@@ -58,10 +58,10 @@ export const Select = ({
       </div>
 
       <span
-        className={`h-0 overflow-hidden transition-all duration-150 ${error && "mt-1 h-[1rem]"}`}
+        className={`h-0 overflow-hidden transition-all duration-150 ${error && 'mt-1 h-[1rem]'}`}
       >
         <div
-          className={`text-xs opacity-0 ${error && "text-error opacity-100"}`}
+          className={`text-xs opacity-0 ${error && 'text-error opacity-100'}`}
         >
           {error}
         </div>

@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { SidebarProvider } from "@/components/Shadcn/sidebar";
-import { Sidebar } from "@/components/sidebar";
+import { useState } from 'react';
+import { SidebarProvider } from '@/components/Shadcn/sidebar';
+import { Sidebar } from '@/components/sidebar';
 
 interface SidebarWrapperProps {
   children: React.ReactNode;

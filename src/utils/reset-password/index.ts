@@ -1,5 +1,5 @@
-import bcrypt from "bcrypt";
-import { prisma } from "@/lib/prisma/client";
+import bcrypt from 'bcrypt';
+import { prisma } from '@/lib/prisma/client';
 
 export async function getRecentResetRequests(email: string, minutesAgo = 5) {
   const timeAgo = new Date(Date.now() - minutesAgo * 60 * 1000);

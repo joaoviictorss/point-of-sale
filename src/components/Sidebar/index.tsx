@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { usePathname } from "next/navigation";
-import { Logo } from "@/components";
+import { usePathname } from 'next/navigation';
+import { Logo } from '@/components';
 import {
   Sidebar as ShadcnSidebar,
   SidebarContent,
@@ -11,8 +11,8 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/Shadcn/sidebar";
-import { navigationItems } from "@/utils/constants";
+} from '@/components/Shadcn/sidebar';
+import { navigationItems } from '@/utils/constants';
 
 export function Sidebar({
   isOpen,
@@ -22,7 +22,7 @@ export function Sidebar({
   onOpenChange: (open: boolean) => void;
 }) {
   const pathname = usePathname();
-  const organizationId = pathname.split("/")[1];
+  const organizationId = pathname.split('/')[1];
 
   const isActiveRoute = (itemUrl: string) => {
     return organizationId
@@ -37,19 +37,19 @@ export function Sidebar({
           <SidebarGroupContent className="w-full items-center justify-center">
             <SidebarHeader
               className={
-                "flex items-start justify-center border-border border-b p-4"
+                'flex items-start justify-center border-border border-b p-4'
               }
               onClick={() => onOpenChange(!isOpen)}
             >
               <Logo variant="small" />
             </SidebarHeader>
-            <SidebarMenu className={"p-4"}>
+            <SidebarMenu className={'p-4'}>
               {navigationItems.map((item) => (
                 <SidebarMenuItem key={item.url}>
                   <SidebarMenuButton
                     asChild
                     isActive={isActiveRoute(item.url)}
-                    size={"lg"}
+                    size={'lg'}
                   >
                     <a
                       href={

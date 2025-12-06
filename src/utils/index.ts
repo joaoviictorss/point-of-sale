@@ -1,7 +1,7 @@
-export { slugify } from "./functions";
-export { createErrorResponse, createSuccessResponse } from "./http";
-export { getOAuthClient, OAuthClient } from "./oAuth";
-export { comparePassword, hasheAndSaltPassword } from "./password";
+export { slugify } from './functions';
+export { createErrorResponse, createSuccessResponse } from './http';
+export { getOAuthClient, OAuthClient } from './oAuth';
+export { comparePassword, hasheAndSaltPassword } from './password';
 export {
   createResetToken,
   findResetToken,
@@ -9,10 +9,10 @@ export {
   isTokenExpired,
   updateResetPasswordToken,
   verifyToken,
-} from "./reset-password";
-export { requestPasswordReset } from "./send-password-reset-email";
+} from './reset-password';
+export { requestPasswordReset } from './send-password-reset-email';
 export {
   findUserByCredentials,
   findUserByEmail,
   updateUserPassword,
-} from "./user";
+} from './user';

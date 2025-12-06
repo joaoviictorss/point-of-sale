@@ -1,8 +1,8 @@
-import { type UseQueryOptions, useQuery } from "@tanstack/react-query";
-import { useDebounce } from "./use-debounce";
+import { type UseQueryOptions, useQuery } from '@tanstack/react-query';
+import { useDebounce } from './use-debounce';
 
 interface UseQueryParams<T>
-  extends Omit<UseQueryOptions<T>, "queryFn" | "queryKey"> {
+  extends Omit<UseQueryOptions<T>, 'queryFn' | 'queryKey'> {
   queryKey: string | unknown[];
   queryFn: () => Promise<T>;
   searchTerm?: string;
@@ -12,7 +12,7 @@ interface UseQueryParams<T>
 export function useQueryWithSearch<T>({
   queryKey,
   queryFn,
-  searchTerm = "",
+  searchTerm = '',
   searchDelay = 300,
   ...options
 }: UseQueryParams<T>) {

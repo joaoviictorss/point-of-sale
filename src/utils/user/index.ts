@@ -1,5 +1,5 @@
-import { prisma } from "@/lib/prisma/client";
-import { comparePassword } from "@/utils/password";
+import { prisma } from '@/lib/prisma/client';
+import { comparePassword } from '@/utils/password';
 
 export const findUserByCredentials = async (
   email: string,

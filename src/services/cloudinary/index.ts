@@ -1,4 +1,4 @@
-import { v2 as cloudinary, type UploadApiResponse } from "cloudinary";
+import { v2 as cloudinary, type UploadApiResponse } from 'cloudinary';
 
 export async function uploadToCloudinary(
   file: File
@@ -10,12 +10,12 @@ export async function uploadToCloudinary(
     cloudinary.uploader
       .upload_stream(
         {
-          folder: "pos",
-          resource_type: "auto",
+          folder: 'pos',
+          resource_type: 'auto',
         },
         (error, result) => {
           if (error || !result) {
-            reject(error || new Error("Upload falhou, resultado indefinido"));
+            reject(error || new Error('Upload falhou, resultado indefinido'));
           } else {
             resolve(result);
           }

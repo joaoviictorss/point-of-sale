@@ -1,27 +1,27 @@
-"use client";
+'use client';
 
 import {
   ArrowLeftIcon,
   CheckIcon,
   TrashIcon,
-} from "@heroicons/react/24/outline";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import type { UseFormReturn } from "react-hook-form";
-import { useForm } from "react-hook-form";
-import { toast } from "sonner";
-import { Modal } from "@/components";
-import type { FileWithPreview } from "@/components/file-input/data";
-import { Button } from "@/components/Shadcn";
-import { Card, CardContent } from "@/components/Shadcn/card";
-import { useProducts } from "@/hooks";
-import type { ProductFormSchema as ProductFormType } from "@/lib/validations/product";
-import { ProductFormSchema } from "@/lib/validations/product";
-import { createMedia, updateMedia } from "@/services/media";
-import type { CreateProductRequest } from "@/types/api/product";
-import { ProductForm } from "./_components/product-form";
-import { ProductPreview } from "./_components/product-preview";
+} from '@heroicons/react/24/outline';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useParams, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import type { UseFormReturn } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import { Modal } from '@/components';
+import type { FileWithPreview } from '@/components/file-input/data';
+import { Button } from '@/components/Shadcn';
+import { Card, CardContent } from '@/components/Shadcn/card';
+import { useProducts } from '@/hooks';
+import type { ProductFormSchema as ProductFormType } from '@/lib/validations/product';
+import { ProductFormSchema } from '@/lib/validations/product';
+import { createMedia, updateMedia } from '@/services/media';
+import type { CreateProductRequest } from '@/types/api/product';
+import { ProductForm } from './_components/product-form';
+import { ProductPreview } from './_components/product-preview';
 
 export default function ProductPage() {
   const { organizationSlug, productId } = useParams<{
@@ -33,7 +33,7 @@ export default function ProductPage() {
   const [loading, setLoading] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
-  const isCreate = productId === "novo";
+  const isCreate = productId === 'novo';
   const isEdit = !isCreate;
 
   const {
@@ -49,15 +49,15 @@ export default function ProductPage() {
   const form = useForm({
     resolver: zodResolver(ProductFormSchema),
     defaultValues: {
-      code: "",
-      name: "",
+      code: '',
+      name: '',
       costPrice: undefined,
       salePrice: 0,
-      imageUrl: "",
-      category: "",
-      productType: "UNIT" as const,
+      imageUrl: '',
+      category: '',
+      productType: 'UNIT' as const,
       stock: 0,
-      stockUnit: "UNITS" as const,
+      stockUnit: 'UNITS' as const,
       minStock: 0,
       maxStock: 0,
       media: [],
@@ -76,7 +76,7 @@ export default function ProductPage() {
           : undefined,
         salePrice: productResponse.data.salePrice,
         imageUrl: productResponse.data.imageUrl || undefined,
-        category: productResponse.data.category || "",
+        category: productResponse.data.category || '',
         productType: productResponse.data.productType,
         stock: productResponse.data.stock,
         stockUnit: productResponse.data.stockUnit,
@@ -112,7 +112,7 @@ export default function ProductPage() {
 
       if (isEdit) {
         if (!productResponse?.data?.id) {
-          toast.error("Produto não encontrado");
+          toast.error('Produto não encontrado');
           return;
         }
 
@@ -142,7 +142,7 @@ export default function ProductPage() {
 
   const handleConfirmDelete = async () => {
     if (!productResponse?.data?.id) {
-      toast.error("Produto não encontrado");
+      toast.error('Produto não encontrado');
       return;
     }
 
@@ -191,7 +191,7 @@ export default function ProductPage() {
               <div>
                 <div className="flex items-center gap-2">
                   <h3 className="font-bold text-2xl text-slate-900">
-                    {isEdit ? "Editar Produto" : "Novo Produto"}
+                    {isEdit ? 'Editar Produto' : 'Novo Produto'}
                   </h3>
                 </div>
               </div>
@@ -206,7 +206,7 @@ export default function ProductPage() {
               )}
               <Button form="product-form" type="submit">
                 <CheckIcon className="size-4" />
-                {isEdit ? "Salvar Alterações" : "Criar Produto"}
+                {isEdit ? 'Salvar Alterações' : 'Criar Produto'}
               </Button>
             </div>
           </div>
@@ -241,16 +241,16 @@ export default function ProductPage() {
         <Modal
           actions={[
             {
-              label: "Cancelar",
+              label: 'Cancelar',
               onClick: () => setIsDeleteModalOpen(false),
-              variant: "outline",
+              variant: 'outline',
               shouldRender: true,
               disabled: deleteProduct.isPending,
             },
             {
-              label: "Excluir",
+              label: 'Excluir',
               onClick: handleConfirmDelete,
-              variant: "destructive",
+              variant: 'destructive',
               shouldRender: true,
               disabled: deleteProduct.isPending,
               loading: deleteProduct.isPending,

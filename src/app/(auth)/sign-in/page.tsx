@@ -1,22 +1,22 @@
-"use client";
+'use client';
 
-import { zodResolver } from "@hookform/resolvers/zod";
+import { zodResolver } from '@hookform/resolvers/zod';
 
-import Image from "next/image";
-import Link from "next/link";
-import { startTransition, use, useActionState, useEffect } from "react";
-import { Controller, useForm } from "react-hook-form";
-import { toast } from "sonner";
-import { oAuthSignIn, signIn } from "@/actions/auth";
-import { GoogleIcon } from "@/assets";
-import { Checkbox, Input, Logo } from "@/components";
-import { Button } from "@/components/Shadcn/button";
-import { useDialog } from "@/hooks";
+import Image from 'next/image';
+import Link from 'next/link';
+import { startTransition, use, useActionState, useEffect } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import { oAuthSignIn, signIn } from '@/actions/auth';
+import { GoogleIcon } from '@/assets';
+import { Checkbox, Input, Logo } from '@/components';
+import { Button } from '@/components/Shadcn/button';
+import { useDialog } from '@/hooks';
 import {
   SignInFormSchema,
   type signInSchema,
-} from "@/lib/validations/auth/sign-up";
-import { ResetPasswordModal } from "./components/reset-password-modal";
+} from '@/lib/validations/auth/sign-up';
+import { ResetPasswordModal } from './components/reset-password-modal';
 
 const SignIn = ({
   searchParams,
@@ -37,8 +37,8 @@ const SignIn = ({
   } = useForm<signInSchema>({
     resolver: zodResolver(SignInFormSchema),
     defaultValues: {
-      email: "",
-      password: "",
+      email: '',
+      password: '',
       keepConnected: false,
     },
   });
@@ -57,7 +57,7 @@ const SignIn = ({
 
   useEffect(() => {
     if (oauthError) {
-      toast.error("Erro ao fazer login com Google. Tente novamente.");
+      toast.error('Erro ao fazer login com Google. Tente novamente.');
     }
   }, [oauthError]);
 
@@ -85,7 +85,7 @@ const SignIn = ({
                   id="email"
                   label="Email"
                   placeholder="Insira seu email"
-                  {...register("email")}
+                  {...register('email')}
                   error={errors.email?.message || state?.errors?.email?.[0]}
                   required
                 />
@@ -95,7 +95,7 @@ const SignIn = ({
                   label="Senha"
                   placeholder="Insira sua senha"
                   type="password"
-                  {...register("password")}
+                  {...register('password')}
                   error={
                     errors.password?.message || state?.errors?.password?.[0]
                   }
@@ -120,7 +120,7 @@ const SignIn = ({
                     asChild
                     className="hover:no-underline"
                     onClick={resetPasswordDialog.openDialog}
-                    variant={"link"}
+                    variant={'link'}
                   >
                     <span className="cursor-pointer text-primary text-sm transition-colors duration-75 hover:text-primary/90">
                       Esqueci minha senha
@@ -128,17 +128,17 @@ const SignIn = ({
                   </Button>
                 </div>
 
-                <Button disabled={isPending} size={"lg"} type="submit">
-                  {isPending ? "Entrando..." : "Entrar"}
+                <Button disabled={isPending} size={'lg'} type="submit">
+                  {isPending ? 'Entrando...' : 'Entrar'}
                 </Button>
 
                 <Button
                   onClick={async () => {
-                    await oAuthSignIn("GOOGLE");
+                    await oAuthSignIn('GOOGLE');
                   }}
-                  size={"lg"}
+                  size={'lg'}
                   type="button"
-                  variant={"outline"}
+                  variant={'outline'}
                 >
                   <GoogleIcon />
                   Acessar com google
@@ -148,7 +148,7 @@ const SignIn = ({
                   <span className="text-text-muted">
                     Ainda não tem uma conta?
                   </span>
-                  <Link className="text-primary" href={"/sign-up"}>
+                  <Link className="text-primary" href={'/sign-up'}>
                     Cadastre-se
                   </Link>
                 </div>
@@ -163,13 +163,13 @@ const SignIn = ({
           alt="Hero Login"
           className="rounded-lg object-cover"
           fill
-          src={"/hero-login.png"}
+          src={'/hero-login.png'}
         />
       </div>
 
       <ResetPasswordModal
         dialog={resetPasswordDialog}
-        email={getValues("email")}
+        email={getValues('email')}
       />
     </main>
   );

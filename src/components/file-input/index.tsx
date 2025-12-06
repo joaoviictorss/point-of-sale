@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useCallback, useEffect } from "react";
-import { useDropzone } from "react-dropzone";
-import type { FileInputProps, FileWithPreview } from "./data";
-import { FileInputLayout } from "./Layout";
+import { useCallback, useEffect } from 'react';
+import { useDropzone } from 'react-dropzone';
+import type { FileInputProps, FileWithPreview } from './data';
+import { FileInputLayout } from './Layout';
 
 export const FileInput = ({
   files,
@@ -12,10 +12,10 @@ export const FileInput = ({
   className,
   error,
   accept = {
-    "image/*": [".png", ".jpg", ".jpeg"],
-    "video/*": [".mp4", ".mov", ".avi"],
-    "audio/*": [".mp3", ".wav", ".ogg"],
-    "application/pdf": [".pdf"],
+    'image/*': ['.png', '.jpg', '.jpeg'],
+    'video/*': ['.mp4', '.mov', '.avi'],
+    'audio/*': ['.mp3', '.wav', '.ogg'],
+    'application/pdf': ['.pdf'],
   },
 }: FileInputProps) => {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -77,4 +77,4 @@ export const FileInput = ({
   );
 };
 
-export type { FileInputProps, FileWithPreview } from "./data";
+export type { FileInputProps, FileWithPreview } from './data';

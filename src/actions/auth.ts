@@ -1,11 +1,11 @@
-"use server";
+'use server';
 
-import type { OAuthProvider } from "@prisma/client";
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
+import type { OAuthProvider } from '@prisma/client';
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 
-import { prisma } from "@/lib/prisma/client";
-import { createSession, deleteSession } from "@/lib/session";
+import { prisma } from '@/lib/prisma/client';
+import { createSession, deleteSession } from '@/lib/session';
 import {
   SignInFormSchema,
   type SignInFormState,
@@ -13,13 +13,13 @@ import {
   SignupFormSchema,
   type signInSchema,
   type signUpSchema,
-} from "@/lib/validations/auth/sign-up";
+} from '@/lib/validations/auth/sign-up';
 import {
   findUserByCredentials,
   findUserByEmail,
   getOAuthClient,
   hasheAndSaltPassword,
-} from "@/utils";
+} from '@/utils';
 
 export async function signUp(_: SignUpFormState, formData: signUpSchema) {
   const validatedFields = SignupFormSchema.safeParse(formData);
@@ -36,7 +36,7 @@ export async function signUp(_: SignUpFormState, formData: signUpSchema) {
 
   if (userAlreadyExists) {
     return {
-      message: "Uma conta já existe com esse email",
+      message: 'Uma conta já existe com esse email',
     };
   }
 
@@ -52,12 +52,12 @@ export async function signUp(_: SignUpFormState, formData: signUpSchema) {
 
   if (!user) {
     return {
-      message: "Erro ao cadastrar usuário",
+      message: 'Erro ao cadastrar usuário',
     };
   }
 
   await createSession(user.id);
-  redirect("/");
+  redirect('/');
 }
 
 export async function signIn(_: SignInFormState, formData: signInSchema) {
@@ -75,17 +75,17 @@ export async function signIn(_: SignInFormState, formData: signInSchema) {
 
   if (!user) {
     return {
-      message: "Usuário ou senhas inválidos",
+      message: 'Usuário ou senhas inválidos',
     };
   }
 
   await createSession(user.id, keepConnected);
-  redirect("/");
+  redirect('/');
 }
 
 export async function logout() {
   await deleteSession();
-  redirect("/sign-in");
+  redirect('/sign-in');
 }
 
 export async function oAuthSignIn(provider: OAuthProvider) {

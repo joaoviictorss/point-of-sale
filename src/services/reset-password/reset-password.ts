@@ -1,6 +1,6 @@
-import { httpApi } from "@/infra/http/httpApi";
-import type { ApiErrorResponse } from "@/types/http";
-import type { ResetPasswordResponse } from "@/types/http/reset-password";
+import { httpApi } from '@/infra/http/httpApi';
+import type { ApiErrorResponse } from '@/types/http';
+import type { ResetPasswordResponse } from '@/types/http/reset-password';
 
 export async function resetPassword(
   password: string,
@@ -8,14 +8,14 @@ export async function resetPassword(
 ): Promise<ResetPasswordResponse> {
   try {
     const response = await httpApi.post<ResetPasswordResponse>(
-      "/auth/reset-password",
+      '/auth/reset-password',
       { token, password }
     );
 
     return response.data;
   } catch (error) {
     throw new Error(
-      (error as ApiErrorResponse).message || "Erro na requisição"
+      (error as ApiErrorResponse).message || 'Erro na requisição'
     );
   }
 }

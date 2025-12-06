@@ -1,9 +1,9 @@
-import { httpApi } from "@/infra/http/httpApi";
+import { httpApi } from '@/infra/http/httpApi';
 import type {
   UpdateProductRequest,
   UpdateProductResponse,
-} from "@/types/api/product";
-import type { ApiErrorResponse, ApiSuccessResponse } from "@/types/http";
+} from '@/types/api/product';
+import type { ApiErrorResponse, ApiSuccessResponse } from '@/types/http';
 
 export async function updateProduct(
   organizationSlug: string,
@@ -18,7 +18,7 @@ export async function updateProduct(
     return response.data;
   } catch (error) {
     throw new Error(
-      (error as ApiErrorResponse).message || "Erro ao atualizar produto"
+      (error as ApiErrorResponse).message || 'Erro ao atualizar produto'
     );
   }
 }

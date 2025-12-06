@@ -1,35 +1,35 @@
-import "server-only";
+import 'server-only';
 // Garante que este código seja executado apenas no servidor, protegendo o SESSION_SECRET
-import { type JWTPayload, jwtVerify, SignJWT } from "jose";
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
+import { type JWTPayload, jwtVerify, SignJWT } from 'jose';
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 
 const key = new TextEncoder().encode(process.env.SESSION_SECRET);
 // Converte a string SESSION_SECRET da variável de ambiente para um formato utilizável pela biblioteca jose
 
 const cookie = {
-  name: "session",
+  name: 'session',
   options: {
     httpOnly: true,
     secure: true,
-    sameSite: "lax",
-    path: "/",
+    sameSite: 'lax',
+    path: '/',
   },
   duration: 24 * 60 * 60 * 1000, // 24 horas
 } as const;
 
 export function encrypt(payload: JWTPayload) {
   return new SignJWT(payload)
-    .setProtectedHeader({ alg: "HS256" })
+    .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
-    .setExpirationTime("1d")
+    .setExpirationTime('1d')
     .sign(key);
 }
 
-export async function decrypt(session: string | undefined = "") {
+export async function decrypt(session: string | undefined = '') {
   try {
     const { payload } = await jwtVerify(session, key, {
-      algorithms: ["HS256"],
+      algorithms: ['HS256'],
     });
     return payload;
   } catch {
@@ -70,7 +70,7 @@ export async function verifySession() {
   const cookieData = (await cookies()).get(cookie.name)?.value;
   const session = await decrypt(cookieData);
   if (!session) {
-    redirect("/sign-in");
+    redirect('/sign-in');
   }
 
   return { isAuth: true, userId: session.userId as string };

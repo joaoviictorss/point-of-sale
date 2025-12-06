@@ -1,1 +1,1 @@
-export { GoogleIcon } from "./svgs/google-icon";
+export { GoogleIcon } from './svgs/google-icon';

@@ -1,22 +1,22 @@
-"use client";
+'use client';
 
-import { zodResolver } from "@hookform/resolvers/zod";
+import { zodResolver } from '@hookform/resolvers/zod';
 
-import Image from "next/image";
-import Link from "next/link";
-import { startTransition, use, useActionState, useEffect } from "react";
-import { useForm } from "react-hook-form";
-import { toast } from "sonner";
+import Image from 'next/image';
+import Link from 'next/link';
+import { startTransition, use, useActionState, useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 
-import { signUp } from "@/actions";
-import { oAuthSignIn } from "@/actions/auth";
-import { GoogleIcon } from "@/assets";
-import { Input, Logo } from "@/components";
-import { Button } from "@/components/Shadcn";
+import { signUp } from '@/actions';
+import { oAuthSignIn } from '@/actions/auth';
+import { GoogleIcon } from '@/assets';
+import { Input, Logo } from '@/components';
+import { Button } from '@/components/Shadcn';
 import {
   SignupFormSchema,
   type signUpSchema,
-} from "@/lib/validations/auth/sign-up";
+} from '@/lib/validations/auth/sign-up';
 
 const SignUp = ({
   searchParams,
@@ -35,10 +35,10 @@ const SignUp = ({
   } = useForm<signUpSchema>({
     resolver: zodResolver(SignupFormSchema),
     defaultValues: {
-      name: "",
-      email: "",
-      password: "",
-      confirmPassword: "",
+      name: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
     },
   });
 
@@ -56,7 +56,7 @@ const SignUp = ({
 
   useEffect(() => {
     if (oauthError) {
-      toast.error("Erro ao fazer login com Google. Tente novamente.");
+      toast.error('Erro ao fazer login com Google. Tente novamente.');
     }
   }, [oauthError]);
 
@@ -82,7 +82,7 @@ const SignUp = ({
                   id="email"
                   label="Email"
                   placeholder="Insira seu email"
-                  {...register("email")}
+                  {...register('email')}
                   error={errors.email?.message || state?.errors?.email?.[0]}
                   required
                 />
@@ -91,7 +91,7 @@ const SignUp = ({
                   id="name"
                   label="Nome de usuario"
                   placeholder="Insira seu nome"
-                  {...register("name")}
+                  {...register('name')}
                   error={errors.name?.message || state?.errors?.name?.[0]}
                   required
                 />
@@ -101,7 +101,7 @@ const SignUp = ({
                   label="Senha"
                   placeholder="Insira sua senha"
                   type="password"
-                  {...register("password")}
+                  {...register('password')}
                   error={
                     errors.password?.message || state?.errors?.password?.[0]
                   }
@@ -113,7 +113,7 @@ const SignUp = ({
                   label="Confirmar senha"
                   placeholder="Insira a confirmação de sua senha"
                   type="password"
-                  {...register("confirmPassword")}
+                  {...register('confirmPassword')}
                   error={
                     errors.confirmPassword?.message ||
                     state?.errors?.confirmPassword?.[0]
@@ -121,17 +121,17 @@ const SignUp = ({
                   required
                 />
 
-                <Button disabled={isPending} size={"lg"} type="submit">
-                  {isPending ? "Criando conta..." : "Criar conta"}
+                <Button disabled={isPending} size={'lg'} type="submit">
+                  {isPending ? 'Criando conta...' : 'Criar conta'}
                 </Button>
 
                 <Button
                   onClick={async () => {
-                    await oAuthSignIn("GOOGLE");
+                    await oAuthSignIn('GOOGLE');
                   }}
-                  size={"lg"}
+                  size={'lg'}
                   type="button"
-                  variant={"outline"}
+                  variant={'outline'}
                 >
                   <GoogleIcon />
                   Acessar com google
@@ -139,7 +139,7 @@ const SignUp = ({
 
                 <div className="flex items-center justify-center gap-1">
                   <span className="text-text-muted">Ja tem uma conta? </span>
-                  <Link className="text-primary" href={"/sign-in"}>
+                  <Link className="text-primary" href={'/sign-in'}>
                     Acesse aqui
                   </Link>
                 </div>
@@ -154,7 +154,7 @@ const SignUp = ({
           alt="Hero Login"
           className="rounded-lg object-cover"
           fill
-          src={"/hero-login.png"}
+          src={'/hero-login.png'}
         />
       </div>
     </main>

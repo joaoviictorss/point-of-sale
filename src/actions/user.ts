@@ -1,8 +1,8 @@
-"use server";
+'use server';
 
-import { getCurrentUser, getCurrentUserId, isAuthenticated } from "@/lib/auth";
-import { prisma } from "@/lib/prisma/client";
-import type { User } from "@/types/user";
+import { getCurrentUser, getCurrentUserId, isAuthenticated } from '@/lib/auth';
+import { prisma } from '@/lib/prisma/client';
+import type { User } from '@/types/user';
 
 export async function getUserData(): Promise<User | null> {
   return await getCurrentUser();

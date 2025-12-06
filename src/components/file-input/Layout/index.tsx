@@ -1,12 +1,12 @@
-import { ArrowUpTrayIcon } from "@heroicons/react/24/outline";
-import { Trash2, X } from "lucide-react";
-import Image from "next/image";
-import type { DropzoneInputProps, DropzoneRootProps } from "react-dropzone";
-import { Input } from "@/components/input";
-import { Button } from "@/components/Shadcn/button";
-import { cn } from "@/lib/utils";
-import { formatFileSize, getFileIcon } from "@/utils/constants";
-import type { FileWithPreview } from "../data";
+import { ArrowUpTrayIcon } from '@heroicons/react/24/outline';
+import { Trash2, X } from 'lucide-react';
+import Image from 'next/image';
+import type { DropzoneInputProps, DropzoneRootProps } from 'react-dropzone';
+import { Input } from '@/components/input';
+import { Button } from '@/components/Shadcn/button';
+import { cn } from '@/lib/utils';
+import { formatFileSize, getFileIcon } from '@/utils/constants';
+import type { FileWithPreview } from '../data';
 
 interface FileInputLayoutProps {
   files: FileWithPreview[];
@@ -37,7 +37,7 @@ export const FileInputLayout = ({
   const inputProps = getInputProps();
 
   return (
-    <div className={cn("flex flex-col", className)}>
+    <div className={cn('flex flex-col', className)}>
       <Input
         className="hidden"
         disabled={disabled}
@@ -51,22 +51,22 @@ export const FileInputLayout = ({
         <button
           {...rootProps}
           className={cn(
-            "group relative cursor-pointer overflow-hidden rounded-2xl border-2 border-dashed p-8 text-center transition-all duration-300",
+            'group relative cursor-pointer overflow-hidden rounded-2xl border-2 border-dashed p-8 text-center transition-all duration-300',
             isDragActive
-              ? "scale-[1.02] border-primary bg-gradient-to-br from-primary/15 to-primary/5 shadow-lg shadow-primary/20"
-              : "border-border bg-gradient-to-br from-background to-muted/20 hover:border-primary hover:bg-gradient-to-br hover:from-primary/10 hover:to-primary/5 hover:shadow-md",
-            disabled && "cursor-not-allowed opacity-50",
-            error && "border-destructive"
+              ? 'scale-[1.02] border-primary bg-gradient-to-br from-primary/15 to-primary/5 shadow-lg shadow-primary/20'
+              : 'border-border bg-gradient-to-br from-background to-muted/20 hover:border-primary hover:bg-gradient-to-br hover:from-primary/10 hover:to-primary/5 hover:shadow-md',
+            disabled && 'cursor-not-allowed opacity-50',
+            error && 'border-destructive'
           )}
           disabled={disabled}
           onClick={(e) => {
             e.stopPropagation();
-            document.getElementById("input-file")?.click();
+            document.getElementById('input-file')?.click();
           }}
           onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
+            if (e.key === 'Enter' || e.key === ' ') {
               e.preventDefault();
-              document.getElementById("input-file")?.click();
+              document.getElementById('input-file')?.click();
             }
           }}
           tabIndex={0}
@@ -77,20 +77,20 @@ export const FileInputLayout = ({
           <div className="relative flex flex-col items-center gap-4">
             <div
               className={cn(
-                "flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-primary/20 to-primary/10 transition-all duration-300"
+                'flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-primary/20 to-primary/10 transition-all duration-300'
               )}
             >
               <ArrowUpTrayIcon
                 className={cn(
-                  "h-8 w-8 text-primary transition-all duration-300"
+                  'h-8 w-8 text-primary transition-all duration-300'
                 )}
               />
             </div>
             <div className="space-y-2">
               <p className="bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text font-semibold text-lg text-transparent">
                 {isDragActive
-                  ? "Solte os arquivos aqui"
-                  : "Arraste e solte seus arquivos"}
+                  ? 'Solte os arquivos aqui'
+                  : 'Arraste e solte seus arquivos'}
               </p>
               <p className="text-muted-foreground text-sm transition-colors group-hover:text-foreground/60">
                 ou clique para selecionar

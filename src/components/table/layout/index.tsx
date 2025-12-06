@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   Table as ShadTable,
@@ -7,16 +7,16 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/Shadcn/table";
-import { cn } from "@/lib/utils";
-import type { ITableData, TableColumn } from "../data";
+} from '@/components/Shadcn/table';
+import { cn } from '@/lib/utils';
+import type { ITableData, TableColumn } from '../data';
 
 export function Table<T = Record<string, unknown>>({
   data,
   columns,
   loading = false,
-  emptyText = "Nenhum dado encontrado",
-  rowKey = "id" as keyof T,
+  emptyText = 'Nenhum dado encontrado',
+  rowKey = 'id' as keyof T,
   className,
 }: ITableData<T>) {
   const renderCell = (column: TableColumn<T>, record: T, index: number) => {
@@ -37,16 +37,16 @@ export function Table<T = Record<string, unknown>>({
 
   return (
     <div className="w-full overflow-auto">
-      <ShadTable className={cn("w-full", className)}>
+      <ShadTable className={cn('w-full', className)}>
         <TableHeader>
           <TableRow>
             {columns.map((column: TableColumn<T>) => (
               <TableHead
                 className={cn(
-                  "text-left",
-                  column.align === "center" && "text-center",
-                  column.align === "right" && "text-right",
-                  "border-border border-b bg-white px-4 py-3 font-medium text-sm text-text-muted"
+                  'text-left',
+                  column.align === 'center' && 'text-center',
+                  column.align === 'right' && 'text-right',
+                  'border-border border-b bg-white px-4 py-3 font-medium text-sm text-text-muted'
                 )}
                 key={column.key}
                 style={{ width: column.width }}
@@ -99,9 +99,9 @@ export function Table<T = Record<string, unknown>>({
                 {columns.map((column: TableColumn<T>) => (
                   <TableCell
                     className={cn(
-                      column.align === "center" && "text-center",
-                      column.align === "right" && "text-right",
-                      "border-border border-b p-4"
+                      column.align === 'center' && 'text-center',
+                      column.align === 'right' && 'text-right',
+                      'border-border border-b p-4'
                     )}
                     key={column.key}
                   >

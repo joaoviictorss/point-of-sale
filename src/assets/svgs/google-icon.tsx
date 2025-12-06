@@ -1,6 +1,6 @@
 export const GoogleIcon = () => (
   <svg viewBox="-0.5 0 48 48" xmlns="http://www.w3.org/2000/svg">
-    <title>{"Google-color"}</title>
+    <title>{'Google-color'}</title>
     <g fill="none" fillRule="evenodd">
       <path
         d="M9.827 24c0-1.524.253-2.986.705-4.356l-7.909-6.04A23.456 23.456 0 0 0 .213 24c0 3.737.868 7.26 2.407 10.388l7.905-6.05A13.885 13.885 0 0 1 9.827 24"

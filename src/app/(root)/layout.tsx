@@ -1,6 +1,6 @@
-import { redirect } from "next/navigation";
-import { getCurrentUserId } from "@/lib";
-import { findOrganizationByUserId } from "@/utils/organizations";
+import { redirect } from 'next/navigation';
+import { getCurrentUserId } from '@/lib';
+import { findOrganizationByUserId } from '@/utils/organizations';
 
 export default async function SetupLayout({
   children,
@@ -10,7 +10,7 @@ export default async function SetupLayout({
   const userId = await getCurrentUserId();
 
   if (!userId) {
-    redirect("/sign-in");
+    redirect('/sign-in');
   }
 
   const organization = await findOrganizationByUserId(userId);

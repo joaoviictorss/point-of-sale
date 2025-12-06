@@ -1,5 +1,5 @@
-import { organizationRouter } from "@/services/organization";
-import { createTRPCRouter } from "../init";
+import { organizationRouter } from '@/services/organization';
+import { createTRPCRouter } from '../init';
 
 export const appRouter = createTRPCRouter({
   organization: organizationRouter,

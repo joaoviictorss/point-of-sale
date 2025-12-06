@@ -1,7 +1,7 @@
-import "server-only";
+import 'server-only';
 
-import { getCurrentUserId } from "@/lib/auth";
-import { prisma } from "@/lib/prisma/client";
+import { getCurrentUserId } from '@/lib/auth';
+import { prisma } from '@/lib/prisma/client';
 
 export async function getUserOrganizationBySlug(slug: string) {
   const userId = await getCurrentUserId();

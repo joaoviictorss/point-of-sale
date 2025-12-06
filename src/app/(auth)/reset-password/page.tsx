@@ -1,19 +1,19 @@
-"use client";
+'use client';
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { use } from "react";
-import { useForm } from "react-hook-form";
-import { toast } from "sonner";
-import { Input, Logo } from "@/components";
-import { Button } from "@/components/Shadcn";
+import { zodResolver } from '@hookform/resolvers/zod';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { use } from 'react';
+import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import { Input, Logo } from '@/components';
+import { Button } from '@/components/Shadcn';
 import {
   resetPasswordFormSchema,
   type resetPasswordSchema,
-} from "@/lib/validations/auth/sign-up";
+} from '@/lib/validations/auth/sign-up';
 
-import { resetPassword } from "@/services/reset-password";
+import { resetPassword } from '@/services/reset-password';
 
 interface PageProps {
   searchParams: Promise<{ token?: string }>;
@@ -32,23 +32,23 @@ const ResetPassword = ({ searchParams }: PageProps) => {
   } = useForm<resetPasswordSchema>({
     resolver: zodResolver(resetPasswordFormSchema),
     defaultValues: {
-      password: "",
+      password: '',
     },
   });
 
   const onSubmit = async (data: resetPasswordSchema) => {
     if (!token) {
-      toast.error("Token inválido");
+      toast.error('Token inválido');
       return;
     }
 
     try {
       await resetPassword(data.password, token);
 
-      toast.success("Senha redefinida com sucesso");
-      router.push("/sign-in");
+      toast.success('Senha redefinida com sucesso');
+      router.push('/sign-in');
     } catch {
-      toast.error("Erro ao redefinir senha");
+      toast.error('Erro ao redefinir senha');
       return;
     }
   };
@@ -56,7 +56,7 @@ const ResetPassword = ({ searchParams }: PageProps) => {
   return (
     <main className="relative flex h-screen flex-col items-center justify-center p-4">
       <header className="fixed top-0 flex w-full items-center justify-end border-border border-b p-4 sm:justify-between">
-        <Link className="hidden sm:block" href={"/sign-in"}>
+        <Link className="hidden sm:block" href={'/sign-in'}>
           <Logo />
         </Link>
 
@@ -65,7 +65,7 @@ const ResetPassword = ({ searchParams }: PageProps) => {
             Lembrou da sua senha?
           </span>
           <Button asChild>
-            <a href={"/sign-in"}>Entrar</a>
+            <a href={'/sign-in'}>Entrar</a>
           </Button>
         </div>
       </header>
@@ -89,13 +89,13 @@ const ResetPassword = ({ searchParams }: PageProps) => {
               label="Nova senha"
               placeholder="Insira sua nova senha"
               type="password"
-              {...register("password")}
+              {...register('password')}
               disabled={isSubmitting}
               required
             />
 
             <Button disabled={isSubmitting}>
-              {isSubmitting ? "Alterando..." : "Alterar senha"}
+              {isSubmitting ? 'Alterando...' : 'Alterar senha'}
             </Button>
           </form>
         </div>

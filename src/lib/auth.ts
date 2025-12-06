@@ -1,16 +1,16 @@
-import "server-only";
+import 'server-only';
 
-import { cookies } from "next/headers";
-import { prisma } from "@/lib/prisma/client";
-import { decrypt } from "@/lib/session";
-import type { User } from "@/types/user";
+import { cookies } from 'next/headers';
+import { prisma } from '@/lib/prisma/client';
+import { decrypt } from '@/lib/session';
+import type { User } from '@/types/user';
 
 export async function getCurrentUser(): Promise<User | null> {
   try {
-    const cookie = (await cookies()).get("session")?.value;
+    const cookie = (await cookies()).get('session')?.value;
     const session = await decrypt(cookie);
 
-    if (!session?.userId || typeof session.userId !== "string") {
+    if (!session?.userId || typeof session.userId !== 'string') {
       return null;
     }
 
@@ -34,10 +34,10 @@ export async function getCurrentUser(): Promise<User | null> {
 
 export async function getCurrentUserId(): Promise<string | null> {
   try {
-    const cookie = (await cookies()).get("session")?.value;
+    const cookie = (await cookies()).get('session')?.value;
     const session = await decrypt(cookie);
 
-    if (!session?.userId || typeof session.userId !== "string") {
+    if (!session?.userId || typeof session.userId !== 'string') {
       return null;
     }
 

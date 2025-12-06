@@ -1,11 +1,11 @@
-import { httpApi } from "@/infra/http/httpApi";
-import type { GetProductsResponse } from "@/types/api/product";
-import type { ApiErrorResponse, ApiSuccessResponse } from "@/types/http";
+import { httpApi } from '@/infra/http/httpApi';
+import type { GetProductsResponse } from '@/types/api/product';
+import type { ApiErrorResponse, ApiSuccessResponse } from '@/types/http';
 
 export interface GetProductsParams {
   page?: number;
   limit?: number;
-  order?: "asc" | "desc";
+  order?: 'asc' | 'desc';
   category?: string;
   productType?: string;
   search?: string;
@@ -19,26 +19,26 @@ export async function getProducts(
     const searchParams = new URLSearchParams();
 
     if (params?.page) {
-      searchParams.set("page", params.page.toString());
+      searchParams.set('page', params.page.toString());
     }
     if (params?.limit) {
-      searchParams.set("limit", params.limit.toString());
+      searchParams.set('limit', params.limit.toString());
     }
     if (params?.order) {
-      searchParams.set("order", params.order);
+      searchParams.set('order', params.order);
     }
     if (params?.category) {
-      searchParams.set("category", params.category);
+      searchParams.set('category', params.category);
     }
     if (params?.productType) {
-      searchParams.set("productType", params.productType);
+      searchParams.set('productType', params.productType);
     }
     if (params?.search) {
-      searchParams.set("search", params.search);
+      searchParams.set('search', params.search);
     }
 
     const queryString = searchParams.toString();
-    const url = `/organizations/${organizationSlug}/products${queryString ? `?${queryString}` : ""}`;
+    const url = `/organizations/${organizationSlug}/products${queryString ? `?${queryString}` : ''}`;
 
     const response =
       await httpApi.get<ApiSuccessResponse<GetProductsResponse>>(url);
@@ -46,7 +46,7 @@ export async function getProducts(
     return response.data;
   } catch (error) {
     throw new Error(
-      (error as ApiErrorResponse).message || "Erro ao buscar produtos"
+      (error as ApiErrorResponse).message || 'Erro ao buscar produtos'
     );
   }
 }

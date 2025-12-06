@@ -1,25 +1,25 @@
-"use client";
+'use client';
 
 import {
   EyeIcon,
   FunnelIcon,
   PencilIcon,
   TrashIcon,
-} from "@heroicons/react/24/outline";
-import { MagnifyingGlassIcon } from "@heroicons/react/24/solid";
-import { useParams, useRouter } from "next/navigation";
-import { useState } from "react";
-import { Input, Modal } from "@/components";
-import { Button } from "@/components/Shadcn";
-import { Table } from "@/components/table";
-import type { TableColumn } from "@/components/table/data";
-import { useProducts } from "@/hooks";
-import type { Product } from "@/types/api/product";
-import { applyCurrencyMask } from "@/utils/functions";
+} from '@heroicons/react/24/outline';
+import { MagnifyingGlassIcon } from '@heroicons/react/24/solid';
+import { useParams, useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { Input, Modal } from '@/components';
+import { Button } from '@/components/Shadcn';
+import { Table } from '@/components/table';
+import type { TableColumn } from '@/components/table/data';
+import { useProducts } from '@/hooks';
+import type { Product } from '@/types/api/product';
+import { applyCurrencyMask } from '@/utils/functions';
 
 const ProductsPage = () => {
   const { organizationSlug } = useParams<{ organizationSlug: string }>();
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [productToDelete, setProductToDelete] = useState<Product | null>(null);
 
@@ -69,40 +69,40 @@ const ProductsPage = () => {
 
   const columns: TableColumn<Product>[] = [
     {
-      key: "code",
-      title: "Código",
-      dataIndex: "code",
+      key: 'code',
+      title: 'Código',
+      dataIndex: 'code',
     },
     {
-      key: "name",
-      title: "Nome do Produto",
-      dataIndex: "name",
+      key: 'name',
+      title: 'Nome do Produto',
+      dataIndex: 'name',
     },
     {
-      key: "category",
-      title: "Categoria",
-      dataIndex: "category",
+      key: 'category',
+      title: 'Categoria',
+      dataIndex: 'category',
     },
     {
-      key: "salePrice",
-      title: "Preço de Venda",
-      dataIndex: "salePrice",
+      key: 'salePrice',
+      title: 'Preço de Venda',
+      dataIndex: 'salePrice',
       render: (_, record) => applyCurrencyMask(record.salePrice),
     },
     {
-      key: "costPrice",
-      title: "Preço de Custo",
-      dataIndex: "costPrice",
+      key: 'costPrice',
+      title: 'Preço de Custo',
+      dataIndex: 'costPrice',
       render: (_, record) => applyCurrencyMask(record.costPrice),
     },
     {
-      key: "stock",
-      title: "Estoque",
-      dataIndex: "stock",
+      key: 'stock',
+      title: 'Estoque',
+      dataIndex: 'stock',
     },
     {
-      key: "actions",
-      title: "",
+      key: 'actions',
+      title: '',
       render: (_, record) => {
         const handleNavigateToView = () => {
           router.push(`/${organizationSlug}/produtos/${record.id}`);
@@ -153,14 +153,14 @@ const ProductsPage = () => {
       <div className="flex items-center justify-between">
         <div className="flex gap-3">
           <Input
-            icon={<MagnifyingGlassIcon className={"size-4"} />}
+            icon={<MagnifyingGlassIcon className={'size-4'} />}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Pesquisar produto"
             type="text"
             value={searchTerm}
           />
-          <Button className="gap-3" type="button" variant={"outline"}>
-            <FunnelIcon className={"size-4"} />
+          <Button className="gap-3" type="button" variant={'outline'}>
+            <FunnelIcon className={'size-4'} />
             Filtrar
           </Button>
         </div>
@@ -183,16 +183,16 @@ const ProductsPage = () => {
       <Modal
         actions={[
           {
-            label: "Cancelar",
+            label: 'Cancelar',
             onClick: handleCloseDeleteModal,
-            variant: "outline",
+            variant: 'outline',
             shouldRender: true,
             disabled: deleteProduct.isPending,
           },
           {
-            label: "Excluir",
+            label: 'Excluir',
             onClick: handleConfirmDelete,
-            variant: "destructive",
+            variant: 'destructive',
             shouldRender: true,
             disabled: deleteProduct.isPending,
             loading: deleteProduct.isPending,

@@ -1,6 +1,6 @@
-import { httpApi } from "@/infra/http/httpApi";
-import type { GetProductResponse } from "@/types/api/product";
-import type { ApiErrorResponse, ApiSuccessResponse } from "@/types/http";
+import { httpApi } from '@/infra/http/httpApi';
+import type { GetProductResponse } from '@/types/api/product';
+import type { ApiErrorResponse, ApiSuccessResponse } from '@/types/http';
 
 export async function getProduct(
   organizationSlug: string,
@@ -14,7 +14,7 @@ export async function getProduct(
     return response.data;
   } catch (error) {
     throw new Error(
-      (error as ApiErrorResponse).message || "Erro ao buscar produto"
+      (error as ApiErrorResponse).message || 'Erro ao buscar produto'
     );
   }
 }

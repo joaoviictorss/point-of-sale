@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { type ReactNode, useState } from "react";
-import { OrganizationModalContext } from "@/contexts/organization-modal-context";
+import { type ReactNode, useState } from 'react';
+import { OrganizationModalContext } from '@/contexts/organization-modal-context';
 
 interface OrganizationModalProviderProps {
   children: ReactNode;

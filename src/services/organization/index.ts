@@ -1,13 +1,13 @@
-import { z } from 'zod';
-import { prisma } from '@/lib/prisma/client';
-import { errorHandler } from '@/lib/error-handler';
-import { createTRPCRouter, protectedProcedure } from '@/trpc/init';
-import { slugify } from '@/utils';
-import { findOrganizationByUserId } from '@/utils/organizations';
+import { z } from "zod";
+import { errorHandler } from "@/lib/error-handler";
+import { prisma } from "@/lib/prisma/client";
+import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
+import { slugify } from "@/utils";
+import { findOrganizationByUserId } from "@/utils/organizations";
 
 export const organizationRouter = createTRPCRouter({
   create: protectedProcedure
-    .input(z.object({ name: z.string().min(1, 'Nome é obrigatório') }))
+    .input(z.object({ name: z.string().min(1, "Nome é obrigatório") }))
     .mutation(async ({ ctx, input }) => {
       const slug = slugify(input.name);
 
@@ -17,7 +17,7 @@ export const organizationRouter = createTRPCRouter({
       });
 
       if (exists) {
-        throw errorHandler.conflict('Já existe uma organização com este nome');
+        throw errorHandler.conflict("Já existe uma organização com este nome");
       }
 
       return await prisma.organization.create({

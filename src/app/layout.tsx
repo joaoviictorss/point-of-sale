@@ -1,28 +1,30 @@
-import type { Metadata } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
+import type { Metadata } from "next";
+import { Geist, Geist_Mono } from "next/font/google";
 
-import { OrganizationModal } from '@/components/organization-modal';
-import { Toaster } from '@/components/Shadcn/sonner';
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 
-import { OrganizationModalProvider } from '@/providers/organization-modal-provider';
+import { OrganizationModal } from "@/components/organization-modal";
+import { Toaster } from "@/components/Shadcn/sonner";
 
-import { TRPCReactProvider } from '@/trpc/client';
+import { OrganizationModalProvider } from "@/providers/organization-modal-provider";
 
-import './globals.css';
+import { TRPCReactProvider } from "@/trpc/client";
+
+import "./globals.css";
 
 const geistSans = Geist({
-  variable: '--font-geist-sans',
-  subsets: ['latin'],
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
 });
 
 const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
-  subsets: ['latin'],
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
-  title: 'VNS - Admin',
-  description: 'VNS - Admin',
+  title: "VNS - Admin",
+  description: "VNS - Admin",
 };
 
 export default function RootLayout({
@@ -36,12 +38,14 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <TRPCReactProvider>
-          <OrganizationModalProvider>
-            <OrganizationModal canClose={false} />
+          <NuqsAdapter>
+            <OrganizationModalProvider>
+              <OrganizationModal canClose={false} />
 
-            {children}
-          </OrganizationModalProvider>
-          <Toaster />
+              {children}
+            </OrganizationModalProvider>
+            <Toaster />
+          </NuqsAdapter>
         </TRPCReactProvider>
       </body>
     </html>

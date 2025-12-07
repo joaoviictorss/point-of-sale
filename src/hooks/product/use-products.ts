@@ -3,34 +3,50 @@ import {
   useQueryClient,
   useSuspenseQuery,
 } from "@tanstack/react-query";
-import type { getAllProductsFromOrganizationSchema } from "@/services/product/schemas";
+import { useOrganization } from "@/contexts/organization-context";
 import { useTRPC } from "@/trpc/client";
+import { useProductsParams } from "./use-products-params";
 
-export const useSuspenseProducts = (
-  input: getAllProductsFromOrganizationSchema
-) => {
+export const useSuspenseProducts = () => {
   const trpc = useTRPC();
+  const { slug: organizationSlug } = useOrganization();
+  const [params] = useProductsParams();
 
   return useSuspenseQuery(
     trpc.product.getAllFromOrganization.queryOptions({
-      organizationSlug: input.organizationSlug,
-      page: input.page,
-      pageSize: input.pageSize,
-      search: input.search,
+      organizationSlug,
+      ...params,
     })
   );
 };
 
-export const useCreateOrganization = () => {
+export const useCreateProduct = () => {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
+  const { slug: organizationSlug } = useOrganization();
 
   return useMutation(
-    trpc.organization.create.mutationOptions({
+    trpc.product.create.mutationOptions({
       onSuccess: () => {
-        queryClient.invalidateQueries({
-          queryKey: ["organizations"],
-        });
+        queryClient.invalidateQueries(
+          trpc.product.getAllFromOrganization.queryOptions({ organizationSlug })
+        );
+      },
+    })
+  );
+};
+
+export const useDeleteProduct = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+  const { slug: organizationSlug } = useOrganization();
+
+  return useMutation(
+    trpc.product.delete.mutationOptions({
+      onSuccess: () => {
+        queryClient.invalidateQueries(
+          trpc.product.getAllFromOrganization.queryOptions({ organizationSlug })
+        );
       },
     })
   );

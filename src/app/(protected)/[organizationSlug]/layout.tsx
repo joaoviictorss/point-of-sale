@@ -1,8 +1,9 @@
-import { redirect } from 'next/navigation';
-import { Header, SidebarWrapper } from '@/components';
-import { UserProvider } from '@/contexts/user-context';
-import { getCurrentUser } from '@/lib/auth';
-import { hasAccessToOrganization } from '@/lib/organization';
+import { redirect } from "next/navigation";
+import { Header, SidebarWrapper } from "@/components";
+import { OrganizationProvider } from "@/contexts/organization-context";
+import { UserProvider } from "@/contexts/user-context";
+import { getCurrentUser } from "@/lib/auth";
+import { hasAccessToOrganization } from "@/lib/organization";
 
 export default async function Layout({
   children,
@@ -14,24 +15,26 @@ export default async function Layout({
   const user = await getCurrentUser();
 
   if (!user) {
-    redirect('/sign-in');
+    redirect("/sign-in");
   }
 
   const { organizationSlug } = await params;
   const hasAccess = await hasAccessToOrganization(organizationSlug);
 
   if (!hasAccess) {
-    redirect('/');
+    redirect("/");
   }
 
   return (
     <UserProvider initialUser={user}>
-      <SidebarWrapper>
-        <main className="h-full min-h-svh w-full">
-          <Header />
-          {children}
-        </main>
-      </SidebarWrapper>
+      <OrganizationProvider slug={organizationSlug}>
+        <SidebarWrapper>
+          <main className="h-full min-h-svh w-full">
+            <Header />
+            {children}
+          </main>
+        </SidebarWrapper>
+      </OrganizationProvider>
     </UserProvider>
   );
 }

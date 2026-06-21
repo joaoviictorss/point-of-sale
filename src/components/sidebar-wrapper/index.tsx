@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { SidebarProvider } from '@/components/Shadcn/sidebar';
+import { SidebarProvider } from '@/components/shadcn/sidebar';
 import { Sidebar } from '@/components/sidebar';
 
 interface SidebarWrapperProps {

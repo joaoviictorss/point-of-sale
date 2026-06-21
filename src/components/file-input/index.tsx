@@ -3,7 +3,7 @@
 import { useCallback, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 import type { FileInputProps, FileWithPreview } from './data';
-import { FileInputLayout } from './Layout';
+import { FileInputLayout } from './layout';
 
 export const FileInput = ({
   files,

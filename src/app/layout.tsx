@@ -4,7 +4,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 
 import { OrganizationModal } from "@/components/organization-modal";
-import { Toaster } from "@/components/Shadcn/sonner";
+import { Toaster } from "@/components/shadcn/sonner";
 
 import { OrganizationModalProvider } from "@/providers/organization-modal-provider";
 

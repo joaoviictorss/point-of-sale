@@ -11,8 +11,8 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { Modal } from "@/components";
-import { Button } from "@/components/Shadcn";
-import { Card, CardContent } from "@/components/Shadcn/card";
+import { Button } from "@/components/shadcn";
+import { Card, CardContent } from "@/components/shadcn/card";
 import { useOrganization } from "@/contexts/organization-context";
 import {
   useDeleteProduct,
@@ -137,6 +137,10 @@ export function EditProductPage({ productId }: EditProductPageProps) {
               <CardContent className="p-0">
                 <ProductForm
                   form={form}
+                  initialMedias={
+                    product.medias?.map((m) => ({ id: m.id, url: m.url })) ??
+                    []
+                  }
                   loading={isLoading}
                   onSubmit={onSubmit}
                 />

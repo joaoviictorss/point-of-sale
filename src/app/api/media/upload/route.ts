@@ -6,7 +6,7 @@ import { uploadToCloudinary } from "@/services/cloudinary";
 import { createErrorResponse } from "@/utils/http";
 
 const uploadSchema = z.object({
-  organizationId: z.string().uuid("ID da organização inválido"),
+  organizationSlug: z.string().min(1, "Slug da organização é obrigatório"),
   alt: z.string().optional(),
 });
 
@@ -21,7 +21,7 @@ export async function POST(request: Request) {
     // Extrair FormData
     const formData = await request.formData();
     const file = formData.get("file") as File | null;
-    const organizationId = formData.get("organizationId") as string | null;
+    const organizationSlug = formData.get("organizationSlug") as string | null;
     const alt = formData.get("alt") as string | null;
 
     // Validar arquivo
@@ -31,7 +31,7 @@ export async function POST(request: Request) {
 
     // Validar dados
     const validation = uploadSchema.safeParse({
-      organizationId,
+      organizationSlug,
       alt: alt ?? undefined,
     });
 
@@ -42,7 +42,7 @@ export async function POST(request: Request) {
     // Verificar se usuário pertence à organização
     const organization = await prisma.organization.findFirst({
       where: {
-        id: validation.data.organizationId,
+        slug: validation.data.organizationSlug,
         OR: [{ ownerId: userId }, { members: { some: { userId } } }],
       },
       select: { id: true },
@@ -66,7 +66,7 @@ export async function POST(request: Request) {
         alt: validation.data.alt,
         mimeType: file.type,
         fileSize: file.size,
-        organizationId: validation.data.organizationId,
+        organizationId: organization.id,
         uploadedById: userId,
       },
     });

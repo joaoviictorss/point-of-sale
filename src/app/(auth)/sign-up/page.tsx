@@ -12,7 +12,7 @@ import { signUp } from '@/actions';
 import { oAuthSignIn } from '@/actions/auth';
 import { GoogleIcon } from '@/assets';
 import { Input, Logo } from '@/components';
-import { Button } from '@/components/Shadcn';
+import { Button } from '@/components/shadcn';
 import {
   SignupFormSchema,
   type signUpSchema,

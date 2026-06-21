@@ -1,4 +1,4 @@
-import { Button } from "@/components/Shadcn";
+import { Button } from "@/components/shadcn";
 
 type EntityContainerProps = {
   children: React.ReactNode;

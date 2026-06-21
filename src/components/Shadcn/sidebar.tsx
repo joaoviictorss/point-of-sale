@@ -5,23 +5,23 @@ import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 import { PanelLeftIcon } from "lucide-react";
 import * as React from "react";
-import { Button } from "@/components/Shadcn/button";
-import { Input } from "@/components/Shadcn/input";
-import { Separator } from "@/components/Shadcn/separator";
+import { Button } from "@/components/shadcn/button";
+import { Input } from "@/components/shadcn/input";
+import { Separator } from "@/components/shadcn/separator";
 import {
   Sheet,
   SheetContent,
   SheetDescription,
   SheetHeader,
   SheetTitle,
-} from "@/components/Shadcn/sheet";
-import { Skeleton } from "@/components/Shadcn/skeleton";
+} from "@/components/shadcn/sheet";
+import { Skeleton } from "@/components/shadcn/skeleton";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/Shadcn/tooltip";
+} from "@/components/shadcn/tooltip";
 import { useIsMobile } from "@/hooks";
 import { cn } from "@/lib/utils";
 

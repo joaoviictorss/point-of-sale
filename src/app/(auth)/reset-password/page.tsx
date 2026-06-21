@@ -7,7 +7,7 @@ import { use } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { Input, Logo } from '@/components';
-import { Button } from '@/components/Shadcn';
+import { Button } from '@/components/shadcn';
 import {
   resetPasswordFormSchema,
   type resetPasswordSchema,

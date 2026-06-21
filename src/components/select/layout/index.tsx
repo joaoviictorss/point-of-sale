@@ -1,11 +1,11 @@
-import { Label } from '@/components/Shadcn/label';
+import { Label } from '@/components/shadcn/label';
 import {
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
   Select as ShadSelect,
-} from '@/components/Shadcn/select';
+} from '@/components/shadcn/select';
 import { cn } from '@/lib/utils';
 import type { ISelectData } from '../data';
 

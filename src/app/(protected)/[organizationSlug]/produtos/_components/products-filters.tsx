@@ -1,6 +1,6 @@
 import { FunnelIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { Input } from "@/components";
-import { Button } from "@/components/Shadcn";
+import { Button } from "@/components/shadcn";
 import { useEntitySearch } from "@/hooks/entitys/use-entity-search";
 import { useProductsParams } from "@/hooks/product/use-products-params";
 

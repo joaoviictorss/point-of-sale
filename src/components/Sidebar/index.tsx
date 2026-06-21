@@ -11,7 +11,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/Shadcn/sidebar";
+} from "@/components/shadcn/sidebar";
 import { navigationItems } from "@/utils/constants";
 
 export function Sidebar({

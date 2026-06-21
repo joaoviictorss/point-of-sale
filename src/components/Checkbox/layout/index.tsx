@@ -1,5 +1,5 @@
-import { Checkbox as ShadCheckbox } from '@/components/Shadcn/checkbox';
-import { Label } from '@/components/Shadcn/label';
+import { Checkbox as ShadCheckbox } from '@/components/shadcn/checkbox';
+import { Label } from '@/components/shadcn/label';
 import { cn } from '@/lib/utils';
 import type { ICheckboxData } from '../data';
 

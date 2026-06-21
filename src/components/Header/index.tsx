@@ -12,8 +12,8 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "../Shadcn/dropdown-menu";
-import { SidebarTrigger } from "../Shadcn/sidebar";
+} from "../shadcn/dropdown-menu";
+import { SidebarTrigger } from "../shadcn/sidebar";
 
 export const Header = () => {
   const pathname = usePathname();

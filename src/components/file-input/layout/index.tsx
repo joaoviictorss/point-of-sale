@@ -3,7 +3,7 @@ import { Trash2, X } from 'lucide-react';
 import Image from 'next/image';
 import type { DropzoneInputProps, DropzoneRootProps } from 'react-dropzone';
 import { Input } from '@/components/input';
-import { Button } from '@/components/Shadcn/button';
+import { Button } from '@/components/shadcn/button';
 import { cn } from '@/lib/utils';
 import { formatFileSize, getFileIcon } from '@/utils/constants';
 import type { FileWithPreview } from '../data';

@@ -10,7 +10,7 @@ import { toast } from 'sonner';
 import { oAuthSignIn, signIn } from '@/actions/auth';
 import { GoogleIcon } from '@/assets';
 import { Checkbox, Input, Logo } from '@/components';
-import { Button } from '@/components/Shadcn/button';
+import { Button } from '@/components/shadcn/button';
 import { useDialog } from '@/hooks';
 import {
   SignInFormSchema,

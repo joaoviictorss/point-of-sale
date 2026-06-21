@@ -7,9 +7,9 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/Shadcn/dialog';
+} from '@/components/shadcn/dialog';
 import { cn } from '@/lib/utils';
-import { Button } from '../Shadcn';
+import { Button } from '../shadcn';
 
 export interface DialogAction {
   label: string;

@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import * as z from "zod";
 import { Input } from "@/components/input";
 import { Modal } from "@/components/modal";
-import { Button } from "@/components/Shadcn/button";
+import { Button } from "@/components/shadcn/button";
 import { useOrganizationModal } from "@/hooks";
 import { useCreateOrganization } from "@/hooks/organization/use-organizations";
 

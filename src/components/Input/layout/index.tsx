@@ -1,5 +1,5 @@
-import { Input as ShadInput } from '@/components/Shadcn/input';
-import { Label } from '@/components/Shadcn/label';
+import { Input as ShadInput } from '@/components/shadcn/input';
+import { Label } from '@/components/shadcn/label';
 import { cn } from '@/lib/utils';
 import type { IInputData } from '../data';
 

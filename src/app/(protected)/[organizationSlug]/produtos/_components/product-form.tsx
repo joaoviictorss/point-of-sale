@@ -6,28 +6,27 @@ import type {
 } from "@/services/product/schemas";
 import { productTypeOptions, stockUnitOptions } from "@/utils/constants";
 import { applyCurrencyMask, removeCurrencyMask } from "@/utils/functions";
+import { MediaUploadSection } from "./media-upload-section";
 
 interface ProductFormProps {
   form: UseFormReturn<ProductFormInput, unknown, ProductFormSchema>;
   loading: boolean;
   onSubmit: (values: ProductFormSchema) => void;
+  initialMedias?: { id: string; url: string }[];
 }
 
-export function ProductForm({ form, loading, onSubmit }: ProductFormProps) {
+export function ProductForm({
+  form,
+  loading,
+  onSubmit,
+  initialMedias,
+}: ProductFormProps) {
   const {
     watch,
     setValue,
     formState: { errors },
     handleSubmit,
   } = form;
-
-  // const mediaValue = watch("media");
-  // const filesFromForm = useMemo<FileWithPreview[]>(() => {
-  //   if (!mediaValue || mediaValue.length === 0) {
-  //     return [];
-  //   }
-  //   return mediaValue as FileWithPreview[];
-  // }, [mediaValue]);
 
   return (
     <form id="product-form" onSubmit={handleSubmit(onSubmit)}>
@@ -217,29 +216,14 @@ export function ProductForm({ form, loading, onSubmit }: ProductFormProps) {
         </div>
       </div>
 
-      {/* <div className="flex w-full flex-col gap-4 p-6">
+      <div className="flex w-full flex-col gap-4 p-6">
         <h2 className="font-semibold text-lg">Mídia</h2>
-
-        <div>
-          <Controller
-            control={control}
-            name="media"
-            render={({ field }) => {
-              return (
-                <FileInput
-                  accept={{
-                    "image/*": [],
-                  }}
-                  disabled={loading}
-                  error={errors.media?.message}
-                  files={filesFromForm}
-                  setFiles={field.onChange}
-                />
-              );
-            }}
-          />
-        </div>
-      </div> */}
+        <MediaUploadSection
+          disabled={loading}
+          form={form}
+          initialMedias={initialMedias}
+        />
+      </div>
     </form>
   );
 }

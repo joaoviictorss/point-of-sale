@@ -7,7 +7,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/Shadcn/table';
+} from '@/components/shadcn/table';
 import { cn } from '@/lib/utils';
 import type { ITableData, TableColumn } from '../data';
 

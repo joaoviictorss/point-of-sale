@@ -5,8 +5,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { Button } from "@/components/Shadcn";
-import { Card, CardContent } from "@/components/Shadcn/card";
+import { Button } from "@/components/shadcn";
+import { Card, CardContent } from "@/components/shadcn/card";
 import { useOrganization } from "@/contexts/organization-context";
 import { useCreateProduct } from "@/hooks/product/use-products";
 import {

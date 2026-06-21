@@ -5,7 +5,7 @@ import type { Product } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Modal } from "@/components";
-import { Button } from "@/components/Shadcn";
+import { Button } from "@/components/shadcn";
 import { Table } from "@/components/table";
 import type { TableColumn } from "@/components/table/data";
 import { useOrganization } from "@/contexts/organization-context";

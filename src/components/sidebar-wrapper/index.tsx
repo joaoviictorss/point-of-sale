@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import { SidebarProvider } from '@/components/shadcn/sidebar';
 import { Sidebar } from '@/components/sidebar';
 
@@ -9,11 +8,9 @@ interface SidebarWrapperProps {
 }
 
 export function SidebarWrapper({ children }: SidebarWrapperProps) {
-  const [isOpen, setIsOpen] = useState(true);
-
   return (
-    <SidebarProvider onOpenChange={setIsOpen} open={isOpen}>
-      <Sidebar isOpen={isOpen} onOpenChange={setIsOpen} />
+    <SidebarProvider>
+      <Sidebar />
       {children}
     </SidebarProvider>
   );

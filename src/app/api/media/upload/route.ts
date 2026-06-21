@@ -1,12 +1,12 @@
-import { NextResponse } from "next/server";
-import { z } from "zod";
-import { getCurrentUserId } from "@/lib/auth";
-import { prisma } from "@/lib/prisma/client";
-import { uploadToCloudinary } from "@/services/cloudinary";
-import { createErrorResponse } from "@/utils/http";
+import { NextResponse } from 'next/server';
+import { z } from 'zod';
+import { getCurrentUserId } from '@/lib/auth';
+import { prisma } from '@/lib/prisma/client';
+import { uploadToS3 } from '@/services/s3';
+import { createErrorResponse } from '@/utils/http';
 
 const uploadSchema = z.object({
-  organizationSlug: z.string().min(1, "Slug da organização é obrigatório"),
+  organizationSlug: z.string().min(1, 'Slug da organização é obrigatório'),
   alt: z.string().optional(),
 });
 
@@ -15,18 +15,18 @@ export async function POST(request: Request) {
     const userId = await getCurrentUserId();
 
     if (!userId) {
-      return createErrorResponse("Não autorizado", 401);
+      return createErrorResponse('Não autorizado', 401);
     }
 
     // Extrair FormData
     const formData = await request.formData();
-    const file = formData.get("file") as File | null;
-    const organizationSlug = formData.get("organizationSlug") as string | null;
-    const alt = formData.get("alt") as string | null;
+    const file = formData.get('file') as File | null;
+    const organizationSlug = formData.get('organizationSlug') as string | null;
+    const alt = formData.get('alt') as string | null;
 
     // Validar arquivo
     if (!(file instanceof File)) {
-      return createErrorResponse("Arquivo é obrigatório", 400);
+      return createErrorResponse('Arquivo é obrigatório', 400);
     }
 
     // Validar dados
@@ -50,19 +50,17 @@ export async function POST(request: Request) {
 
     if (!organization) {
       return createErrorResponse(
-        "Organização não encontrada ou sem permissão",
+        'Organização não encontrada ou sem permissão',
         403
       );
     }
 
-    // Upload para Cloudinary
-    const cloudinaryResult = await uploadToCloudinary(file);
+    const s3Result = await uploadToS3(file, validation.data.organizationSlug);
 
-    // Salvar no banco
     const media = await prisma.media.create({
       data: {
-        url: cloudinaryResult.secure_url,
-        publicId: cloudinaryResult.public_id,
+        url: s3Result.url,
+        publicId: s3Result.key,
         alt: validation.data.alt,
         mimeType: file.type,
         fileSize: file.size,
@@ -73,6 +71,6 @@ export async function POST(request: Request) {
 
     return NextResponse.json(media, { status: 201 });
   } catch {
-    return createErrorResponse("Erro ao fazer upload do arquivo", 500);
+    return createErrorResponse('Erro ao fazer upload do arquivo', 500);
   }
 }

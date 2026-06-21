@@ -1,11 +1,11 @@
-import type { SearchParams } from "nuqs/server";
-import { Suspense } from "react";
-import { ErrorBoundary } from "react-error-boundary";
-import { productsParamsLoader } from "@/hooks/product/use-products-params";
-import { prefetchProductsFromOrganization } from "@/services/product/prefetch";
-import { HydrateClient } from "@/trpc/server";
-import { ProductsContainer } from "./_components/products-container";
-import { ProductsList } from "./_components/products-list";
+import type { SearchParams } from 'nuqs/server';
+import { Suspense } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
+import { productsParamsLoader } from '@/hooks/product/use-products-params';
+import { prefetchProductsFromOrganization } from '@/services/product/prefetch';
+import { HydrateClient } from '@/trpc/server';
+import { ProductsContainer } from './_components/products-container';
+import { ProductsList } from './_components/products-list';
 
 type ProductsPageProps = {
   searchParams: Promise<SearchParams>;

@@ -1,17 +1,17 @@
-"use client";
+'use client';
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { toast } from "sonner";
-import * as z from "zod";
-import { Input } from "@/components/input";
-import { Modal } from "@/components/modal";
-import { Button } from "@/components/shadcn/button";
-import { useOrganizationModal } from "@/hooks";
-import { useCreateOrganization } from "@/hooks/organization/use-organizations";
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import * as z from 'zod';
+import { Input } from '@/components/input';
+import { Modal } from '@/components/modal';
+import { Button } from '@/components/shadcn/button';
+import { useOrganizationModal } from '@/hooks';
+import { useCreateOrganization } from '@/hooks/organization/use-organizations';
 
 const formSchema = z.object({
-  name: z.string().min(1, "O nome da organização é obrigatório"),
+  name: z.string().min(1, 'O nome da organização é obrigatório'),
 });
 
 export const OrganizationModal = ({ canClose }: { canClose: boolean }) => {
@@ -21,14 +21,14 @@ export const OrganizationModal = ({ canClose }: { canClose: boolean }) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
+      name: '',
     },
   });
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     createOrganizationMutation.mutate(values, {
       onSuccess: (data) => {
-        toast.success("Organização criada com sucesso");
+        toast.success('Organização criada com sucesso');
         window.location.assign(`/${data.slug}/vendas`);
       },
       onError: (error) => {
@@ -55,7 +55,7 @@ export const OrganizationModal = ({ canClose }: { canClose: boolean }) => {
           <div className="space-y-4">
             <div>
               <Input
-                {...form.register("name")}
+                {...form.register('name')}
                 disabled={createOrganizationMutation.isPending}
                 error={form.formState.errors.name?.message}
                 label="Nome da organização"

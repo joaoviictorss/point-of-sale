@@ -1,17 +1,17 @@
-import { z } from "zod";
-import { errorHandler } from "@/lib/error-handler";
-import { prisma } from "@/lib/prisma/client";
+import { z } from 'zod';
+import { errorHandler } from '@/lib/error-handler';
+import { prisma } from '@/lib/prisma/client';
 import {
   createTRPCRouter,
   organizationProcedure,
   protectedProcedure,
-} from "@/trpc/init";
+} from '@/trpc/init';
 import {
   deleteProductSchema,
   getAllProductsFromOrganizationSchema,
   getProductByIdSchema,
   productFormSchema,
-} from "./schemas";
+} from './schemas';
 
 export const productRouter = createTRPCRouter({
   create: organizationProcedure
@@ -29,7 +29,7 @@ export const productRouter = createTRPCRouter({
       });
 
       if (existingProduct) {
-        throw errorHandler.conflict("Já existe um produto com este código");
+        throw errorHandler.conflict('Já existe um produto com este código');
       }
 
       return await prisma.product.create({
@@ -68,20 +68,20 @@ export const productRouter = createTRPCRouter({
           where: {
             organizationSlug,
             OR: [
-              { name: { contains: search, mode: "insensitive" } },
-              { code: { contains: search, mode: "insensitive" } },
+              { name: { contains: search, mode: 'insensitive' } },
+              { code: { contains: search, mode: 'insensitive' } },
             ],
           },
           orderBy: {
-            createdAt: "desc",
+            createdAt: 'desc',
           },
         }),
         prisma.product.count({
           where: {
             organizationSlug,
             OR: [
-              { name: { contains: search, mode: "insensitive" } },
-              { code: { contains: search, mode: "insensitive" } },
+              { name: { contains: search, mode: 'insensitive' } },
+              { code: { contains: search, mode: 'insensitive' } },
             ],
           },
         }),
@@ -111,7 +111,7 @@ export const productRouter = createTRPCRouter({
       });
 
       if (!product) {
-        throw errorHandler.notFound("Produto");
+        throw errorHandler.notFound('Produto');
       }
 
       // Verificar acesso à organização do produto
@@ -127,7 +127,7 @@ export const productRouter = createTRPCRouter({
       });
 
       if (!hasAccess) {
-        throw errorHandler.forbidden("Você não tem acesso a este produto");
+        throw errorHandler.forbidden('Você não tem acesso a este produto');
       }
 
       return product;
@@ -136,7 +136,7 @@ export const productRouter = createTRPCRouter({
   update: organizationProcedure
     .input(
       z.object({
-        id: z.string().uuid("ID inválido"),
+        id: z.string().uuid('ID inválido'),
         ...productFormSchema.shape,
       })
     )
@@ -149,12 +149,12 @@ export const productRouter = createTRPCRouter({
       });
 
       if (!existingProduct) {
-        throw errorHandler.notFound("Produto");
+        throw errorHandler.notFound('Produto');
       }
 
       // Verificar se o produto pertence à organização do contexto
       if (existingProduct.organizationSlug !== organizationSlug) {
-        throw errorHandler.forbidden("Você não tem acesso a este produto");
+        throw errorHandler.forbidden('Você não tem acesso a este produto');
       }
 
       return await prisma.product.update({
@@ -192,11 +192,11 @@ export const productRouter = createTRPCRouter({
       });
 
       if (!existingProduct) {
-        throw errorHandler.notFound("Produto");
+        throw errorHandler.notFound('Produto');
       }
 
       if (existingProduct.organizationSlug !== organizationSlug) {
-        throw errorHandler.forbidden("Você não tem acesso a este produto");
+        throw errorHandler.forbidden('Você não tem acesso a este produto');
       }
 
       return await prisma.product.delete({

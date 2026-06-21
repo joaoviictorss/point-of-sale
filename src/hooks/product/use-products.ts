@@ -2,10 +2,10 @@ import {
   useMutation,
   useQueryClient,
   useSuspenseQuery,
-} from "@tanstack/react-query";
-import { useOrganization } from "@/contexts/organization-context";
-import { useTRPC } from "@/trpc/client";
-import { useProductsParams } from "./use-products-params";
+} from '@tanstack/react-query';
+import { useOrganization } from '@/contexts/organization-context';
+import { useTRPC } from '@/trpc/client';
+import { useProductsParams } from './use-products-params';
 
 export const useSuspenseProducts = () => {
   const trpc = useTRPC();

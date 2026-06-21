@@ -1,4 +1,4 @@
-import { httpApi } from '@/infra/http/httpApi';
+import { httpApi } from '@/infra/http/http-api';
 import type { ApiErrorResponse } from '@/types/http';
 import type { RequesResetPasswordResponse } from '@/types/http/reset-password';
 

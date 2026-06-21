@@ -1,5 +1,5 @@
-import { useOrganization } from "@/contexts/organization-context";
-import { uploadMedia } from "@/services/media";
+import { useOrganization } from '@/contexts/organization-context';
+import { uploadMedia } from '@/services/media';
 
 export const useUploadMedia = () => {
   const { slug: organizationSlug } = useOrganization();

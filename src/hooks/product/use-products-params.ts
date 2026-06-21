@@ -1,6 +1,6 @@
-import { useQueryStates } from "nuqs";
-import { createLoader, parseAsInteger, parseAsString } from "nuqs/server";
-import { PAGINATION } from "@/utils/constants";
+import { useQueryStates } from 'nuqs';
+import { createLoader, parseAsInteger, parseAsString } from 'nuqs/server';
+import { PAGINATION } from '@/utils/constants';
 
 export const productsParams = {
   page: parseAsInteger.withDefault(PAGINATION.DEFAULT_PAGE).withOptions({
@@ -11,7 +11,7 @@ export const productsParams = {
     .withOptions({
       clearOnDefault: true,
     }),
-  search: parseAsString.withDefault("").withOptions({
+  search: parseAsString.withDefault('').withOptions({
     clearOnDefault: true,
   }),
 };

@@ -1,6 +1,6 @@
-import { cache } from "react";
-import { prisma } from "./prisma/client";
-import { verifySession } from "./session";
+import { cache } from 'react';
+import { prisma } from './prisma/client';
+import { verifySession } from './session';
 
 export const getUser = cache(async () => {
   const session = await verifySession();

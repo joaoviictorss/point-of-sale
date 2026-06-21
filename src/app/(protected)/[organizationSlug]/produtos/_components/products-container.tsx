@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useRouter } from "next/navigation";
-import { EntityContainer } from "@/components/entity-components/entity-container";
-import { useOrganization } from "@/contexts/organization-context";
-import { ProductsFilters } from "./products-filters";
+import { useRouter } from 'next/navigation';
+import { EntityContainer } from '@/components/entity-components/entity-container';
+import { useOrganization } from '@/contexts/organization-context';
+import { ProductsFilters } from './products-filters';
 
 export const ProductsContainer = ({
   children,

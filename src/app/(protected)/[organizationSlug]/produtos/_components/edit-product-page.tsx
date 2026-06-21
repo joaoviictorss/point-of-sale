@@ -1,31 +1,31 @@
-"use client";
+'use client';
 
 import {
   ArrowLeftIcon,
   CheckIcon,
   TrashIcon,
-} from "@heroicons/react/24/outline";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { toast } from "sonner";
-import { Modal } from "@/components";
-import { Button } from "@/components/shadcn";
-import { Card, CardContent } from "@/components/shadcn/card";
-import { useOrganization } from "@/contexts/organization-context";
+} from '@heroicons/react/24/outline';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import { Modal } from '@/components';
+import { Button } from '@/components/shadcn';
+import { Card, CardContent } from '@/components/shadcn/card';
+import { useOrganization } from '@/contexts/organization-context';
 import {
   useDeleteProduct,
   useSuspenseProductById,
   useUpdateProduct,
-} from "@/hooks/product/use-products";
+} from '@/hooks/product/use-products';
 import {
   type ProductFormInput,
   type ProductFormSchema,
   productFormSchema,
-} from "@/services/product/schemas";
-import { ProductForm } from "./product-form";
-import { ProductPreview } from "./product-preview";
+} from '@/services/product/schemas';
+import { ProductForm } from './product-form';
+import { ProductPreview } from './product-preview';
 
 interface EditProductPageProps {
   productId: string;
@@ -49,7 +49,7 @@ export function EditProductPage({ productId }: EditProductPageProps) {
       name: product.name,
       costPrice: product.costPrice,
       salePrice: product.salePrice,
-      category: product.category ?? "",
+      category: product.category ?? '',
       productType: product.productType,
       stock: product.stock,
       stockUnit: product.stockUnit,
@@ -64,7 +64,7 @@ export function EditProductPage({ productId }: EditProductPageProps) {
       { id: productId, organizationSlug, ...values },
       {
         onSuccess: () => {
-          toast.success("Produto atualizado com sucesso");
+          toast.success('Produto atualizado com sucesso');
           router.push(`/${organizationSlug}/produtos`);
         },
         onError: (error) => {
@@ -83,7 +83,7 @@ export function EditProductPage({ productId }: EditProductPageProps) {
       { id: productId, organizationSlug },
       {
         onSuccess: () => {
-          toast.success("Produto excluído com sucesso");
+          toast.success('Produto excluído com sucesso');
           router.push(`/${organizationSlug}/produtos`);
         },
         onError: (error) => {
@@ -126,7 +126,7 @@ export function EditProductPage({ productId }: EditProductPageProps) {
               </Button>
               <Button disabled={isLoading} form="product-form" type="submit">
                 <CheckIcon className="size-4" />
-                {updateProduct.isPending ? "Salvando..." : "Salvar Alterações"}
+                {updateProduct.isPending ? 'Salvando...' : 'Salvar Alterações'}
               </Button>
             </div>
           </div>
@@ -138,8 +138,7 @@ export function EditProductPage({ productId }: EditProductPageProps) {
                 <ProductForm
                   form={form}
                   initialMedias={
-                    product.medias?.map((m) => ({ id: m.id, url: m.url })) ??
-                    []
+                    product.medias?.map((m) => ({ id: m.id, url: m.url })) ?? []
                   }
                   loading={isLoading}
                   onSubmit={onSubmit}
@@ -162,16 +161,16 @@ export function EditProductPage({ productId }: EditProductPageProps) {
       <Modal
         actions={[
           {
-            label: "Cancelar",
+            label: 'Cancelar',
             onClick: () => setIsDeleteModalOpen(false),
-            variant: "outline",
+            variant: 'outline',
             shouldRender: true,
             disabled: deleteProduct.isPending,
           },
           {
-            label: "Excluir",
+            label: 'Excluir',
             onClick: handleConfirmDelete,
-            variant: "destructive",
+            variant: 'destructive',
             shouldRender: true,
             disabled: deleteProduct.isPending,
             loading: deleteProduct.isPending,

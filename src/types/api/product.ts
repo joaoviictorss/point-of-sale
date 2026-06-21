@@ -1,4 +1,4 @@
-import type { Media, ProductType, StockUnit } from "@prisma/client";
+import type { Media, ProductType, StockUnit } from '@prisma/client';
 
 export interface CreateProductRequest {
   code: string;

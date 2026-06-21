@@ -1,17 +1,17 @@
-"use client";
+'use client';
 
-import { XMarkIcon } from "@heroicons/react/24/outline";
-import Image from "next/image";
-import { useCallback, useEffect, useState } from "react";
-import type { UseFormReturn } from "react-hook-form";
-import { FileInput } from "@/components";
-import type { FileWithPreview } from "@/components/file-input";
-import { Button } from "@/components/shadcn";
-import { useUploadMedia } from "@/hooks/media/use-medias";
+import { XMarkIcon } from '@heroicons/react/24/outline';
+import Image from 'next/image';
+import { useCallback, useState } from 'react';
+import type { UseFormReturn } from 'react-hook-form';
+import { FileInput } from '@/components';
+import type { FileWithPreview } from '@/components/file-input';
+import { Button } from '@/components/shadcn';
+import { useUploadMedia } from '@/hooks/media/use-medias';
 import type {
   ProductFormInput,
   ProductFormSchema,
-} from "@/services/product/schemas";
+} from '@/services/product/schemas';
 
 type UploadedMedia = { id: string; url: string };
 
@@ -19,7 +19,7 @@ type PendingFile = {
   localId: string;
   file: File;
   preview: string;
-  status: "uploading" | "error";
+  status: 'uploading' | 'error';
   error?: string;
 };
 
@@ -39,16 +39,10 @@ export function MediaUploadSection({
     useState<UploadedMedia[]>(initialMedias);
   const [pendingFiles, setPendingFiles] = useState<PendingFile[]>([]);
 
-  // Sync initialMedias on edit mode mount
-  useEffect(() => {
-    setUploadedMedias(initialMedias);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   const syncFormMedias = useCallback(
     (medias: UploadedMedia[]) => {
       form.setValue(
-        "medias",
+        'medias',
         medias.map((m) => m.id)
       );
     },
@@ -61,46 +55,50 @@ export function MediaUploadSection({
         (f) => !pendingFiles.some((p) => p.localId === f.id)
       );
 
-      if (newFiles.length === 0) return;
+      if (newFiles.length === 0) {
+        return;
+      }
 
       const newPending: PendingFile[] = newFiles.map((f) => ({
         localId: f.id,
         file: f.file as File,
-        preview: f.preview ?? "",
-        status: "uploading",
+        preview: f.preview ?? '',
+        status: 'uploading',
       }));
 
       setPendingFiles((prev) => [...prev, ...newPending]);
 
-      for (const pending of newPending) {
-        try {
-          const result = await upload(pending.file);
+      await Promise.all(
+        newPending.map(async (pending) => {
+          try {
+            const result = await upload(pending.file);
 
-          setUploadedMedias((prev) => {
-            const updated = [...prev, { id: result.id, url: result.url }];
-            syncFormMedias(updated);
-            return updated;
-          });
+            setUploadedMedias((prev) => {
+              const updated = [...prev, { id: result.id, url: result.url }];
+              syncFormMedias(updated);
+              return updated;
+            });
 
-          setPendingFiles((prev) =>
-            prev.filter((p) => p.localId !== pending.localId)
-          );
+            setPendingFiles((prev) =>
+              prev.filter((p) => p.localId !== pending.localId)
+            );
 
-          if (pending.preview) {
-            URL.revokeObjectURL(pending.preview);
+            if (pending.preview) {
+              URL.revokeObjectURL(pending.preview);
+            }
+          } catch (err) {
+            const message =
+              err instanceof Error ? err.message : 'Erro ao fazer upload';
+            setPendingFiles((prev) =>
+              prev.map((p) =>
+                p.localId === pending.localId
+                  ? { ...p, status: 'error', error: message }
+                  : p
+              )
+            );
           }
-        } catch (err) {
-          const message =
-            err instanceof Error ? err.message : "Erro ao fazer upload";
-          setPendingFiles((prev) =>
-            prev.map((p) =>
-              p.localId === pending.localId
-                ? { ...p, status: "error", error: message }
-                : p
-            )
-          );
-        }
-      }
+        })
+      );
     },
     [pendingFiles, upload, syncFormMedias]
   );
@@ -119,7 +117,9 @@ export function MediaUploadSection({
   const handleRemovePending = useCallback((localId: string) => {
     setPendingFiles((prev) => {
       const file = prev.find((p) => p.localId === localId);
-      if (file?.preview) URL.revokeObjectURL(file.preview);
+      if (file?.preview) {
+        URL.revokeObjectURL(file.preview);
+      }
       return prev.filter((p) => p.localId !== localId);
     });
   }, []);
@@ -143,7 +143,7 @@ export function MediaUploadSection({
                 width={120}
               />
               <button
-                className="absolute right-1 top-1 rounded-full bg-black/60 p-0.5 opacity-0 transition-opacity group-hover:opacity-100"
+                className="absolute top-1 right-1 rounded-full bg-black/60 p-0.5 opacity-0 transition-opacity group-hover:opacity-100"
                 disabled={disabled}
                 onClick={() => handleRemoveUploaded(media.id)}
                 type="button"
@@ -168,13 +168,11 @@ export function MediaUploadSection({
                 />
               )}
               <div className="absolute inset-0 flex items-center justify-center bg-black/40">
-                {pending.status === "uploading" ? (
+                {pending.status === 'uploading' ? (
                   <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
                 ) : (
                   <div className="flex flex-col items-center gap-1 px-1">
-                    <span className="text-center text-white text-xs">
-                      Erro
-                    </span>
+                    <span className="text-center text-white text-xs">Erro</span>
                     <Button
                       className="h-6 px-2 text-xs"
                       onClick={() => handleRemovePending(pending.localId)}
@@ -193,8 +191,10 @@ export function MediaUploadSection({
       )}
 
       <FileInput
-        accept={{ "image/*": [".png", ".jpg", ".jpeg", ".webp"] }}
-        disabled={disabled || pendingFiles.some((p) => p.status === "uploading")}
+        accept={{ 'image/*': ['.png', '.jpg', '.jpeg', '.webp'] }}
+        disabled={
+          disabled || pendingFiles.some((p) => p.status === 'uploading')
+        }
         files={[]}
         setFiles={(files) => handleFilesChange(files)}
       />

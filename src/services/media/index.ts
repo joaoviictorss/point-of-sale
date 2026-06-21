@@ -12,18 +12,20 @@ export async function uploadMedia(
   alt?: string
 ): Promise<UploadedMedia> {
   const formData = new FormData();
-  formData.append("file", file);
-  formData.append("organizationSlug", organizationSlug);
-  if (alt) formData.append("alt", alt);
+  formData.append('file', file);
+  formData.append('organizationSlug', organizationSlug);
+  if (alt) {
+    formData.append('alt', alt);
+  }
 
-  const response = await fetch("/api/media/upload", {
-    method: "POST",
+  const response = await fetch('/api/media/upload', {
+    method: 'POST',
     body: formData,
   });
 
   if (!response.ok) {
     const err = await response.json();
-    throw new Error(err.message || "Erro ao fazer upload");
+    throw new Error(err.message || 'Erro ao fazer upload');
   }
 
   return response.json();

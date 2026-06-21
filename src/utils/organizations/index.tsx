@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/prisma/client";
+import { prisma } from '@/lib/prisma/client';
 
 export const findOrganizationByUserId = async (userId: string) => {
   // Buscar se é owner de alguma organização

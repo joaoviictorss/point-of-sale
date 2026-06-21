@@ -1,9 +1,9 @@
-import { Suspense } from "react";
-import { ErrorBoundary } from "react-error-boundary";
-import { prefetchProductById } from "@/services/product/prefetch";
-import { HydrateClient } from "@/trpc/server";
-import { CreateProductPage } from "../_components/create-product-page";
-import { EditProductPage } from "../_components/edit-product-page";
+import { Suspense } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
+import { prefetchProductById } from '@/services/product/prefetch';
+import { HydrateClient } from '@/trpc/server';
+import { CreateProductPage } from '../_components/create-product-page';
+import { EditProductPage } from '../_components/edit-product-page';
 
 interface PageProps {
   params: Promise<{ organizationSlug: string; productId: string }>;
@@ -30,7 +30,7 @@ function ProductPageError() {
 const Page = async ({ params }: PageProps) => {
   const { productId } = await params;
 
-  const isNewProduct = productId === "novo";
+  const isNewProduct = productId === 'novo';
 
   // Criar produto - não precisa de prefetch nem Suspense
   if (isNewProduct) {

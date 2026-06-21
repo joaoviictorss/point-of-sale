@@ -1,8 +1,9 @@
-import { NextResponse } from "next/server";
+/** biome-ignore-all lint/suspicious/noConsole: Logs for debug */
+import { NextResponse } from 'next/server';
 import type {
   ApiErrorResponse,
   ApiSuccessResponse,
-} from "@/types/http/index.ts";
+} from '@/types/http/index.ts';
 
 export function createSuccessResponse<T>(
   message: string,
@@ -16,5 +17,6 @@ export function createErrorResponse(
   message: string,
   status = 400
 ): NextResponse<ApiErrorResponse> {
+  console.log('Error:', message);
   return NextResponse.json({ message }, { status });
 }

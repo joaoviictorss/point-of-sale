@@ -1,11 +1,11 @@
-import { Prisma } from "@prisma/client";
-import { initTRPC, TRPCError } from "@trpc/server";
-import { cache } from "react";
-import superjson from "superjson";
-import { z } from "zod";
-import { errorHandler, prismaCodeToTRPC } from "@/lib/error-handler";
-import { prisma } from "@/lib/prisma/client";
-import { verifySession } from "@/lib/session";
+import { Prisma } from '@prisma/client';
+import { initTRPC, TRPCError } from '@trpc/server';
+import { cache } from 'react';
+import superjson from 'superjson';
+import { z } from 'zod';
+import { errorHandler, prismaCodeToTRPC } from '@/lib/error-handler';
+import { prisma } from '@/lib/prisma/client';
+import { verifySession } from '@/lib/session';
 
 export const createTRPCContext = cache(async () => {
   /**
@@ -33,12 +33,12 @@ const errorTransformerMiddleware = t.middleware(async ({ next }) => {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       throw new TRPCError({
         code: prismaCodeToTRPC(error.code),
-        message: "Erro ao processar solicitação",
+        message: 'Erro ao processar solicitação',
         cause: error,
       });
     }
 
-    throw errorHandler.internal("Erro interno do servidor", error);
+    throw errorHandler.internal('Erro interno do servidor', error);
   }
 });
 
@@ -77,8 +77,8 @@ export const organizationProcedure = protectedProcedure
 
     if (!organization) {
       throw new TRPCError({
-        code: "FORBIDDEN",
-        message: "Você não tem acesso a esta organização",
+        code: 'FORBIDDEN',
+        message: 'Você não tem acesso a esta organização',
       });
     }
 

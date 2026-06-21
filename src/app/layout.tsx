@@ -1,30 +1,30 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import type { Metadata } from 'next';
+import { Geist, Geist_Mono } from 'next/font/google';
 
-import { NuqsAdapter } from "nuqs/adapters/next/app";
+import { NuqsAdapter } from 'nuqs/adapters/next/app';
 
-import { OrganizationModal } from "@/components/organization-modal";
-import { Toaster } from "@/components/shadcn/sonner";
+import { OrganizationModal } from '@/components/organization-modal';
+import { Toaster } from '@/components/shadcn/sonner';
 
-import { OrganizationModalProvider } from "@/providers/organization-modal-provider";
+import { OrganizationModalProvider } from '@/providers/organization-modal-provider';
 
-import { TRPCReactProvider } from "@/trpc/client";
+import { TRPCReactProvider } from '@/trpc/client';
 
-import "./globals.css";
+import './globals.css';
 
 const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+  variable: '--font-geist-sans',
+  subsets: ['latin'],
 });
 
 const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  variable: '--font-geist-mono',
+  subsets: ['latin'],
 });
 
 export const metadata: Metadata = {
-  title: "VNS - Admin",
-  description: "VNS - Admin",
+  title: 'VNS - Admin',
+  description: 'VNS - Admin',
 };
 
 export default function RootLayout({

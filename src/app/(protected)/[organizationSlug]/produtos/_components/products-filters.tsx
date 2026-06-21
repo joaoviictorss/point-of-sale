@@ -1,8 +1,8 @@
-import { FunnelIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import { Input } from "@/components";
-import { Button } from "@/components/shadcn";
-import { useEntitySearch } from "@/hooks/entitys/use-entity-search";
-import { useProductsParams } from "@/hooks/product/use-products-params";
+import { FunnelIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
+import { Input } from '@/components';
+import { Button } from '@/components/shadcn';
+import { useEntitySearch } from '@/hooks/entitys/use-entity-search';
+import { useProductsParams } from '@/hooks/product/use-products-params';
 
 export const ProductsFilters = () => {
   const [params, setParams] = useProductsParams();
@@ -14,14 +14,14 @@ export const ProductsFilters = () => {
   return (
     <>
       <Input
-        icon={<MagnifyingGlassIcon className={"size-4"} />}
+        icon={<MagnifyingGlassIcon className={'size-4'} />}
         onChange={(e) => onSearchChange(e.target.value)}
         placeholder="Pesquisar produto"
         type="text"
         value={searchValue}
       />
-      <Button className="gap-3" type="button" variant={"outline"}>
-        <FunnelIcon className={"size-4"} />
+      <Button className="gap-3" type="button" variant={'outline'}>
+        <FunnelIcon className={'size-4'} />
         Filtrar
       </Button>
     </>

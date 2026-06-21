@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { createContext, useContext } from "react";
+import { createContext, useContext } from 'react';
 
 type OrganizationContextType = {
   slug: string;
@@ -28,7 +28,7 @@ export function useOrganization(): OrganizationContextType {
   const context = useContext(OrganizationContext);
 
   if (!context) {
-    throw new Error("useOrganization must be used within OrganizationProvider");
+    throw new Error('useOrganization must be used within OrganizationProvider');
   }
 
   return context;

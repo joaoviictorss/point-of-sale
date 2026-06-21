@@ -1,11 +1,11 @@
-import type { OAuthProvider } from "@prisma/client";
-import crypto from "crypto";
-import type { ReadonlyRequestCookies } from "next/dist/server/web/spec-extension/adapters/request-cookies";
-import { z } from "zod";
-import { createGoogleOAuthClient } from "./google";
+import type { OAuthProvider } from '@prisma/client';
+import crypto from 'crypto';
+import type { ReadonlyRequestCookies } from 'next/dist/server/web/spec-extension/adapters/request-cookies';
+import { z } from 'zod';
+import { createGoogleOAuthClient } from './google';
 
-const STATE_COOKIE_KEY = "oAuthState";
-const CODE_VERIFIER_COOKIE_KEY = "oAuthCodeVerifier";
+const STATE_COOKIE_KEY = 'oAuthState';
+const CODE_VERIFIER_COOKIE_KEY = 'oAuthCodeVerifier';
 // Ten minutes in seconds
 const COOKIE_EXPIRATION_SECONDS = 60 * 10;
 
@@ -67,20 +67,20 @@ export class OAuthClient<T> {
     return new URL(this.provider, process.env.OAUTH_REDIRECT_URL_BASE);
   }
 
-  createAuthUrl(cookies: Pick<ReadonlyRequestCookies, "set">) {
+  createAuthUrl(cookies: Pick<ReadonlyRequestCookies, 'set'>) {
     const state = createState(cookies);
     const codeVerifier = createCodeVerifier(cookies);
 
     const url = new URL(this.urls.auth);
-    url.searchParams.set("client_id", this.clientId);
-    url.searchParams.set("redirect_uri", this.redirectUrl.toString());
-    url.searchParams.set("response_type", "code");
-    url.searchParams.set("scope", this.scopes.join(" "));
-    url.searchParams.set("state", state);
-    url.searchParams.set("code_challenge_method", "S256");
+    url.searchParams.set('client_id', this.clientId);
+    url.searchParams.set('redirect_uri', this.redirectUrl.toString());
+    url.searchParams.set('response_type', 'code');
+    url.searchParams.set('scope', this.scopes.join(' '));
+    url.searchParams.set('state', state);
+    url.searchParams.set('code_challenge_method', 'S256');
     url.searchParams.set(
-      "code_challenge",
-      crypto.hash("sha256", codeVerifier, "base64url")
+      'code_challenge',
+      crypto.hash('sha256', codeVerifier, 'base64url')
     );
     return url.toString();
   }
@@ -88,7 +88,7 @@ export class OAuthClient<T> {
   async fetchUser(
     code: string,
     state: string,
-    cookies: Pick<ReadonlyRequestCookies, "get">
+    cookies: Pick<ReadonlyRequestCookies, 'get'>
   ) {
     const isValidState = await validateState(state, cookies);
     if (!isValidState) {
@@ -121,15 +121,15 @@ export class OAuthClient<T> {
 
   private fetchToken(code: string, codeVerifier: string) {
     return fetch(this.urls.token, {
-      method: "POST",
+      method: 'POST',
       headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-        Accept: "application/json",
+        'Content-Type': 'application/x-www-form-urlencoded',
+        Accept: 'application/json',
       },
       body: new URLSearchParams({
         code,
         redirect_uri: this.redirectUrl.toString(),
-        grant_type: "authorization_code",
+        grant_type: 'authorization_code',
         client_id: this.clientId,
         client_secret: this.clientSecret,
         code_verifier: codeVerifier,
@@ -152,7 +152,7 @@ export class OAuthClient<T> {
 
 export function getOAuthClient(provider: OAuthProvider) {
   switch (provider) {
-    case "GOOGLE":
+    case 'GOOGLE':
       return createGoogleOAuthClient();
     default:
       throw new Error(`Invalid provider: ${provider satisfies never}`);
@@ -161,47 +161,47 @@ export function getOAuthClient(provider: OAuthProvider) {
 
 class InvalidTokenError extends Error {
   constructor(zodError: z.ZodError) {
-    super("Invalid Token");
+    super('Invalid Token');
     this.cause = zodError;
   }
 }
 
 class InvalidUserError extends Error {
   constructor(zodError: z.ZodError) {
-    super("Invalid User");
+    super('Invalid User');
     this.cause = zodError;
   }
 }
 
 class InvalidStateError extends Error {
   constructor() {
-    super("Invalid State");
+    super('Invalid State');
   }
 }
 
 class InvalidCodeVerifierError extends Error {
   constructor() {
-    super("Invalid Code Verifier");
+    super('Invalid Code Verifier');
   }
 }
 
-function createState(cookies: Pick<ReadonlyRequestCookies, "set">) {
-  const state = crypto.randomBytes(64).toString("hex").normalize();
+function createState(cookies: Pick<ReadonlyRequestCookies, 'set'>) {
+  const state = crypto.randomBytes(64).toString('hex').normalize();
   cookies.set(STATE_COOKIE_KEY, state, {
     secure: true,
     httpOnly: true,
-    sameSite: "lax",
+    sameSite: 'lax',
     expires: Date.now() + COOKIE_EXPIRATION_SECONDS * 1000,
   });
   return state;
 }
 
-function createCodeVerifier(cookies: Pick<ReadonlyRequestCookies, "set">) {
-  const codeVerifier = crypto.randomBytes(64).toString("hex").normalize();
+function createCodeVerifier(cookies: Pick<ReadonlyRequestCookies, 'set'>) {
+  const codeVerifier = crypto.randomBytes(64).toString('hex').normalize();
   cookies.set(CODE_VERIFIER_COOKIE_KEY, codeVerifier, {
     secure: true,
     httpOnly: true,
-    sameSite: "lax",
+    sameSite: 'lax',
     expires: Date.now() + COOKIE_EXPIRATION_SECONDS * 1000,
   });
   return codeVerifier;
@@ -209,13 +209,13 @@ function createCodeVerifier(cookies: Pick<ReadonlyRequestCookies, "set">) {
 
 function validateState(
   state: string,
-  cookies: Pick<ReadonlyRequestCookies, "get">
+  cookies: Pick<ReadonlyRequestCookies, 'get'>
 ) {
   const cookieState = cookies.get(STATE_COOKIE_KEY)?.value;
   return cookieState === state;
 }
 
-function getCodeVerifier(cookies: Pick<ReadonlyRequestCookies, "get">) {
+function getCodeVerifier(cookies: Pick<ReadonlyRequestCookies, 'get'>) {
   const codeVerifier = cookies.get(CODE_VERIFIER_COOKIE_KEY)?.value;
   if (codeVerifier == null) {
     throw new InvalidCodeVerifierError();

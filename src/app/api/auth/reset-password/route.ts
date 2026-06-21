@@ -1,11 +1,11 @@
-import type { NextResponse } from "next/server";
+import type { NextResponse } from 'next/server';
 
-import { resetPasswordFormSchema } from "@/lib/validations/auth/sign-up";
+import { resetPasswordFormSchema } from '@/lib/validations/auth/sign-up';
 import type {
   ApiErrorResponse,
   ApiSuccessResponse,
-} from "@/types/http/index.ts";
-import type { ResetPasswordResponse } from "@/types/http/reset-password";
+} from '@/types/http/index.ts';
+import type { ResetPasswordResponse } from '@/types/http/reset-password';
 import {
   createErrorResponse,
   createSuccessResponse,
@@ -15,7 +15,7 @@ import {
   isTokenExpired,
   updateResetPasswordToken,
   updateUserPassword,
-} from "@/utils";
+} from '@/utils';
 
 export async function POST(
   request: Request
@@ -27,11 +27,11 @@ export async function POST(
     const { token, password } = body;
 
     if (!token) {
-      return createErrorResponse("Token é obrigatório", 400);
+      return createErrorResponse('Token é obrigatório', 400);
     }
 
     if (!password) {
-      return createErrorResponse("Nova senha é obrigatória", 400);
+      return createErrorResponse('Nova senha é obrigatória', 400);
     }
 
     const passwordValidation = resetPasswordFormSchema.safeParse({
@@ -40,7 +40,7 @@ export async function POST(
 
     if (!passwordValidation.success) {
       return createErrorResponse(
-        "Senha não atende aos critérios de segurança",
+        'Senha não atende aos critérios de segurança',
         400
       );
     }
@@ -48,21 +48,21 @@ export async function POST(
     const resetToken = await findResetToken(token);
 
     if (!resetToken) {
-      return createErrorResponse("Token não encontrado", 400);
+      return createErrorResponse('Token não encontrado', 400);
     }
 
     if (resetToken.used) {
-      return createErrorResponse("Token já utilizado", 400);
+      return createErrorResponse('Token já utilizado', 400);
     }
 
     if (isTokenExpired(resetToken.expiresAt)) {
-      return createErrorResponse("Token expirado", 400);
+      return createErrorResponse('Token expirado', 400);
     }
 
     const user = await findUserByEmail(resetToken.email);
 
     if (!user) {
-      return createErrorResponse("Usuário não encontrado", 404);
+      return createErrorResponse('Usuário não encontrado', 404);
     }
 
     const hashedPassword = await hasheAndSaltPassword(password);
@@ -70,10 +70,10 @@ export async function POST(
 
     await updateResetPasswordToken(resetToken.id, { used: true });
 
-    return createSuccessResponse("Senha redefinida com sucesso", null, 200);
+    return createSuccessResponse('Senha redefinida com sucesso', null, 200);
   } catch {
     return createErrorResponse(
-      "Erro interno do servidor. Tente novamente mais tarde",
+      'Erro interno do servidor. Tente novamente mais tarde',
       500
     );
   }

@@ -1,31 +1,31 @@
-"use client";
+'use client';
 
-import { ArrowLeftIcon, CheckIcon } from "@heroicons/react/24/outline";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
-import { toast } from "sonner";
-import { Button } from "@/components/shadcn";
-import { Card, CardContent } from "@/components/shadcn/card";
-import { useOrganization } from "@/contexts/organization-context";
-import { useCreateProduct } from "@/hooks/product/use-products";
+import { ArrowLeftIcon, CheckIcon } from '@heroicons/react/24/outline';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useRouter } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import { Button } from '@/components/shadcn';
+import { Card, CardContent } from '@/components/shadcn/card';
+import { useOrganization } from '@/contexts/organization-context';
+import { useCreateProduct } from '@/hooks/product/use-products';
 import {
   type ProductFormInput,
   type ProductFormSchema,
   productFormSchema,
-} from "@/services/product/schemas";
-import { ProductForm } from "./product-form";
-import { ProductPreview } from "./product-preview";
+} from '@/services/product/schemas';
+import { ProductForm } from './product-form';
+import { ProductPreview } from './product-preview';
 
 const defaultValues: ProductFormInput = {
-  code: "",
-  name: "",
+  code: '',
+  name: '',
   costPrice: 0,
   salePrice: 0,
-  category: "",
-  productType: "UNIT",
+  category: '',
+  productType: 'UNIT',
   stock: 0,
-  stockUnit: "UNITS",
+  stockUnit: 'UNITS',
   minStock: undefined,
   maxStock: undefined,
   medias: [],
@@ -46,7 +46,7 @@ export function CreateProductPage() {
       { organizationSlug, ...values },
       {
         onSuccess: () => {
-          toast.success("Produto criado com sucesso");
+          toast.success('Produto criado com sucesso');
           router.push(`/${organizationSlug}/produtos`);
         },
         onError: (error) => {
@@ -81,7 +81,7 @@ export function CreateProductPage() {
               type="submit"
             >
               <CheckIcon className="size-4" />
-              {createProduct.isPending ? "Criando..." : "Criar Produto"}
+              {createProduct.isPending ? 'Criando...' : 'Criar Produto'}
             </Button>
           </div>
 

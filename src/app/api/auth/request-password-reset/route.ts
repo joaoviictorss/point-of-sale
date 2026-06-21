@@ -1,9 +1,9 @@
-import type { NextResponse } from "next/server";
+import type { NextResponse } from 'next/server';
 
 import type {
   ApiErrorResponse,
   ApiSuccessResponse,
-} from "@/types/http/index.ts";
+} from '@/types/http/index.ts';
 import {
   createErrorResponse,
   createResetToken,
@@ -11,7 +11,7 @@ import {
   findUserByEmail,
   getRecentResetRequests,
   requestPasswordReset,
-} from "@/utils";
+} from '@/utils';
 
 export interface RateLimitMeta {
   retryAfter: number; // em minutos
@@ -62,16 +62,16 @@ export async function POST(
   try {
     const body: { email: string } = await request.json();
     const { email } = body;
-    const ip = request.headers.get("x-forwarded-for") || "unknown";
+    const ip = request.headers.get('x-forwarded-for') || 'unknown';
 
-    if (!email || typeof email !== "string") {
-      return createErrorResponse("Email é obrigatório e deve ser válido", 400);
+    if (!email || typeof email !== 'string') {
+      return createErrorResponse('Email é obrigatório e deve ser válido', 400);
     }
 
     const rateLimitCheck = isRateLimited(ip, email);
     if (rateLimitCheck.isLimited) {
       return createErrorResponse(
-        "Muitas tentativas. Aguarde e tente novamente mais tarde.",
+        'Muitas tentativas. Aguarde e tente novamente mais tarde.',
         429
       );
     }
@@ -79,7 +79,7 @@ export async function POST(
     const recentRequests = await getRecentResetRequests(email, 5);
     if (recentRequests.length > 0) {
       return createErrorResponse(
-        "Pedido de redefinição de senha já foi enviado recentemente. Aguarde e tente novamente mais tarde.",
+        'Pedido de redefinição de senha já foi enviado recentemente. Aguarde e tente novamente mais tarde.',
         429
       );
     }
@@ -100,12 +100,12 @@ export async function POST(
     }
 
     return createSuccessResponse(
-      "Se o email estiver cadastrado, você receberá um link de recuperação.",
+      'Se o email estiver cadastrado, você receberá um link de recuperação.',
       null
     );
   } catch {
     return createErrorResponse(
-      "Erro interno do servidor. Tente novamente mais tarde.",
+      'Erro interno do servidor. Tente novamente mais tarde.',
       500
     );
   }

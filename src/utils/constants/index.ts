@@ -3,38 +3,38 @@ import {
   CircleStackIcon,
   ClipboardDocumentListIcon,
   ShoppingBagIcon,
-} from "@heroicons/react/24/outline";
+} from '@heroicons/react/24/outline';
 import {
   FileAudio,
   FileIcon,
   FileImage,
   FileText,
   FileVideo,
-} from "lucide-react";
+} from 'lucide-react';
 
 export const navigationItems = [
   {
-    title: "Vendas",
-    url: "/vendas",
-    headerTitle: "Suas vendas",
+    title: 'Vendas',
+    url: '/vendas',
+    headerTitle: 'Suas vendas',
     icon: ShoppingBagIcon,
   },
   {
-    title: "Produtos",
-    url: "/produtos",
-    headerTitle: "Seus produtos",
+    title: 'Produtos',
+    url: '/produtos',
+    headerTitle: 'Seus produtos',
     icon: ClipboardDocumentListIcon,
   },
   {
-    title: "Estoque",
-    url: "/estoque",
-    headerTitle: "Seu estoque",
+    title: 'Estoque',
+    url: '/estoque',
+    headerTitle: 'Seu estoque',
     icon: CircleStackIcon,
   },
   {
-    title: "Relatórios",
-    url: "/relatorios",
-    headerTitle: "Relatórios",
+    title: 'Relatórios',
+    url: '/relatorios',
+    headerTitle: 'Relatórios',
     icon: ChartPieIcon,
   },
 ] as const;
@@ -42,30 +42,30 @@ export const navigationItems = [
 export type NavigationItem = (typeof navigationItems)[number];
 
 export const stockUnitOptions = [
-  { label: "Unidades", value: "UNITS" },
-  { label: "Gramas", value: "GRAMS" },
-  { label: "Quilogramas", value: "KILOGRAMS" },
-  { label: "Litros", value: "LITERS" },
-  { label: "Mililitros", value: "MILLILITERS" },
+  { label: 'Unidades', value: 'UNITS' },
+  { label: 'Gramas', value: 'GRAMS' },
+  { label: 'Quilogramas', value: 'KILOGRAMS' },
+  { label: 'Litros', value: 'LITERS' },
+  { label: 'Mililitros', value: 'MILLILITERS' },
 ];
 
 export const productTypeOptions = [
-  { label: "Unidade", value: "UNIT" },
-  { label: "Peso", value: "WEIGHT" },
-  { label: "Volume", value: "VOLUME" },
+  { label: 'Unidade', value: 'UNIT' },
+  { label: 'Peso', value: 'WEIGHT' },
+  { label: 'Volume', value: 'VOLUME' },
 ];
 
 export const getFileIcon = (mimeType: string) => {
-  if (mimeType.startsWith("image/")) {
+  if (mimeType.startsWith('image/')) {
     return FileImage;
   }
-  if (mimeType.startsWith("video/")) {
+  if (mimeType.startsWith('video/')) {
     return FileVideo;
   }
-  if (mimeType.startsWith("audio/")) {
+  if (mimeType.startsWith('audio/')) {
     return FileAudio;
   }
-  if (mimeType === "application/pdf") {
+  if (mimeType === 'application/pdf') {
     return FileText;
   }
   return FileIcon;
@@ -73,10 +73,10 @@ export const getFileIcon = (mimeType: string) => {
 
 export const formatFileSize = (bytes: number) => {
   if (bytes === 0) {
-    return "0 B";
+    return '0 B';
   }
   const k = 1024;
-  const sizes = ["B", "KB", "MB", "GB"];
+  const sizes = ['B', 'KB', 'MB', 'GB'];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
   return `${Number.parseFloat((bytes / k ** i).toFixed(1))} ${sizes[i]}`;
 };

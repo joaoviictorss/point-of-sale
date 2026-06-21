@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { PAGINATION } from "@/utils/constants";
+import { useEffect, useState } from 'react';
+import { PAGINATION } from '@/utils/constants';
 
 interface UseEntitySearchProps<
   T extends {
@@ -25,8 +25,8 @@ export const useEntitySearch = <
   const [localSearch, setLocalSearch] = useState(params.search);
 
   useEffect(() => {
-    if (localSearch === "" && params.search !== "") {
-      setParams({ ...params, search: "", page: PAGINATION.DEFAULT_PAGE });
+    if (localSearch === '' && params.search !== '') {
+      setParams({ ...params, search: '', page: PAGINATION.DEFAULT_PAGE });
       return;
     }
 

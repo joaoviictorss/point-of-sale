@@ -1,19 +1,19 @@
-"use client";
+'use client';
 
-import { EyeIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
-import type { Product } from "@prisma/client";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { Modal } from "@/components";
-import { Button } from "@/components/shadcn";
-import { Table } from "@/components/table";
-import type { TableColumn } from "@/components/table/data";
-import { useOrganization } from "@/contexts/organization-context";
+import { EyeIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
+import type { Product } from '@prisma/client';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { Modal } from '@/components';
+import { Button } from '@/components/shadcn';
+import { Table } from '@/components/table';
+import type { TableColumn } from '@/components/table/data';
+import { useOrganization } from '@/contexts/organization-context';
 import {
   useDeleteProduct,
   useSuspenseProducts,
-} from "@/hooks/product/use-products";
-import { applyCurrencyMask } from "@/utils/functions";
+} from '@/hooks/product/use-products';
+import { applyCurrencyMask } from '@/utils/functions';
 
 interface ProductsListProps {
   isLoading?: boolean;
@@ -44,40 +44,40 @@ export const ProductsList = ({ isLoading }: ProductsListProps) => {
 
   const columns: TableColumn<Product>[] = [
     {
-      key: "code",
-      title: "Código",
-      dataIndex: "code",
+      key: 'code',
+      title: 'Código',
+      dataIndex: 'code',
     },
     {
-      key: "name",
-      title: "Nome do Produto",
-      dataIndex: "name",
+      key: 'name',
+      title: 'Nome do Produto',
+      dataIndex: 'name',
     },
     {
-      key: "category",
-      title: "Categoria",
-      dataIndex: "category",
+      key: 'category',
+      title: 'Categoria',
+      dataIndex: 'category',
     },
     {
-      key: "salePrice",
-      title: "Preço de Venda",
-      dataIndex: "salePrice",
+      key: 'salePrice',
+      title: 'Preço de Venda',
+      dataIndex: 'salePrice',
       render: (_, record) => applyCurrencyMask(record.salePrice),
     },
     {
-      key: "costPrice",
-      title: "Preço de Custo",
-      dataIndex: "costPrice",
+      key: 'costPrice',
+      title: 'Preço de Custo',
+      dataIndex: 'costPrice',
       render: (_, record) => applyCurrencyMask(record.costPrice),
     },
     {
-      key: "stock",
-      title: "Estoque",
-      dataIndex: "stock",
+      key: 'stock',
+      title: 'Estoque',
+      dataIndex: 'stock',
     },
     {
-      key: "actions",
-      title: "",
+      key: 'actions',
+      title: '',
       render: (_, record) => {
         const handleNavigateToProductPage = () => {
           router.push(`/${organizationSlug}/produtos/${record.id}`);
@@ -139,16 +139,16 @@ export const ProductsList = ({ isLoading }: ProductsListProps) => {
       <Modal
         actions={[
           {
-            label: "Cancelar",
+            label: 'Cancelar',
             onClick: handleCloseDeleteModal,
-            variant: "outline",
+            variant: 'outline',
             shouldRender: true,
             disabled: deleteProduct.isPending,
           },
           {
-            label: "Excluir",
+            label: 'Excluir',
             onClick: () => handleConfirmDelete(selectedProductId),
-            variant: "destructive",
+            variant: 'destructive',
             shouldRender: true,
             disabled: deleteProduct.isPending,
             loading: deleteProduct.isPending,

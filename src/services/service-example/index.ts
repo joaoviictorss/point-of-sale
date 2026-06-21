@@ -1,4 +1,4 @@
-import { httpApi } from '@/infra/http/httpApi';
+import { httpApi } from '@/infra/http/http-api';
 import type { ApiErrorResponse, ApiSuccessResponse } from '@/types/http';
 
 export type ExempleResponse = ApiSuccessResponse<{

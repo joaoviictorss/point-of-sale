@@ -1,5 +1,5 @@
-import type { IInputProps } from "./data";
-import { Input as Layout } from "./layout";
+import type { IInputProps } from './data';
+import { Input as Layout } from './layout';
 
 export const Input = (props: IInputProps) => {
   const layoutProps = {

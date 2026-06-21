@@ -2,8 +2,8 @@ import {
   useMutation,
   useQueryClient,
   useSuspenseQuery,
-} from "@tanstack/react-query";
-import { useTRPC } from "@/trpc/client";
+} from '@tanstack/react-query';
+import { useTRPC } from '@/trpc/client';
 
 export const useSuspenseOrganizations = () => {
   const trpc = useTRPC();
@@ -21,7 +21,7 @@ export const useCreateOrganization = () => {
     trpc.organization.create.mutationOptions({
       onSuccess: () => {
         queryClient.invalidateQueries({
-          queryKey: ["organizations"],
+          queryKey: ['organizations'],
         });
       },
     })

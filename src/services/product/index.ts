@@ -1,7 +1,11 @@
 import { z } from "zod";
 import { errorHandler } from "@/lib/error-handler";
 import { prisma } from "@/lib/prisma/client";
-import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
+import {
+  createTRPCRouter,
+  organizationProcedure,
+  protectedProcedure,
+} from "@/trpc/init";
 import {
   deleteProductSchema,
   getAllProductsFromOrganizationSchema,
@@ -10,14 +14,16 @@ import {
 } from "./schemas";
 
 export const productRouter = createTRPCRouter({
-  create: protectedProcedure
+  create: organizationProcedure
     .input(productFormSchema)
-    .mutation(async ({ input }) => {
+    .mutation(async ({ ctx, input }) => {
+      const { slug: organizationSlug } = ctx.organization;
+
       // Verificar se código já existe na organização
       const existingProduct = await prisma.product.findFirst({
         where: {
           code: input.code,
-          organizationSlug: input.organizationSlug,
+          organizationSlug,
         },
         select: { id: true },
       });
@@ -26,7 +32,6 @@ export const productRouter = createTRPCRouter({
         throw errorHandler.conflict("Já existe um produto com este código");
       }
 
-      // Criar produto e conectar mídias existentes
       return await prisma.product.create({
         data: {
           name: input.name,
@@ -39,7 +44,7 @@ export const productRouter = createTRPCRouter({
           stockUnit: input.stockUnit,
           minStock: input.minStock,
           maxStock: input.maxStock,
-          organizationSlug: input.organizationSlug,
+          organizationSlug,
           medias: {
             connect: input.medias.map((id) => ({ id })),
           },
@@ -50,18 +55,22 @@ export const productRouter = createTRPCRouter({
       });
     }),
 
-  getAllFromOrganization: protectedProcedure
+  getAllFromOrganization: organizationProcedure
     .input(getAllProductsFromOrganizationSchema)
-    .query(async ({ input }) => {
+    .query(async ({ ctx, input }) => {
+      const { slug: organizationSlug } = ctx.organization;
       const { page, pageSize, search } = input;
+
       const [items, totalCount] = await Promise.all([
         prisma.product.findMany({
           skip: (page - 1) * pageSize,
           take: pageSize,
           where: {
-            organizationSlug: input.organizationSlug,
-            name: { contains: search, mode: "insensitive" },
-            code: { contains: search, mode: "insensitive" },
+            organizationSlug,
+            OR: [
+              { name: { contains: search, mode: "insensitive" } },
+              { code: { contains: search, mode: "insensitive" } },
+            ],
           },
           orderBy: {
             createdAt: "desc",
@@ -69,9 +78,11 @@ export const productRouter = createTRPCRouter({
         }),
         prisma.product.count({
           where: {
-            organizationSlug: input.organizationSlug,
-            name: { contains: search, mode: "insensitive" },
-            code: { contains: search, mode: "insensitive" },
+            organizationSlug,
+            OR: [
+              { name: { contains: search, mode: "insensitive" } },
+              { code: { contains: search, mode: "insensitive" } },
+            ],
           },
         }),
       ]);
@@ -93,20 +104,59 @@ export const productRouter = createTRPCRouter({
 
   getById: protectedProcedure
     .input(getProductByIdSchema)
-    .query(async ({ input }) => {
-      return await prisma.product.findUnique({
+    .query(async ({ ctx, input }) => {
+      const product = await prisma.product.findUnique({
         where: { id: input.id },
+        include: { medias: true },
       });
+
+      if (!product) {
+        throw errorHandler.notFound("Produto");
+      }
+
+      // Verificar acesso à organização do produto
+      const hasAccess = await prisma.organization.findFirst({
+        where: {
+          slug: product.organizationSlug,
+          OR: [
+            { ownerId: ctx.auth.userId },
+            { members: { some: { userId: ctx.auth.userId } } },
+          ],
+        },
+        select: { id: true },
+      });
+
+      if (!hasAccess) {
+        throw errorHandler.forbidden("Você não tem acesso a este produto");
+      }
+
+      return product;
     }),
 
-  update: protectedProcedure
+  update: organizationProcedure
     .input(
       z.object({
         id: z.string().uuid("ID inválido"),
         ...productFormSchema.shape,
       })
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ ctx, input }) => {
+      const { slug: organizationSlug } = ctx.organization;
+
+      const existingProduct = await prisma.product.findUnique({
+        where: { id: input.id },
+        select: { organizationSlug: true },
+      });
+
+      if (!existingProduct) {
+        throw errorHandler.notFound("Produto");
+      }
+
+      // Verificar se o produto pertence à organização do contexto
+      if (existingProduct.organizationSlug !== organizationSlug) {
+        throw errorHandler.forbidden("Você não tem acesso a este produto");
+      }
+
       return await prisma.product.update({
         where: { id: input.id },
         data: {
@@ -120,9 +170,9 @@ export const productRouter = createTRPCRouter({
           stockUnit: input.stockUnit,
           minStock: input.minStock,
           maxStock: input.maxStock,
-          organizationSlug: input.organizationSlug,
+          organizationSlug,
           medias: {
-            connect: input.medias.map((id) => ({ id })),
+            set: input.medias.map((id) => ({ id })),
           },
         },
         include: {
@@ -131,9 +181,24 @@ export const productRouter = createTRPCRouter({
       });
     }),
 
-  delete: protectedProcedure
+  delete: organizationProcedure
     .input(deleteProductSchema)
-    .mutation(async ({ input }) => {
+    .mutation(async ({ ctx, input }) => {
+      const { slug: organizationSlug } = ctx.organization;
+
+      const existingProduct = await prisma.product.findUnique({
+        where: { id: input.id },
+        select: { organizationSlug: true },
+      });
+
+      if (!existingProduct) {
+        throw errorHandler.notFound("Produto");
+      }
+
+      if (existingProduct.organizationSlug !== organizationSlug) {
+        throw errorHandler.forbidden("Você não tem acesso a este produto");
+      }
+
       return await prisma.product.delete({
         where: { id: input.id },
       });

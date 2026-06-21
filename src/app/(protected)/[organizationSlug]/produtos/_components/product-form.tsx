@@ -1,13 +1,16 @@
 import type { UseFormReturn } from "react-hook-form";
 import { Input, Select } from "@/components";
-import type { productFormSchema } from "@/services/product/schemas";
+import type {
+  ProductFormInput,
+  ProductFormSchema,
+} from "@/services/product/schemas";
 import { productTypeOptions, stockUnitOptions } from "@/utils/constants";
 import { applyCurrencyMask, removeCurrencyMask } from "@/utils/functions";
 
 interface ProductFormProps {
-  form: UseFormReturn<productFormSchema>;
+  form: UseFormReturn<ProductFormInput, unknown, ProductFormSchema>;
   loading: boolean;
-  onSubmit: (values: productFormSchema) => void;
+  onSubmit: (values: ProductFormSchema) => void;
 }
 
 export function ProductForm({ form, loading, onSubmit }: ProductFormProps) {

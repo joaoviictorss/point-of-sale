@@ -2,7 +2,6 @@ import { z } from "zod";
 import { PAGINATION } from "@/utils/constants";
 
 export const productFormSchema = z.object({
-  organizationSlug: z.string().min(1, "Organização é obrigatória"),
   code: z
     .string()
     .min(1, "Código é obrigatório")
@@ -43,7 +42,6 @@ export const productFormSchema = z.object({
 });
 
 export const getAllProductsFromOrganizationSchema = z.object({
-  organizationSlug: z.string().min(1, "Organização é obrigatória"),
   page: z.number().default(PAGINATION.DEFAULT_PAGE),
   pageSize: z
     .number()
@@ -61,12 +59,14 @@ export const deleteProductSchema = z.object({
   id: z.string().uuid("ID inválido"),
 });
 
-export type productFormSchema = z.infer<typeof productFormSchema>;
+export type ProductFormInput = z.input<typeof productFormSchema>;
 
-export type getAllProductsFromOrganizationSchema = z.infer<
+export type ProductFormSchema = z.infer<typeof productFormSchema>;
+
+export type GetAllProductsFromOrganizationSchema = z.infer<
   typeof getAllProductsFromOrganizationSchema
 >;
 
-export type getProductByIdSchema = z.infer<typeof getProductByIdSchema>;
+export type GetProductByIdSchema = z.infer<typeof getProductByIdSchema>;
 
-export type deleteProductSchema = z.infer<typeof deleteProductSchema>;
+export type DeleteProductSchema = z.infer<typeof deleteProductSchema>;

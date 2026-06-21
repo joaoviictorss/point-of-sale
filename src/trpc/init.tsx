@@ -1,9 +1,11 @@
+import { Prisma } from "@prisma/client";
 import { initTRPC, TRPCError } from "@trpc/server";
 import { cache } from "react";
-import { verifySession } from "@/lib/session";
-import { errorHandler, prismaCodeToTRPC } from "@/lib/error-handler";
-import { Prisma } from "@prisma/client";
 import superjson from "superjson";
+import { z } from "zod";
+import { errorHandler, prismaCodeToTRPC } from "@/lib/error-handler";
+import { prisma } from "@/lib/prisma/client";
+import { verifySession } from "@/lib/session";
 
 export const createTRPCContext = cache(async () => {
   /**
@@ -59,3 +61,31 @@ export const protectedProcedure = baseProcedure.use(async ({ ctx, next }) => {
     },
   });
 });
+
+export const organizationProcedure = protectedProcedure
+  .input(z.object({ organizationSlug: z.string().min(1) }))
+  .use(async ({ ctx, input, next }) => {
+    const organization = await prisma.organization.findFirst({
+      where: {
+        slug: input.organizationSlug,
+        OR: [
+          { ownerId: ctx.auth.userId },
+          { members: { some: { userId: ctx.auth.userId } } },
+        ],
+      },
+    });
+
+    if (!organization) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "Você não tem acesso a esta organização",
+      });
+    }
+
+    return next({
+      ctx: {
+        ...ctx,
+        organization,
+      },
+    });
+  });

@@ -7,12 +7,15 @@ import {
   TagIcon,
 } from "@heroicons/react/24/outline";
 import type { UseFormReturn } from "react-hook-form";
-import type { productFormSchema } from "@/services/product/schemas";
+import type {
+  ProductFormInput,
+  ProductFormSchema,
+} from "@/services/product/schemas";
 import { stockUnitOptions } from "@/utils/constants";
 import { applyCurrencyMask, getLabelFromValue } from "@/utils/functions";
 
 interface ProductPreviewProps {
-  form: UseFormReturn<productFormSchema>;
+  form: UseFormReturn<ProductFormInput, unknown, ProductFormSchema>;
 }
 
 export function ProductPreview({ form }: ProductPreviewProps) {

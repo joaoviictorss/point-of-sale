@@ -20,6 +20,11 @@ export const useSuspenseProducts = () => {
   );
 };
 
+export const useSuspenseProductById = (id: string) => {
+  const trpc = useTRPC();
+  return useSuspenseQuery(trpc.product.getById.queryOptions({ id }));
+};
+
 export const useCreateProduct = () => {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
@@ -30,6 +35,25 @@ export const useCreateProduct = () => {
       onSuccess: () => {
         queryClient.invalidateQueries(
           trpc.product.getAllFromOrganization.queryOptions({ organizationSlug })
+        );
+      },
+    })
+  );
+};
+
+export const useUpdateProduct = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+  const { slug: organizationSlug } = useOrganization();
+
+  return useMutation(
+    trpc.product.update.mutationOptions({
+      onSuccess: (data) => {
+        queryClient.invalidateQueries(
+          trpc.product.getAllFromOrganization.queryOptions({ organizationSlug })
+        );
+        queryClient.invalidateQueries(
+          trpc.product.getById.queryOptions({ id: data.id })
         );
       },
     })

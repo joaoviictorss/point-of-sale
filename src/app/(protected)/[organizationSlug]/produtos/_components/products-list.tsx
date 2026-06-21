@@ -30,7 +30,7 @@ export const ProductsList = ({ isLoading }: ProductsListProps) => {
     if (!idToDelete) {
       return;
     }
-    await deleteProduct.mutateAsync({ id: idToDelete });
+    await deleteProduct.mutateAsync({ organizationSlug, id: idToDelete });
   };
 
   const [isOpenDeleteModal, setIsOpenDeleteModal] = useState(false);

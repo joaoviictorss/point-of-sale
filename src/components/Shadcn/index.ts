@@ -1,3 +1,4 @@
+export { Badge, badgeVariants } from './badge';
 export { Button } from './button';
 export { Checkbox } from './checkbox';
 export { Input } from './input';

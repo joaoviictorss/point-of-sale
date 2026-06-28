@@ -75,6 +75,9 @@ export const productRouter = createTRPCRouter({
           orderBy: {
             createdAt: 'desc',
           },
+          include: {
+            medias: { take: 1, select: { url: true, alt: true } },
+          },
         }),
         prisma.product.count({
           where: {

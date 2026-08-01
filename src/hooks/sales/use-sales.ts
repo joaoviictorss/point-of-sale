@@ -1,28 +1,50 @@
-import { useQuery } from '@tanstack/react-query';
+import {
+  useMutation,
+  useQueryClient,
+  useSuspenseQuery,
+} from '@tanstack/react-query';
+import { useOrganization } from '@/contexts/organization-context';
+import { useTRPC } from '@/trpc/client';
+import { useSalesParams } from './use-sales-params';
 
-// TODO: Implementar serviço de vendas
-// import { getSales } from "@/services/sales/get-sales";
+export const useSuspenseSales = () => {
+  const trpc = useTRPC();
+  const { slug: organizationSlug } = useOrganization();
+  const [params] = useSalesParams();
 
-interface UseSalesParams {
-  organizationSlug: string;
-  enabled?: boolean;
-  limit?: number;
-  page?: number;
-}
+  return useSuspenseQuery(
+    trpc.sale.getAllFromOrganization.queryOptions({
+      organizationSlug,
+      ...params,
+    })
+  );
+};
 
-export function useSales({
-  organizationSlug,
-  enabled = true,
-  limit = 10,
-  page = 1,
-}: UseSalesParams) {
-  return useQuery({
-    queryKey: ['sales', organizationSlug, { limit, page }],
-    queryFn: () => {
-      // TODO: Implementar quando o serviço estiver pronto
-      // return getSales(organizationSlug, { limit, page });
-      throw new Error('Serviço de vendas não implementado ainda');
-    },
-    enabled: enabled && !!organizationSlug,
-  });
-}
+export const useSuspenseSaleById = (id: string) => {
+  const trpc = useTRPC();
+  const { slug: organizationSlug } = useOrganization();
+
+  return useSuspenseQuery(
+    trpc.sale.getById.queryOptions({ organizationSlug, id })
+  );
+};
+
+export const useCreateSale = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+  const { slug: organizationSlug } = useOrganization();
+
+  return useMutation(
+    trpc.sale.create.mutationOptions({
+      onSuccess: () => {
+        queryClient.invalidateQueries(
+          trpc.sale.getAllFromOrganization.queryOptions({ organizationSlug })
+        );
+        // a venda baixa estoque, então a listagem de produtos também muda
+        queryClient.invalidateQueries(
+          trpc.product.getAllFromOrganization.queryOptions({ organizationSlug })
+        );
+      },
+    })
+  );
+};

@@ -26,41 +26,38 @@ export const Header = () => {
   });
 
   return (
-    <header className="sticky top-0 z-10 flex w-full items-center justify-between border-border border-b bg-white p-4">
-      <div className="flex items-center gap-4">
-        <span className="font-semibold text-lg">
-          {currentHeaderTitle ? currentHeaderTitle.headerTitle : 'VNS - Admin'}
-        </span>
-      </div>
-      <div className="flex h-[60px] items-center justify-center p-4">
-        <DropdownMenu>
-          <DropdownMenuTrigger>
-            <div
-              className={`relative flex size-10 items-center justify-center rounded-full border-[#00000020] transition-all hover:scale-105 hover:cursor-pointer ${user?.imageUrl ? 'border-2' : 'border-0 bg-primary'}`}
-            >
-              {user?.imageUrl ? (
-                <Image
-                  alt="Imagem do usuário"
-                  className="size-4 rounded-full"
-                  fill
-                  src={user.imageUrl}
-                />
-              ) : (
-                <UsersIcon className="size-6" color="white" />
-              )}
-            </div>
-          </DropdownMenuTrigger>
+    <header className="sticky top-0 z-10 flex h-[72px] w-full items-center justify-between border-border border-b bg-white px-6">
+      <span className="font-semibold text-2xl text-foreground tracking-tight">
+        {currentHeaderTitle ? currentHeaderTitle.headerTitle : 'VNS - Admin'}
+      </span>
 
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem>
-              <span>Gerenciar conta</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => logout()}>
-              <span>Sair</span>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
+      <DropdownMenu>
+        <DropdownMenuTrigger>
+          <div
+            className={`relative flex size-10 items-center justify-center rounded-full border-[#00000020] transition-all hover:scale-105 hover:cursor-pointer ${user?.imageUrl ? 'border-2' : 'border-0 bg-primary'}`}
+          >
+            {user?.imageUrl ? (
+              <Image
+                alt="Imagem do usuário"
+                className="size-4 rounded-full"
+                fill
+                src={user.imageUrl}
+              />
+            ) : (
+              <UsersIcon className="size-6" color="white" />
+            )}
+          </div>
+        </DropdownMenuTrigger>
+
+        <DropdownMenuContent align="end">
+          <DropdownMenuItem>
+            <span>Gerenciar conta</span>
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => logout()}>
+            <span>Sair</span>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </header>
   );
 };

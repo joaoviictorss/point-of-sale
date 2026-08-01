@@ -10,11 +10,11 @@ export const Logo = ({ variant = 'default', ...rest }: ILogoProps) => {
     <div className="flex items-center gap-5" {...rest}>
       <Image
         alt="Logo"
-        height={60}
+        height={variant === 'small' ? 40 : 60}
         priority
         quality={100}
         src="/logo.png"
-        width={60}
+        width={variant === 'small' ? 40 : 60}
       />
 
       <div className={'flex flex-col gap-0.5 transition-opacity'}>

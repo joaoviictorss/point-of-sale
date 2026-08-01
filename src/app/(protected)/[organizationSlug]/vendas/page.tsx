@@ -1,9 +1,34 @@
-const Home = () => {
+import type { SearchParams } from 'nuqs/server';
+import { Suspense } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
+import { salesParamsLoader } from '@/hooks/sales/use-sales-params';
+import { prefetchSalesFromOrganization } from '@/services/sales/prefetch';
+import { HydrateClient } from '@/trpc/server';
+import { SalesContainer } from './_components/sales-container';
+import { SalesList } from './_components/sales-list';
+
+type VendasPageProps = {
+  searchParams: Promise<SearchParams>;
+  params: Promise<{ organizationSlug: string }>;
+};
+
+const VendasPage = async ({ searchParams, params }: VendasPageProps) => {
+  const { organizationSlug } = await params;
+  const queryParams = await salesParamsLoader(searchParams);
+
+  prefetchSalesFromOrganization({ ...queryParams, organizationSlug });
+
   return (
-    <main>
-      <h1>Home protegida</h1>
-    </main>
+    <SalesContainer>
+      <HydrateClient>
+        <ErrorBoundary fallback={<span>Error</span>}>
+          <Suspense fallback={<SalesList isLoading={true} />}>
+            <SalesList />
+          </Suspense>
+        </ErrorBoundary>
+      </HydrateClient>
+    </SalesContainer>
   );
 };
 
-export default Home;
+export default VendasPage;

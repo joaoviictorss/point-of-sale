@@ -25,6 +25,7 @@ model User {
   userOAuthAccount userOAuthAccount[]
   orders           Order[]
   uploadedMedia    Media[]
+  stockMovements   StockMovement[]
 
   memberOf           Member[]
   ownedOrganizations Organization[]
@@ -46,10 +47,12 @@ model Organization {
   owner   User   @relation(fields: [ownerId], references: [id])
   ownerId String
 
-  members  Member[]
-  products Product[]
-  orders   Order[]
-  Media    Media[]
+  members        Member[]
+  products       Product[]
+  orders         Order[]
+  customers      Customer[]
+  stockMovements StockMovement[]
+  Media          Media[]
 }
 
 model Member {
@@ -102,6 +105,11 @@ enum OrderStatus {
   CANCELLED
 }
 
+enum DiscountType {
+  FIXED // valor em centavos
+  PERCENT // percentual (ex: 1000 = 10,00%)
+}
+
 enum PaymentMethod {
   CASH
   CREDIT_CARD
@@ -110,25 +118,72 @@ enum PaymentMethod {
   BANK_TRANSFER
 }
 
-model Order {
-  id            String        @id @default(uuid())
-  totalAmount   Int
-  discount      Int           @default(0)
-  tax           Int           @default(0)
-  finalAmount   Int
-  status        OrderStatus   @default(PENDING)
-  paymentMethod PaymentMethod
-  notes         String?
+enum PaymentStatus {
+  PENDING
+  PAID
+  REFUSED
+  REFUNDED
+}
 
+enum InvoiceType {
+  NFE // nota fiscal eletrônica
+  NFCE // consumidor
+}
+
+enum InvoiceStatus {
+  DRAFT
+  ISSUED
+  CANCELLED
+  ERROR
+}
+
+enum StockMovementType {
+  SALE // saída por venda
+  RETURN // entrada por devolução / cancelamento
+  ADJUSTMENT // ajuste manual
+  PURCHASE // entrada por compra / reposição
+}
+
+model Order {
+  id          String      @id @default(uuid())
+  orderNumber Int // sequencial legível, por organização
+  status      OrderStatus @default(PENDING)
+
+  // valores (tudo em centavos)
+  itemsSubtotal Int // soma dos itens já com desconto de item
+  discount      Int          @default(0)
+  discountType  DiscountType @default(FIXED)
+  tax           Int          @default(0)
+  finalAmount   Int // subtotal - desconto + imposto
+
+  notes String? // observação (≠ nota fiscal)
+
+  // relações
   employeeId String
-  employee   User        @relation(fields: [employeeId], references: [id], onDelete: Cascade)
-  items      OrderItem[]
+  employee   User   @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  customerId String?
+  customer   Customer? @relation(fields: [customerId], references: [id])
 
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
+  items          OrderItem[]
+  payments       Payment[]
+  invoice        Invoice?
+  stockMovements StockMovement[]
+
+  // cancelamento
+  canceledAt   DateTime?
+  cancelReason String?
+  canceledById String?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@unique([organizationId, orderNumber])
+  @@index([organizationId, status])
+  @@index([customerId])
 }
 
 model OrderItem {
@@ -136,18 +191,100 @@ model OrderItem {
   quantity   Float
   unitPrice  Int
   discount   Int    @default(0)
-  totalPrice Int
+  totalPrice Int // quantity * unitPrice - discount
+
+  // snapshot do produto no momento da venda
+  productId   String
+  productName String
+  productCode String
 
   orderId String
   order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
-
-  productId String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([orderId])
   @@index([productId])
+}
+
+model Payment {
+  id           String        @id @default(uuid())
+  method       PaymentMethod
+  amount       Int
+  installments Int           @default(1) // parcelas
+  status       PaymentStatus @default(PENDING)
+  paidAt       DateTime?
+
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([orderId])
+}
+
+model Invoice {
+  id        String        @id @default(uuid())
+  type      InvoiceType
+  status    InvoiceStatus @default(DRAFT)
+  number    Int?
+  series    Int?
+  accessKey String?       @unique // chave de acesso (44 dígitos)
+  issuedAt  DateTime?
+  xmlUrl    String?
+  danfeUrl  String?
+
+  orderId String @unique
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Customer {
+  id       String  @id @default(uuid())
+  name     String
+  email    String?
+  phone    String?
+  document String? // CPF/CNPJ
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  orders         Order[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([organizationId])
+}
+
+model StockMovement {
+  id          String            @id @default(uuid())
+  type        StockMovementType
+  quantity    Float // positivo = entrada, negativo = saída
+  stockBefore Float
+  stockAfter  Float
+  reason      String?
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  orderId String?
+  order   Order?  @relation(fields: [orderId], references: [id], onDelete: SetNull)
+
+  createdById String?
+  createdBy   User?   @relation(fields: [createdById], references: [id], onDelete: SetNull)
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@index([productId])
+  @@index([orderId])
+  @@index([organizationId])
 }
 
 enum ProductType {
@@ -180,7 +317,8 @@ model Product {
   organizationSlug String
   organization     Organization @relation(fields: [organizationSlug], references: [slug], onDelete: Cascade)
 
-  medias Media[]
+  medias         Media[]
+  stockMovements StockMovement[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

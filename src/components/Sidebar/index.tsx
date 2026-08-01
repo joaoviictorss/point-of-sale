@@ -35,13 +35,12 @@ export function Sidebar() {
           <SidebarGroupContent className="w-full items-center justify-center">
             <SidebarHeader
               className={
-                'flex items-start justify-center border-border border-b p-4'
+                'flex h-[72px] items-start justify-center border-border border-b px-4'
               }
-              // onClick={() => onOpenChange(!isOpen)}
             >
               <Logo variant="small" />
             </SidebarHeader>
-            <SidebarMenu className={'p-4'}>
+            <SidebarMenu className={'gap-1 p-3'}>
               {navigationItems.map((item) => (
                 <SidebarMenuItem key={item.url}>
                   <SidebarMenuButton

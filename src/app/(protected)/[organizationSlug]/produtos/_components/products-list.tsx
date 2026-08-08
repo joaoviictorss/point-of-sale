@@ -1,44 +1,26 @@
 'use client';
 
 import {
-  EllipsisVerticalIcon,
   EyeIcon,
   PencilIcon,
   PhotoIcon,
   TrashIcon,
 } from '@heroicons/react/24/outline';
-import {
-  createColumnHelper,
-  flexRender,
-  getCoreRowModel,
-  useReactTable,
-} from '@tanstack/react-table';
+import { createColumnHelper } from '@tanstack/react-table';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { Modal } from '@/components';
-import { Badge, Button } from '@/components/shadcn';
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/shadcn/dropdown-menu';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/shadcn/table';
+  DataTable,
+  RowActions,
+} from '@/components/entity-components/data-table';
 import { useOrganization } from '@/contexts/organization-context';
 import {
   useDeleteProduct,
   useSuspenseProducts,
 } from '@/hooks/product/use-products';
-import { cn } from '@/lib/utils';
+import { useProductsParams } from '@/hooks/product/use-products-params';
 import { applyCurrencyMask } from '@/utils/functions';
 
 type ProductItem = ReturnType<
@@ -53,41 +35,35 @@ const UNIT_LABEL: Record<string, string> = {
   MILLILITERS: 'ml',
 };
 
-type StockVariant = 'destructive-soft' | 'warning' | 'info' | 'success';
-
-function getStockState(p: ProductItem): {
-  label: string;
-  variant: StockVariant;
-  dot: string;
-} {
+function getStockColor(p: ProductItem): string {
   const min = p.minStock ?? 0;
   const max = p.maxStock ?? 0;
   if (p.stock <= min) {
-    return { label: 'Crítico', variant: 'destructive-soft', dot: 'bg-red-500' };
+    return 'text-destructive';
   }
   if (min > 0 && p.stock <= min * 2) {
-    return { label: 'Baixo', variant: 'warning', dot: 'bg-amber-500' };
+    return 'text-warning';
   }
   if (max > 0 && p.stock >= max) {
-    return { label: 'No limite', variant: 'info', dot: 'bg-blue-500' };
+    return 'text-primary';
   }
-  return { label: 'Em dia', variant: 'success', dot: 'bg-green-500' };
+  return 'text-foreground';
 }
 
 function ProductThumb({ product }: { product: ProductItem }) {
   const media = product.medias?.[0];
   return (
-    <div className="size-10 shrink-0">
+    <div className="size-8 shrink-0">
       {media?.url ? (
         <Image
           alt={media.alt ?? product.name}
-          className="size-10 rounded-lg object-cover"
-          height={40}
+          className="size-8 rounded-md object-cover"
+          height={32}
           src={media.url}
-          width={40}
+          width={32}
         />
       ) : (
-        <span className="inline-flex size-10 items-center justify-center rounded-lg border border-border border-dashed bg-muted text-muted-foreground">
+        <span className="inline-flex size-8 items-center justify-center rounded-md border border-border border-dashed bg-muted text-muted-foreground">
           <PhotoIcon className="size-4" />
         </span>
       )}
@@ -95,19 +71,15 @@ function ProductThumb({ product }: { product: ProductItem }) {
   );
 }
 
-function StockBadge({ product }: { product: ProductItem }) {
-  const state = getStockState(product);
+function StockCell({ product }: { product: ProductItem }) {
   const unit = UNIT_LABEL[product.stockUnit] ?? product.stockUnit;
   return (
-    <Badge variant={state.variant}>
-      <span className={cn('size-1.5 rounded-full', state.dot)} />
-      {product.stock} {unit} · {state.label}
-    </Badge>
+    <span className={getStockColor(product)}>
+      {product.stock} {unit}
+    </span>
   );
 }
 
-const EDGE_COLUMNS = new Set(['image', 'product', 'actions']);
-const SKELETON_KEYS = ['sk-0', 'sk-1', 'sk-2', 'sk-3', 'sk-4'];
 const columnHelper = createColumnHelper<ProductItem>();
 
 interface ProductsListProps {
@@ -117,6 +89,7 @@ interface ProductsListProps {
 export const ProductsList = ({ isLoading }: ProductsListProps) => {
   const { slug: organizationSlug } = useOrganization();
   const products = useSuspenseProducts();
+  const [, setParams] = useProductsParams();
   const router = useRouter();
   const deleteProduct = useDeleteProduct();
 
@@ -124,7 +97,6 @@ export const ProductsList = ({ isLoading }: ProductsListProps) => {
   const [selectedProduct, setSelectedProduct] = useState<ProductItem | null>(
     null
   );
-  const dropdownOpenRef = useRef(false);
 
   const handleConfirmDelete = async () => {
     if (!selectedProduct) {
@@ -138,228 +110,108 @@ export const ProductsList = ({ isLoading }: ProductsListProps) => {
   };
 
   const columns = [
-    columnHelper.display({
-      id: 'image',
-      size: 56,
-      header: () => null,
-      cell: ({ row }) => <ProductThumb product={row.original} />,
+    columnHelper.accessor('code', {
+      header: 'Código',
+      cell: ({ getValue }) => (
+        <span className="font-medium">#{getValue()}</span>
+      ),
     }),
 
-    columnHelper.display({
-      id: 'product',
+    columnHelper.accessor('name', {
       header: 'Produto',
+      meta: { expand: true },
       cell: ({ row }) => (
-        <div className="flex flex-col gap-0.5">
-          <span className="font-semibold text-foreground text-sm leading-snug">
-            {row.original.name}
-          </span>
-          <span className="font-mono text-muted-foreground text-xs">
-            #{row.original.code}
-          </span>
-        </div>
+        <span className="inline-flex items-center gap-2.5">
+          <ProductThumb product={row.original} />
+          {row.original.name}
+        </span>
       ),
     }),
 
     columnHelper.accessor('category', {
       header: 'Categoria',
-      cell: ({ getValue }) => {
-        const cat = getValue();
-        return cat ? (
-          <Badge variant="secondary">{cat}</Badge>
-        ) : (
-          <span className="text-muted-foreground text-xs">—</span>
-        );
-      },
+      cell: ({ getValue }) =>
+        getValue() ?? <span className="text-muted-foreground">—</span>,
+    }),
+
+    columnHelper.accessor('costPrice', {
+      header: 'Custo',
+      meta: { align: 'right', skeletonClassName: 'ml-auto w-16' },
+      cell: ({ getValue }) => (
+        <span className="text-muted-foreground tabular-nums">
+          {applyCurrencyMask(getValue())}
+        </span>
+      ),
     }),
 
     columnHelper.accessor('salePrice', {
       header: 'Preço de venda',
+      meta: { align: 'right', skeletonClassName: 'ml-auto w-20' },
       cell: ({ getValue }) => (
-        <span className="font-semibold text-foreground text-sm tabular-nums">
-          {applyCurrencyMask(getValue())}
-        </span>
+        <span className="tabular-nums">{applyCurrencyMask(getValue())}</span>
       ),
     }),
 
     columnHelper.display({
       id: 'stock',
       header: 'Estoque',
-      cell: ({ row }) => <StockBadge product={row.original} />,
+      meta: { align: 'right', skeletonClassName: 'ml-auto w-16' },
+      cell: ({ row }) => <StockCell product={row.original} />,
     }),
 
     columnHelper.display({
       id: 'actions',
-      size: 56,
       header: () => null,
+      meta: { align: 'right', skeletonClassName: 'ml-auto w-8' },
       cell: ({ row }) => {
         const product = row.original;
         const goToProduct = () =>
           router.push(`/${organizationSlug}/produtos/${product.id}`);
 
         return (
-          <div className="flex justify-end">
-            <DropdownMenu
-              onOpenChange={(open) => {
-                dropdownOpenRef.current = open;
-                if (!open) {
-                  setTimeout(() => { dropdownOpenRef.current = false; }, 0);
-                }
-              }}
-            >
-              <DropdownMenuTrigger asChild>
-                <Button
-                  className="size-8 text-muted-foreground hover:text-foreground"
-                  size="icon"
-                  type="button"
-                  variant="ghost"
-                >
-                  <EllipsisVerticalIcon className="size-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-44">
-                <DropdownMenuItem onClick={goToProduct}>
-                  <EyeIcon className="size-4" />
-                  Ver detalhes
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={goToProduct}>
-                  <PencilIcon className="size-4" />
-                  Editar produto
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  onClick={(event) => {
-                    event.preventDefault();
-                    setSelectedProduct(product);
-                    setIsOpenDeleteModal(true);
-                  }}
-                  variant="destructive"
-                >
-                  <TrashIcon className="size-4" />
-                  Excluir
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
+          <RowActions
+            actions={[
+              { label: 'Ver detalhes', icon: EyeIcon, onClick: goToProduct },
+              {
+                label: 'Editar produto',
+                icon: PencilIcon,
+                onClick: goToProduct,
+              },
+              {
+                label: 'Excluir produto',
+                icon: TrashIcon,
+                onClick: () => {
+                  setSelectedProduct(product);
+                  setIsOpenDeleteModal(true);
+                },
+                variant: 'destructive',
+              },
+            ]}
+          />
         );
       },
     }),
   ];
 
   const items = products.data.items ?? [];
-
-  const table = useReactTable({
-    data: items,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-  });
-
   const isFetching = products.isFetching || isLoading;
-
-  const skeletonRow = (key: string) => (
-    <TableRow className="hover:bg-transparent" key={key}>
-      <TableCell className="border-border border-b px-4 py-3">
-        <div className="size-10 animate-pulse rounded-lg bg-secondary" />
-      </TableCell>
-      <TableCell className="border-border border-b px-4 py-3">
-        <div className="flex flex-col gap-1.5">
-          <div className="h-3.5 w-36 animate-pulse rounded bg-secondary" />
-          <div className="h-3 w-16 animate-pulse rounded bg-secondary" />
-        </div>
-      </TableCell>
-      <TableCell className="border-border border-b px-4 py-3 text-center">
-        <div className="mx-auto h-5 w-20 animate-pulse rounded-full bg-secondary" />
-      </TableCell>
-      <TableCell className="border-border border-b px-4 py-3 text-center">
-        <div className="mx-auto h-3.5 w-20 animate-pulse rounded bg-secondary" />
-      </TableCell>
-      <TableCell className="border-border border-b px-4 py-3 text-center">
-        <div className="mx-auto h-6 w-32 animate-pulse rounded-full bg-secondary" />
-      </TableCell>
-      <TableCell className="border-border border-b px-4 py-3">
-        <div className="ml-auto size-8 animate-pulse rounded-md bg-secondary" />
-      </TableCell>
-    </TableRow>
-  );
-
-  const renderBody = () => {
-    if (isFetching) {
-      return SKELETON_KEYS.map(skeletonRow);
-    }
-    if (table.getRowModel().rows.length === 0) {
-      return (
-        <TableRow className="hover:bg-transparent">
-          <TableCell
-            className="py-10 text-center text-muted-foreground text-sm"
-            colSpan={columns.length}
-          >
-            Nenhum produto encontrado.
-          </TableCell>
-        </TableRow>
-      );
-    }
-    return table.getRowModel().rows.map((row) => (
-      <TableRow
-        className="cursor-pointer border-border border-b transition-colors hover:bg-muted/50"
-        key={row.id}
-        onClick={() => {
-          if (!dropdownOpenRef.current) {
-            router.push(`/${organizationSlug}/produtos/${row.original.id}`);
-          }
-        }}
-      >
-        {row.getVisibleCells().map((cell) => (
-          <TableCell
-            className={cn(
-              'px-4 py-3 align-middle',
-              !EDGE_COLUMNS.has(cell.column.id) && 'text-center'
-            )}
-            key={cell.id}
-          >
-            {flexRender(cell.column.columnDef.cell, cell.getContext())}
-          </TableCell>
-        ))}
-      </TableRow>
-    ));
-  };
 
   return (
     <>
-      <div className="flex flex-col gap-4">
-        {/* table */}
-        <div className="overflow-hidden rounded-lg border border-border bg-card shadow-xs">
-          <Table>
-            <TableHeader>
-              {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow className="hover:bg-transparent" key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => (
-                    <TableHead
-                      className={cn(
-                        'whitespace-nowrap border-border border-b px-4 py-3 font-medium text-muted-foreground text-sm',
-                        !EDGE_COLUMNS.has(header.id) && 'text-center'
-                      )}
-                      key={header.id}
-                      style={{
-                        width:
-                          header.getSize() !== 150
-                            ? header.getSize()
-                            : undefined,
-                      }}
-                    >
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                    </TableHead>
-                  ))}
-                </TableRow>
-              ))}
-            </TableHeader>
-            <TableBody>{renderBody()}</TableBody>
-          </Table>
-        </div>
-      </div>
+      <DataTable
+        columns={columns}
+        data={items}
+        emptyMessage="Nenhum produto encontrado."
+        isFetching={isFetching}
+        onRowClick={(product) =>
+          router.push(`/${organizationSlug}/produtos/${product.id}`)
+        }
+        pagination={{
+          page: products.data.page,
+          totalPages: products.data.totalPages,
+          onPageChange: (page) => setParams({ page }),
+        }}
+      />
 
       <Modal
         actions={[

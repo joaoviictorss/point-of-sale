@@ -1,7 +1,15 @@
 'use client';
 
 import { CalendarIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
-import { format } from 'date-fns';
+import {
+  endOfMonth,
+  format,
+  isSameDay,
+  startOfDay,
+  startOfMonth,
+  subDays,
+  subMonths,
+} from 'date-fns';
 import { useState } from 'react';
 import type { DateRange } from 'react-day-picker';
 import { Button } from '@/components/shadcn';
@@ -14,11 +22,120 @@ import {
 import { useSalesParams } from '@/hooks/sales/use-sales-params';
 import { cn } from '@/lib/utils';
 import { PAGINATION } from '@/utils/constants';
-import {
-  formatPeriodLabel,
-  PERIOD_PRESETS,
-  resolveActivePreset,
-} from './period-presets';
+
+type PeriodPreset = {
+  id: string;
+  label: string;
+  getRange: () => { from: Date; to: Date };
+};
+
+const PERIOD_PRESETS: PeriodPreset[] = [
+  {
+    id: 'today',
+    label: 'Hoje',
+    getRange: () => {
+      const today = startOfDay(new Date());
+      return { from: today, to: today };
+    },
+  },
+  {
+    id: 'yesterday',
+    label: 'Ontem',
+    getRange: () => {
+      const yesterday = startOfDay(subDays(new Date(), 1));
+      return { from: yesterday, to: yesterday };
+    },
+  },
+  {
+    id: 'last7',
+    label: 'Últimos 7 dias',
+    getRange: () => {
+      const today = startOfDay(new Date());
+      return { from: startOfDay(subDays(today, 6)), to: today };
+    },
+  },
+  {
+    id: 'last30',
+    label: 'Últimos 30 dias',
+    getRange: () => {
+      const today = startOfDay(new Date());
+      return { from: startOfDay(subDays(today, 29)), to: today };
+    },
+  },
+  {
+    id: 'thisMonth',
+    label: 'Este mês',
+    getRange: () => {
+      const now = new Date();
+      return { from: startOfMonth(now), to: startOfDay(now) };
+    },
+  },
+  {
+    id: 'lastMonth',
+    label: 'Mês passado',
+    getRange: () => {
+      const previous = subMonths(new Date(), 1);
+      return {
+        from: startOfMonth(previous),
+        to: startOfDay(endOfMonth(previous)),
+      };
+    },
+  },
+];
+
+const presetMatchesRange = (
+  presetId: string,
+  from: Date | null,
+  to: Date | null
+): boolean => {
+  if (!(from && to)) {
+    return false;
+  }
+
+  const preset = PERIOD_PRESETS.find((item) => item.id === presetId);
+  if (!preset) {
+    return false;
+  }
+
+  const range = preset.getRange();
+  return isSameDay(range.from, from) && isSameDay(range.to, to);
+};
+
+const resolveActivePreset = (
+  from: Date | null,
+  to: Date | null
+): string | null => {
+  if (!(from && to)) {
+    return null;
+  }
+
+  const matched = PERIOD_PRESETS.find((preset) =>
+    presetMatchesRange(preset.id, from, to)
+  );
+
+  return matched?.id ?? 'custom';
+};
+
+const formatPeriodLabel = (
+  from: Date | null,
+  to: Date | null,
+  presetId?: string | null
+): string => {
+  if (!(from || to)) {
+    return 'Todo o período';
+  }
+
+  const activeId = presetId ?? resolveActivePreset(from, to);
+  if (activeId && activeId !== 'custom') {
+    return PERIOD_PRESETS.find((preset) => preset.id === activeId)?.label ?? '';
+  }
+
+  if (from && to) {
+    return `${format(from, 'dd/MM/yyyy')} – ${format(to, 'dd/MM/yyyy')}`;
+  }
+
+  return format((from ?? to) as Date, 'dd/MM/yyyy');
+};
 
 const rangeFromParams = (
   from: Date | null,
@@ -32,16 +149,24 @@ export const PeriodFilter = () => {
     rangeFromParams(params.from, params.to)
   );
 
-  const hasFilter = Boolean(params.from || params.to);
-  const activePreset = resolveActivePreset(
-    range?.from ?? null,
-    range?.to ?? null
+  const [appliedPreset, setAppliedPreset] = useState<string | null>(() =>
+    resolveActivePreset(params.from, params.to)
   );
+  const [pendingPreset, setPendingPreset] = useState<string | null>(
+    appliedPreset
+  );
+
+  const hasFilter = Boolean(params.from || params.to);
+
+  const activePreset =
+    appliedPreset && presetMatchesRange(appliedPreset, params.from, params.to)
+      ? appliedPreset
+      : resolveActivePreset(params.from, params.to);
 
   const handleOpenChange = (next: boolean) => {
     if (next) {
-      // sincroniza o range pendente com o que está aplicado na URL
       setRange(rangeFromParams(params.from, params.to));
+      setPendingPreset(activePreset);
     }
     setOpen(next);
   };
@@ -50,7 +175,13 @@ export const PeriodFilter = () => {
     const preset = PERIOD_PRESETS.find((item) => item.id === presetId);
     if (preset) {
       setRange(preset.getRange());
+      setPendingPreset(presetId);
     }
+  };
+
+  const handleSelectRange = (next: DateRange | undefined) => {
+    setRange(next);
+    setPendingPreset(resolveActivePreset(next?.from ?? null, next?.to ?? null));
   };
 
   const handleApply = () => {
@@ -59,11 +190,14 @@ export const PeriodFilter = () => {
       to: range?.to ?? range?.from ?? null,
       page: PAGINATION.DEFAULT_PAGE,
     });
+    setAppliedPreset(pendingPreset);
     setOpen(false);
   };
 
   const handleClear = () => {
     setRange(undefined);
+    setPendingPreset(null);
+    setAppliedPreset(null);
     setParams({ from: null, to: null, page: PAGINATION.DEFAULT_PAGE });
     setOpen(false);
   };
@@ -72,21 +206,17 @@ export const PeriodFilter = () => {
     <Popover onOpenChange={handleOpenChange} open={open}>
       <PopoverTrigger asChild>
         <Button
-          className={cn(
-            'gap-2 font-medium text-foreground',
-            hasFilter && 'border-primary text-primary'
-          )}
+          className={cn('gap-3', hasFilter && 'border-primary text-primary')}
           type="button"
           variant="outline"
         >
           <CalendarIcon className="size-4" />
-          {formatPeriodLabel(params.from, params.to)}
-          <ChevronDownIcon className="size-4 text-muted-foreground" />
+          {formatPeriodLabel(params.from, params.to, activePreset)}
+          <ChevronDownIcon className="size-4 opacity-60" />
         </Button>
       </PopoverTrigger>
       <PopoverContent align="start" className="w-auto p-0">
         <div className="flex flex-col sm:flex-row">
-          {/* presets */}
           <div className="flex min-w-[172px] flex-col gap-0.5 border-border border-b p-2 sm:border-r sm:border-b-0">
             <button
               className="rounded-md px-3 py-2 text-left text-muted-foreground text-sm transition-colors hover:bg-accent"
@@ -99,7 +229,7 @@ export const PeriodFilter = () => {
               <button
                 className={cn(
                   'rounded-md px-3 py-2 text-left text-sm transition-colors hover:bg-accent',
-                  activePreset === preset.id
+                  pendingPreset === preset.id
                     ? 'bg-blue-50 font-semibold text-primary hover:bg-blue-50'
                     : 'text-foreground'
                 )}
@@ -111,9 +241,12 @@ export const PeriodFilter = () => {
               </button>
             ))}
           </div>
-          {/* calendário */}
           <div className="flex flex-col">
-            <Calendar mode="range" onSelect={setRange} selected={range} />
+            <Calendar
+              mode="range"
+              onSelect={handleSelectRange}
+              selected={range}
+            />
             <div className="flex items-center gap-2 border-border border-t px-3 py-2.5">
               <div className="flex flex-1 flex-col gap-1">
                 <span className="text-muted-foreground text-xs">De</span>

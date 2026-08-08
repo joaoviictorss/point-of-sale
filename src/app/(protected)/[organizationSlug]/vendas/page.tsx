@@ -6,6 +6,7 @@ import { prefetchSalesFromOrganization } from '@/services/sales/prefetch';
 import { HydrateClient } from '@/trpc/server';
 import { SalesContainer } from './_components/sales-container';
 import { SalesList } from './_components/sales-list';
+import { SalesLoadingState } from './_components/sales-loading-state';
 
 type VendasPageProps = {
   searchParams: Promise<SearchParams>;
@@ -22,7 +23,7 @@ const VendasPage = async ({ searchParams, params }: VendasPageProps) => {
     <SalesContainer>
       <HydrateClient>
         <ErrorBoundary fallback={<span>Error</span>}>
-          <Suspense fallback={<SalesList isLoading={true} />}>
+          <Suspense fallback={<SalesLoadingState />}>
             <SalesList />
           </Suspense>
         </ErrorBoundary>

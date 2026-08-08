@@ -29,7 +29,7 @@ export default async function Layout({
     <UserProvider initialUser={user}>
       <OrganizationProvider slug={organizationSlug}>
         <SidebarWrapper>
-          <main className="h-full min-h-svh w-full">
+          <main className="flex h-full min-h-svh w-full flex-col">
             <Header />
             {children}
           </main>

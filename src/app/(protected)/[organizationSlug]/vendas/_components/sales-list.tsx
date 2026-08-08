@@ -28,7 +28,6 @@ import { useSuspenseSales } from '@/hooks/sales/use-sales';
 import { useSalesParams } from '@/hooks/sales/use-sales-params';
 import { cn } from '@/lib/utils';
 import { applyCurrencyMask } from '@/utils/functions';
-import { PeriodChips } from './period-chips';
 import { SalesEmptyState } from './sales-empty-state';
 
 type SaleItem = ReturnType<typeof useSuspenseSales>['data']['items'][number];
@@ -100,11 +99,7 @@ function PaymentCell({ payments }: { payments: SaleItem['payments'] }) {
   );
 }
 
-interface SalesListProps {
-  isLoading?: boolean;
-}
-
-export const SalesList = ({ isLoading }: SalesListProps) => {
+export const SalesList = () => {
   const sales = useSuspenseSales();
   const [params, setParams] = useSalesParams();
 
@@ -190,7 +185,6 @@ export const SalesList = ({ isLoading }: SalesListProps) => {
   ];
 
   const items = sales.data.items ?? [];
-  const summary = sales.data.summary;
 
   const table = useReactTable({
     data: items,
@@ -198,15 +192,12 @@ export const SalesList = ({ isLoading }: SalesListProps) => {
     getCoreRowModel: getCoreRowModel(),
   });
 
-  const isFetching = sales.isFetching || isLoading;
+  const isFetching = sales.isFetching;
   const hasSearch = params.search.trim().length > 0;
   const hasPeriod = Boolean(params.from || params.to);
   const hasActiveFilter = hasSearch || hasPeriod;
 
-  // Sem nenhuma venda e sem nenhum filtro ativo → onboarding da primeira venda.
-  if (!isFetching && items.length === 0 && !hasActiveFilter) {
-    return <SalesEmptyState />;
-  }
+  const showOnboarding = !isFetching && items.length === 0 && !hasActiveFilter;
 
   const emptyMessage = hasPeriod
     ? 'Nenhuma venda neste período.'
@@ -262,69 +253,58 @@ export const SalesList = ({ isLoading }: SalesListProps) => {
   };
 
   return (
-    <div className="flex flex-col gap-4">
-      {/* chips de atalho de período */}
-      <PeriodChips />
-
-      {/* régua de estatísticas do período */}
-      <div className="flex divide-x divide-border rounded-xl border border-border bg-card shadow-xs">
-        <div className="flex flex-1 flex-col gap-1 px-5 py-4">
-          <span className="text-muted-foreground text-sm">
-            Vendas no período
-          </span>
-          <span className="font-semibold text-2xl text-foreground tracking-tight">
-            {summary?.salesCount ?? 0}
-          </span>
-        </div>
-        <div className="flex flex-1 flex-col gap-1 px-5 py-4">
-          <span className="text-muted-foreground text-sm">Faturamento</span>
-          <span className="font-mono font-semibold text-2xl text-foreground tracking-tight">
-            {applyCurrencyMask(summary?.totalRevenue ?? 0)}
-          </span>
-        </div>
-        <div className="flex flex-1 flex-col gap-1 px-5 py-4">
-          <span className="text-muted-foreground text-sm">Ticket médio</span>
-          <span className="font-mono font-semibold text-2xl text-foreground tracking-tight">
-            {applyCurrencyMask(summary?.averageTicket ?? 0)}
-          </span>
-        </div>
+    <div className={cn('flex flex-col gap-4', showOnboarding && 'flex-1')}>
+      <div
+        className={cn(
+          'overflow-hidden',
+          showOnboarding
+            ? 'flex flex-1 flex-col justify-center'
+            : 'rounded-lg border border-border bg-card shadow-xs'
+        )}
+      >
+        {showOnboarding ? (
+          <SalesEmptyState />
+        ) : (
+          <Table>
+            <TableHeader>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow className="hover:bg-transparent" key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => (
+                    <TableHead
+                      className={cn(
+                        'whitespace-nowrap border-border border-b px-4 py-3 font-medium text-muted-foreground text-sm',
+                        RIGHT_COLUMNS.has(header.id) && 'text-right'
+                      )}
+                      key={header.id}
+                      style={{
+                        width:
+                          header.getSize() !== 150
+                            ? header.getSize()
+                            : undefined,
+                      }}
+                    >
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                    </TableHead>
+                  ))}
+                </TableRow>
+              ))}
+            </TableHeader>
+            <TableBody>{renderBody()}</TableBody>
+          </Table>
+        )}
       </div>
 
-      {/* tabela */}
-      <div className="overflow-hidden rounded-lg border border-border bg-card shadow-xs">
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow className="hover:bg-transparent" key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <TableHead
-                    className={cn(
-                      'whitespace-nowrap border-border border-b px-4 py-3 font-medium text-muted-foreground text-sm',
-                      RIGHT_COLUMNS.has(header.id) && 'text-right'
-                    )}
-                    key={header.id}
-                    style={{
-                      width:
-                        header.getSize() !== 150 ? header.getSize() : undefined,
-                    }}
-                  >
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                  </TableHead>
-                ))}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>{renderBody()}</TableBody>
-        </Table>
-      </div>
-
-      {/* paginação */}
-      <div className="flex items-center justify-end gap-1.5">
+      <div
+        className={cn(
+          'flex items-center justify-end gap-1.5',
+          showOnboarding && 'hidden'
+        )}
+      >
         <Button
           className="gap-1.5 text-muted-foreground"
           disabled={!sales.data.hasPreviousPage || isFetching}

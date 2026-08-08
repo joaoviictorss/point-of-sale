@@ -22,7 +22,7 @@ export const Header = () => {
     const fullPath = organizationId
       ? `/${organizationId}${item.url}`
       : item.url;
-    return pathname === fullPath;
+    return pathname === fullPath || pathname.startsWith(`${fullPath}/`);
   });
 
   return (

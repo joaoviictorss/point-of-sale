@@ -1,8 +1,8 @@
 'use client';
 
-import { XMarkIcon } from '@heroicons/react/24/outline';
+import { PlusIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import Image from 'next/image';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import type { UseFormReturn } from 'react-hook-form';
 import { FileInput } from '@/components';
 import type { FileWithPreview } from '@/components/file-input';
@@ -27,17 +27,20 @@ interface MediaUploadSectionProps {
   form: UseFormReturn<ProductFormInput, unknown, ProductFormSchema>;
   disabled?: boolean;
   initialMedias?: UploadedMedia[];
+  onCoverChange?: (url: string | null) => void;
 }
 
 export function MediaUploadSection({
   form,
   disabled,
   initialMedias = [],
+  onCoverChange,
 }: MediaUploadSectionProps) {
   const { upload } = useUploadMedia();
   const [uploadedMedias, setUploadedMedias] =
     useState<UploadedMedia[]>(initialMedias);
   const [pendingFiles, setPendingFiles] = useState<PendingFile[]>([]);
+  const openFileDialogRef = useRef<(() => void) | null>(null);
 
   const syncFormMedias = useCallback(
     (medias: UploadedMedia[]) => {
@@ -48,6 +51,10 @@ export function MediaUploadSection({
     },
     [form]
   );
+
+  useEffect(() => {
+    onCoverChange?.(uploadedMedias[0]?.url ?? null);
+  }, [uploadedMedias, onCoverChange]);
 
   const handleFilesChange = useCallback(
     async (files: FileWithPreview[]) => {
@@ -124,79 +131,88 @@ export function MediaUploadSection({
     });
   }, []);
 
-  const hasMedia = uploadedMedias.length > 0 || pendingFiles.length > 0;
+  const isUploading = pendingFiles.some((p) => p.status === 'uploading');
 
   return (
-    <div className="space-y-4">
-      {hasMedia && (
-        <div className="grid grid-cols-3 gap-3 sm:grid-cols-4">
-          {uploadedMedias.map((media) => (
-            <div
-              className="group relative aspect-square overflow-hidden rounded-lg border border-border"
-              key={media.id}
+    <div className="flex flex-col gap-5">
+      <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 lg:grid-cols-6">
+        {uploadedMedias.map((media) => (
+          <div
+            className="group relative aspect-square overflow-hidden rounded-lg border border-border bg-muted"
+            key={media.id}
+          >
+            <Image
+              alt="Mídia do produto"
+              className="h-full w-full object-cover"
+              height={120}
+              src={media.url}
+              width={120}
+            />
+            <button
+              className="absolute top-1 right-1 rounded-full bg-black/60 p-0.5 opacity-0 transition-opacity group-hover:opacity-100"
+              disabled={disabled}
+              onClick={() => handleRemoveUploaded(media.id)}
+              type="button"
             >
+              <XMarkIcon className="h-3.5 w-3.5 text-white" />
+            </button>
+          </div>
+        ))}
+
+        {pendingFiles.map((pending) => (
+          <div
+            className="relative aspect-square overflow-hidden rounded-lg border border-border bg-muted"
+            key={pending.localId}
+          >
+            {pending.preview && (
               <Image
-                alt="Mídia do produto"
+                alt="Upload em andamento"
                 className="h-full w-full object-cover"
                 height={120}
-                src={media.url}
+                src={pending.preview}
                 width={120}
               />
-              <button
-                className="absolute top-1 right-1 rounded-full bg-black/60 p-0.5 opacity-0 transition-opacity group-hover:opacity-100"
-                disabled={disabled}
-                onClick={() => handleRemoveUploaded(media.id)}
-                type="button"
-              >
-                <XMarkIcon className="h-3.5 w-3.5 text-white" />
-              </button>
-            </div>
-          ))}
-
-          {pendingFiles.map((pending) => (
-            <div
-              className="relative aspect-square overflow-hidden rounded-lg border border-border"
-              key={pending.localId}
-            >
-              {pending.preview && (
-                <Image
-                  alt="Upload em andamento"
-                  className="h-full w-full object-cover"
-                  height={120}
-                  src={pending.preview}
-                  width={120}
-                />
+            )}
+            <div className="absolute inset-0 flex items-center justify-center bg-black/40">
+              {pending.status === 'uploading' ? (
+                <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
+              ) : (
+                <div className="flex flex-col items-center gap-1 px-1">
+                  <span className="text-center text-white text-xs">Erro</span>
+                  <Button
+                    className="h-6 px-2 text-xs"
+                    onClick={() => handleRemovePending(pending.localId)}
+                    size="sm"
+                    type="button"
+                    variant="destructive"
+                  >
+                    Remover
+                  </Button>
+                </div>
               )}
-              <div className="absolute inset-0 flex items-center justify-center bg-black/40">
-                {pending.status === 'uploading' ? (
-                  <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                ) : (
-                  <div className="flex flex-col items-center gap-1 px-1">
-                    <span className="text-center text-white text-xs">Erro</span>
-                    <Button
-                      className="h-6 px-2 text-xs"
-                      onClick={() => handleRemovePending(pending.localId)}
-                      size="sm"
-                      type="button"
-                      variant="destructive"
-                    >
-                      Remover
-                    </Button>
-                  </div>
-                )}
-              </div>
             </div>
-          ))}
-        </div>
-      )}
+          </div>
+        ))}
+
+        <button
+          className="flex aspect-square cursor-pointer flex-col items-center justify-center gap-1 rounded-lg border border-gray-300 border-dashed bg-gray-50 text-primary transition-colors hover:border-primary disabled:cursor-not-allowed disabled:opacity-50"
+          disabled={disabled || isUploading}
+          onClick={() => openFileDialogRef.current?.()}
+          type="button"
+        >
+          <PlusIcon className="size-[18px]" />
+          <span className="text-[11px] text-text-muted">Adicionar</span>
+        </button>
+      </div>
 
       <FileInput
         accept={{ 'image/*': ['.png', '.jpg', '.jpeg', '.webp'] }}
-        disabled={
-          disabled || pendingFiles.some((p) => p.status === 'uploading')
-        }
+        disabled={disabled || isUploading}
         files={[]}
+        hint="PNG, JPG ou WEBP até 5 MB cada"
+        openRef={openFileDialogRef}
         setFiles={(files) => handleFilesChange(files)}
+        variant="compact"
       />
     </div>
   );

@@ -36,11 +36,14 @@ export function EditProductPage({ productId }: EditProductPageProps) {
   const { slug: organizationSlug } = useOrganization();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
-  // Suspense query - sempre executa pois este componente só renderiza quando tem productId
   const { data: product } = useSuspenseProductById(productId);
 
   const updateProduct = useUpdateProduct();
   const deleteProduct = useDeleteProduct();
+
+  const [coverUrl, setCoverUrl] = useState<string | null>(
+    product.medias?.[0]?.url ?? null
+  );
 
   const form = useForm<ProductFormInput, unknown, ProductFormSchema>({
     resolver: zodResolver(productFormSchema),
@@ -96,68 +99,69 @@ export function EditProductPage({ productId }: EditProductPageProps) {
   const isLoading = updateProduct.isPending || deleteProduct.isPending;
 
   return (
-    <div className="h-full w-full">
-      <div className="flex flex-1 flex-col">
-        <div className="space-y-8 overflow-y-auto px-4 py-6">
-          {/* Header */}
-          <div className="flex flex-shrink-0 items-center justify-between bg-white">
-            <div className="flex items-center gap-4">
-              <Button
-                disabled={isLoading}
-                onClick={handleCancel}
-                size="icon"
-                variant="outline"
-              >
-                <ArrowLeftIcon />
-              </Button>
-              <h3 className="font-bold text-2xl text-slate-900">
-                Editar Produto
-              </h3>
-            </div>
+    <div className="flex flex-1 flex-col gap-5 bg-gray-50 p-6">
+      <div className="flex items-center justify-between gap-6">
+        <div className="flex items-center gap-3">
+          <Button
+            aria-label="Voltar"
+            disabled={isLoading}
+            onClick={handleCancel}
+            size="icon"
+            variant="outline"
+          >
+            <ArrowLeftIcon />
+          </Button>
 
-            <div className="flex items-center gap-4">
-              <Button
-                disabled={isLoading}
-                onClick={() => setIsDeleteModalOpen(true)}
-                variant="destructive"
-              >
-                <TrashIcon className="size-4" />
-                Excluir
-              </Button>
-              <Button disabled={isLoading} form="product-form" type="submit">
-                <CheckIcon className="size-4" />
-                {updateProduct.isPending ? 'Salvando...' : 'Salvar Alterações'}
-              </Button>
-            </div>
-          </div>
+          <h1 className="font-semibold text-2xl text-foreground tracking-tight">
+            Editar produto
+          </h1>
+        </div>
 
-          {/* Content */}
-          <div className="flex h-full w-full flex-1 gap-4">
-            <Card className="flex-1 p-0">
-              <CardContent className="p-0">
-                <ProductForm
-                  form={form}
-                  initialMedias={
-                    product.medias?.map((m) => ({ id: m.id, url: m.url })) ?? []
-                  }
-                  loading={isLoading}
-                  onSubmit={onSubmit}
-                />
-              </CardContent>
-            </Card>
+        <div className="flex items-center gap-3">
+          <Button
+            disabled={isLoading}
+            onClick={() => setIsDeleteModalOpen(true)}
+            type="button"
+            variant="destructive"
+          >
+            <TrashIcon className="size-4" />
+            Excluir
+          </Button>
 
-            <Card className="h-fit">
-              <CardContent>
-                <div className="hidden w-80 lg:block">
-                  <ProductPreview form={form} />
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+          <Button
+            disabled={isLoading}
+            onClick={handleCancel}
+            type="button"
+            variant="outline"
+          >
+            Cancelar
+          </Button>
+
+          <Button disabled={isLoading} form="product-form" type="submit">
+            <CheckIcon className="size-4" />
+            {updateProduct.isPending ? 'Salvando...' : 'Salvar produto'}
+          </Button>
         </div>
       </div>
 
-      {/* Modal de Delete */}
+      <div className="grid grid-cols-1 items-start gap-5 xl:grid-cols-[minmax(0,1fr)_320px]">
+        <ProductForm
+          form={form}
+          initialMedias={
+            product.medias?.map((m) => ({ id: m.id, url: m.url })) ?? []
+          }
+          loading={isLoading}
+          onCoverChange={setCoverUrl}
+          onSubmit={onSubmit}
+        />
+
+        <Card className="sticky top-[88px] hidden xl:block">
+          <CardContent>
+            <ProductPreview coverUrl={coverUrl} form={form} />
+          </CardContent>
+        </Card>
+      </div>
+
       <Modal
         actions={[
           {
@@ -179,7 +183,7 @@ export function EditProductPage({ productId }: EditProductPageProps) {
         description="Tem certeza que deseja excluir este produto? Esta ação não pode ser desfeita."
         onOpenChange={setIsDeleteModalOpen}
         open={isDeleteModalOpen}
-        title="Excluir Produto"
+        title="Excluir produto"
       />
     </div>
   );

@@ -70,7 +70,9 @@ export async function POST(request: Request) {
     });
 
     return NextResponse.json(media, { status: 201 });
-  } catch {
+  } catch (error) {
+    // biome-ignore lint/suspicious/noConsole: erro de upload precisa aparecer no log do servidor
+    console.error('[media/upload]', error);
     return createErrorResponse('Erro ao fazer upload do arquivo', 500);
   }
 }

@@ -35,7 +35,7 @@ const Page = async ({ params }: PageProps) => {
   // Criar produto - não precisa de prefetch nem Suspense
   if (isNewProduct) {
     return (
-      <main className="flex-1">
+      <main className="flex flex-1 flex-col">
         <CreateProductPage />
       </main>
     );
@@ -48,7 +48,7 @@ const Page = async ({ params }: PageProps) => {
     <HydrateClient>
       <ErrorBoundary fallback={<ProductPageError />}>
         <Suspense fallback={<ProductPageSkeleton />}>
-          <main className="flex-1">
+          <main className="flex flex-1 flex-col">
             <EditProductPage productId={productId} />
           </main>
         </Suspense>

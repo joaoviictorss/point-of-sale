@@ -6,7 +6,7 @@ import { Input } from '@/components/input';
 import { Button } from '@/components/shadcn/button';
 import { cn } from '@/lib/utils';
 import { formatFileSize, getFileIcon } from '@/utils/constants';
-import type { FileWithPreview } from '../data';
+import type { FileInputVariant, FileWithPreview } from '../data';
 
 interface FileInputLayoutProps {
   files: FileWithPreview[];
@@ -18,9 +18,64 @@ interface FileInputLayoutProps {
   disabled?: boolean;
   className?: string;
   error?: string;
+  variant?: FileInputVariant;
+  hint?: string;
   onRemoveFile: (fileId: string) => void;
   onClear: () => void;
 }
+
+type CompactLayoutProps = Pick<
+  FileInputLayoutProps,
+  'isDragActive' | 'disabled' | 'className' | 'error' | 'hint'
+> & {
+  rootProps: DropzoneRootProps;
+  inputProps: DropzoneInputProps;
+};
+
+const CompactLayout = ({
+  rootProps,
+  inputProps,
+  isDragActive,
+  disabled,
+  className,
+  error,
+  hint,
+}: CompactLayoutProps) => (
+  <div className={cn('flex flex-col', className)}>
+    <input className="hidden" {...inputProps} />
+
+    <button
+      {...rootProps}
+      className={cn(
+        'flex cursor-pointer items-center gap-3 rounded-[10px] border border-dashed bg-gray-50 p-4 text-left transition-colors',
+        isDragActive
+          ? 'border-primary bg-primary/5'
+          : 'border-gray-300 hover:border-primary',
+        disabled && 'cursor-not-allowed opacity-50',
+        error && 'border-destructive'
+      )}
+      disabled={disabled}
+      type="button"
+    >
+      <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+        <ArrowUpTrayIcon className="size-[18px]" />
+      </span>
+
+      <span className="flex flex-col gap-0.5">
+        <span className="font-medium text-foreground text-sm">
+          {isDragActive
+            ? 'Solte as imagens aqui'
+            : 'Arraste imagens ou clique para selecionar'}
+        </span>
+        <span className="text-text-muted text-xs">
+          {hint ?? 'PNG, JPG ou WEBP'}
+        </span>
+      </span>
+    </button>
+
+    {error && <p className="mt-2 text-destructive text-sm">{error}</p>}
+  </div>
+);
 
 export const FileInputLayout = ({
   files,
@@ -30,11 +85,27 @@ export const FileInputLayout = ({
   disabled = false,
   className,
   error,
+  variant = 'default',
+  hint,
   onRemoveFile,
   onClear,
 }: FileInputLayoutProps) => {
   const rootProps = getRootProps();
   const inputProps = getInputProps();
+
+  if (variant === 'compact') {
+    return (
+      <CompactLayout
+        className={className}
+        disabled={disabled}
+        error={error}
+        hint={hint}
+        inputProps={inputProps}
+        isDragActive={isDragActive}
+        rootProps={rootProps}
+      />
+    );
+  }
 
   return (
     <div className={cn('flex flex-col', className)}>

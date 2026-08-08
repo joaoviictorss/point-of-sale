@@ -3,6 +3,7 @@
 import { ArrowLeftIcon, CheckIcon } from '@heroicons/react/24/outline';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { Button } from '@/components/shadcn';
@@ -35,6 +36,7 @@ export function CreateProductPage() {
   const router = useRouter();
   const { slug: organizationSlug } = useOrganization();
   const createProduct = useCreateProduct();
+  const [coverUrl, setCoverUrl] = useState<string | null>(null);
 
   const form = useForm<ProductFormInput, unknown, ProductFormSchema>({
     resolver: zodResolver(productFormSchema),
@@ -61,51 +63,58 @@ export function CreateProductPage() {
   };
 
   return (
-    <div className="h-full w-full">
-      <div className="flex flex-1 flex-col">
-        <div className="space-y-8 overflow-y-auto px-4 py-6">
-          {/* Header */}
-          <div className="flex flex-shrink-0 items-center justify-between bg-white">
-            <div className="flex items-center gap-4">
-              <Button onClick={handleCancel} size="icon" variant="outline">
-                <ArrowLeftIcon />
-              </Button>
-              <h3 className="font-bold text-2xl text-slate-900">
-                Novo Produto
-              </h3>
-            </div>
+    <div className="flex flex-1 flex-col gap-5 bg-gray-50 p-6">
+      <div className="flex items-center justify-between gap-6">
+        <div className="flex items-center gap-3">
+          <Button
+            aria-label="Voltar"
+            disabled={createProduct.isPending}
+            onClick={handleCancel}
+            size="icon"
+            variant="outline"
+          >
+            <ArrowLeftIcon />
+          </Button>
 
-            <Button
-              disabled={createProduct.isPending}
-              form="product-form"
-              type="submit"
-            >
-              <CheckIcon className="size-4" />
-              {createProduct.isPending ? 'Criando...' : 'Criar Produto'}
-            </Button>
-          </div>
-
-          {/* Content */}
-          <div className="flex h-full w-full flex-1 gap-4">
-            <Card className="flex-1 p-0">
-              <CardContent className="p-0">
-                <ProductForm
-                  form={form}
-                  loading={createProduct.isPending}
-                  onSubmit={onSubmit}
-                />
-              </CardContent>
-            </Card>
-
-            <Card className="h-fit">
-              <CardContent>
-                <div className="hidden w-80 lg:block">
-                  <ProductPreview form={form} />
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+          <h1 className="font-semibold text-2xl text-foreground tracking-tight">
+            Novo produto
+          </h1>
         </div>
+
+        <div className="flex items-center gap-3">
+          <Button
+            disabled={createProduct.isPending}
+            onClick={handleCancel}
+            type="button"
+            variant="outline"
+          >
+            Cancelar
+          </Button>
+
+          <Button
+            disabled={createProduct.isPending}
+            form="product-form"
+            type="submit"
+          >
+            <CheckIcon className="size-4" />
+            {createProduct.isPending ? 'Salvando...' : 'Salvar produto'}
+          </Button>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 items-start gap-5 xl:grid-cols-[minmax(0,1fr)_320px]">
+        <ProductForm
+          form={form}
+          loading={createProduct.isPending}
+          onCoverChange={setCoverUrl}
+          onSubmit={onSubmit}
+        />
+
+        <Card className="sticky top-[88px] hidden xl:block">
+          <CardContent>
+            <ProductPreview coverUrl={coverUrl} form={form} />
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

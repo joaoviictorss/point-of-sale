@@ -11,6 +11,9 @@ export const FileInput = ({
   disabled = false,
   className,
   error,
+  variant = 'default',
+  openRef,
+  hint,
   accept = {
     'image/*': ['.png', '.jpg', '.jpeg'],
     'video/*': ['.mp4', '.mov', '.avi'],
@@ -18,7 +21,7 @@ export const FileInput = ({
     'application/pdf': ['.pdf'],
   },
 }: FileInputProps) => {
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+  const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
     accept,
     disabled,
     onDrop: (droppedFiles) => {
@@ -62,6 +65,18 @@ export const FileInput = ({
     };
   }, [files]);
 
+  useEffect(() => {
+    if (!openRef) {
+      return;
+    }
+
+    openRef.current = open;
+
+    return () => {
+      openRef.current = null;
+    };
+  }, [open, openRef]);
+
   return (
     <FileInputLayout
       className={className}
@@ -70,9 +85,11 @@ export const FileInput = ({
       files={files}
       getInputProps={getInputProps}
       getRootProps={getRootProps}
+      hint={hint}
       isDragActive={isDragActive}
       onClear={handleClear}
       onRemoveFile={handleRemoveFile}
+      variant={variant}
     />
   );
 };

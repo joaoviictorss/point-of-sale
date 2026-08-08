@@ -1,4 +1,3 @@
-/** biome-ignore-all lint/suspicious/noConsole: Logs for debug */
 import { z } from 'zod';
 
 const envSchema = z.object({
@@ -17,7 +16,13 @@ const envSchema = z.object({
 const parsed = envSchema.safeParse(process.env);
 
 if (!parsed.success) {
-  console.error('Variáveis de ambiente inválidas ou ausentes:');
+  const issues = parsed.error.issues
+    .map((issue) => `  - ${issue.path.join('.')}: ${issue.message}`)
+    .join('\n');
+
+  throw new Error(
+    `Variáveis de ambiente inválidas ou ausentes:\n${issues}\n\nConfira o arquivo .env.`
+  );
 }
 
 export const env = parsed.data;

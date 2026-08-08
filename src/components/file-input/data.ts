@@ -1,3 +1,4 @@
+import type { RefObject } from 'react';
 import type { FileWithPath } from 'react-dropzone';
 
 export interface FileWithPreview {
@@ -5,6 +6,8 @@ export interface FileWithPreview {
   file: FileWithPath;
   preview?: string;
 }
+
+export type FileInputVariant = 'default' | 'compact';
 
 export interface FileInputProps {
   files: FileWithPreview[];
@@ -15,4 +18,7 @@ export interface FileInputProps {
   accept?: {
     [key: string]: string[];
   };
+  variant?: FileInputVariant;
+  openRef?: RefObject<(() => void) | null>;
+  hint?: string;
 }

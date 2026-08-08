@@ -23,17 +23,17 @@ type RowActionsProps = {
 
 export const RowActions = ({ actions }: RowActionsProps) => {
   return (
-    <div className="flex items-center justify-end gap-1">
+    <div className="flex items-center justify-end gap-0.5">
       {actions.map((action) => (
         <Tooltip key={action.label}>
           <TooltipTrigger asChild>
             <Button
               aria-label={action.label}
               className={cn(
-                'size-8 text-muted-foreground',
+                'size-8 text-text-muted transition-colors',
                 action.variant === 'destructive'
-                  ? 'hover:text-destructive'
-                  : 'hover:text-foreground'
+                  ? 'hover:bg-destructive/10 hover:text-destructive'
+                  : 'hover:bg-muted hover:text-foreground'
               )}
               disabled={action.disabled ?? !action.onClick}
               onClick={(event) => {

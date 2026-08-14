@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 export const httpApi = axios.create({
-  baseURL: process.env.VERCEL_URL,
+  baseURL: '/api',
   timeout: 10_000,
   headers: {
     'Content-Type': 'application/json',

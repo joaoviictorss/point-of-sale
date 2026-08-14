@@ -53,9 +53,11 @@ export const ResetPasswordModal = ({
       await requestPasswordReset(data.email);
 
       setModalState('success');
-    } catch {
+    } catch (error) {
       toast.error(
-        'Pedido de redefinição de senha já foi enviado recentemente. Aguarde e tente novamente mais tarde.'
+        error instanceof Error
+          ? error.message
+          : 'Não foi possível enviar o pedido de redefinição. Tente novamente mais tarde.'
       );
     } finally {
       setIsSubmitting(false);

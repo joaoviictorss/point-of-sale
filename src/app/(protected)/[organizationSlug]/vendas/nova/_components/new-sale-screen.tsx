@@ -5,8 +5,10 @@ import { toast } from 'sonner';
 import { useOrganization } from '@/contexts/organization-context';
 import { useUser } from '@/contexts/user-context';
 import { useCart } from '@/hooks/sales/use-cart';
+import { useLastSellerId } from '@/hooks/sales/use-last-seller';
 import { useSaleCatalog } from '@/hooks/sales/use-sale-catalog';
 import { useCreateSale } from '@/hooks/sales/use-sales';
+import { useActiveSellers } from '@/hooks/seller/use-sellers';
 import { removeCurrencyMask } from '@/utils/functions';
 import { CartPanel, type CustomerDraft } from './cart-panel';
 import {
@@ -24,15 +26,37 @@ export function NewSaleScreen() {
   const cart = useCart();
   const catalog = useSaleCatalog();
   const createSale = useCreateSale();
+  const activeSellers = useActiveSellers();
+  const [lastSellerId, setLastSellerId] = useLastSellerId(organizationSlug);
 
   const [discountInput, setDiscountInput] = useState('');
   const [customer, setCustomer] = useState<CustomerDraft>(EMPTY_CUSTOMER);
   const [notes, setNotes] = useState('');
   const [checkoutOpen, setCheckoutOpen] = useState(false);
+  const [sellerId, setSellerId] = useState<string | null>(null);
 
   const searchInputRef = useRef<HTMLInputElement>(null);
 
-  const sellerName = user?.name || user?.email || 'Vendedor';
+  const sellers = activeSellers.data ?? [];
+
+  useEffect(() => {
+    if (sellerId || !lastSellerId) {
+      return;
+    }
+    if (sellers.some((seller) => seller.id === lastSellerId)) {
+      setSellerId(lastSellerId);
+    }
+  }, [sellerId, lastSellerId, sellers]);
+
+  const handleSelectSeller = (id: string) => {
+    setSellerId(id);
+    setLastSellerId(id);
+  };
+
+  const sellerFallbackName = user?.name || user?.email || 'Vendedor';
+  const sellerName =
+    sellers.find((seller) => seller.id === sellerId)?.name ??
+    sellerFallbackName;
 
   const rawDiscount = Number.parseInt(
     removeCurrencyMask(discountInput) || '0',
@@ -101,6 +125,7 @@ export function NewSaleScreen() {
         discount: discountValue,
         discountType: 'FIXED',
         tax: 0,
+        sellerId: sellerId ?? undefined,
         customer: trimmedName
           ? {
               name: trimmedName,
@@ -149,7 +174,11 @@ export function NewSaleScreen() {
         onCustomerChange={setCustomer}
         onDiscountInputChange={setDiscountInput}
         onNotesChange={setNotes}
-        sellerName={sellerName}
+        onSelectSeller={handleSelectSeller}
+        selectedSellerId={sellerId}
+        sellerFallbackName={sellerFallbackName}
+        sellers={sellers}
+        sellersLoading={activeSellers.isLoading}
         total={total}
       />
 

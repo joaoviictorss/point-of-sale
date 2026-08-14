@@ -14,8 +14,7 @@ import { Badge, Button, Input } from '@/components/shadcn';
 import type { UseCartReturn } from '@/hooks/sales/use-cart';
 import { applyCurrencyMask, removeCurrencyMask } from '@/utils/functions';
 import { QuantityStepper } from './quantity-stepper';
-
-const NAME_SPLIT = /\s+/;
+import { type SellerOption, SellerSelect } from './seller-select';
 
 export interface CustomerDraft {
   name: string;
@@ -25,7 +24,11 @@ export interface CustomerDraft {
 
 interface CartPanelProps {
   cart: UseCartReturn;
-  sellerName: string;
+  sellers: SellerOption[];
+  sellersLoading: boolean;
+  selectedSellerId: string | null;
+  onSelectSeller: (sellerId: string) => void;
+  sellerFallbackName: string;
   discountInput: string;
   onDiscountInputChange: (value: string) => void;
   discountValue: number;
@@ -37,19 +40,13 @@ interface CartPanelProps {
   onCheckout: () => void;
 }
 
-function initials(name: string) {
-  return name
-    .trim()
-    .split(NAME_SPLIT)
-    .slice(0, 2)
-    .map((part) => part[0])
-    .join('')
-    .toUpperCase();
-}
-
 export function CartPanel({
   cart,
-  sellerName,
+  sellers,
+  sellersLoading,
+  selectedSellerId,
+  onSelectSeller,
+  sellerFallbackName,
   discountInput,
   onDiscountInputChange,
   discountValue,
@@ -64,7 +61,6 @@ export function CartPanel({
 
   return (
     <aside className="flex w-[360px] shrink-0 flex-col border-border border-l bg-card">
-      {/* header + vendedor */}
       <div className="flex flex-col gap-2.5 border-border border-b p-4">
         <div className="flex items-center justify-between">
           <span className="inline-flex items-center gap-2 font-semibold text-base text-foreground">
@@ -76,17 +72,13 @@ export function CartPanel({
             </Badge>
           ) : null}
         </div>
-        <div className="flex items-center gap-2.5 rounded-md border border-border bg-card px-2.5 py-2">
-          <span className="inline-flex size-8 items-center justify-center rounded-full bg-primary font-semibold text-primary-foreground text-xs">
-            {initials(sellerName)}
-          </span>
-          <span className="flex flex-col">
-            <span className="font-semibold text-foreground text-sm">
-              {sellerName}
-            </span>
-            <span className="text-muted-foreground text-xs">Vendedor</span>
-          </span>
-        </div>
+        <SellerSelect
+          fallbackName={sellerFallbackName}
+          isLoading={sellersLoading}
+          onSelect={onSelectSeller}
+          selectedSellerId={selectedSellerId}
+          sellers={sellers}
+        />
       </div>
 
       {/* items */}

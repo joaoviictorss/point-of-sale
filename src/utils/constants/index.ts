@@ -3,6 +3,7 @@ import {
   CircleStackIcon,
   ClipboardDocumentListIcon,
   ShoppingBagIcon,
+  UserGroupIcon,
 } from '@heroicons/react/24/outline';
 import {
   FileAudio,
@@ -30,6 +31,12 @@ export const navigationItems = [
     url: '/estoque',
     headerTitle: 'Seu estoque',
     icon: CircleStackIcon,
+  },
+  {
+    title: 'Vendedores',
+    url: '/vendedores',
+    headerTitle: 'Seus vendedores',
+    icon: UserGroupIcon,
   },
   {
     title: 'Relatórios',

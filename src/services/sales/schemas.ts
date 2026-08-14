@@ -12,7 +12,6 @@ const paymentMethodEnum = z.enum([
 export const saleItemSchema = z.object({
   productId: z.string().uuid('Produto inválido'),
   quantity: z.number().positive('Quantidade deve ser maior que 0'),
-  // desconto do item, em centavos
   discount: z
     .number()
     .int('Desconto deve ser informado em centavos')
@@ -22,7 +21,6 @@ export const saleItemSchema = z.object({
 
 export const salePaymentSchema = z.object({
   method: paymentMethodEnum,
-  // valor pago nesta forma de pagamento, em centavos
   amount: z
     .number()
     .int('Valor deve ser informado em centavos')
@@ -40,21 +38,19 @@ export const createSaleSchema = z
     payments: z
       .array(salePaymentSchema)
       .min(1, 'Informe ao menos uma forma de pagamento'),
-    // desconto da venda inteira (centavos se FIXED; ex.: 1000 = 10,00% se PERCENT)
     discount: z
       .number()
       .int('Desconto deve ser informado em centavos')
       .min(0, 'Desconto deve ser maior ou igual a 0')
       .default(0),
     discountType: z.enum(['FIXED', 'PERCENT']).default('FIXED'),
-    // imposto da venda, em centavos
     tax: z
       .number()
       .int('Imposto deve ser informado em centavos')
       .min(0, 'Imposto deve ser maior ou igual a 0')
       .default(0),
     customerId: z.string().uuid('Cliente inválido').optional(),
-    // cliente capturado inline durante a venda (criado se não houver customerId)
+    sellerId: z.string().uuid('Vendedor inválido').optional(),
     customer: z
       .object({
         name: z
@@ -88,7 +84,6 @@ export const getAllSalesFromOrganizationSchema = z.object({
     .max(PAGINATION.MAX_PAGE_SIZE)
     .default(PAGINATION.DEFAULT_PAGE_SIZE),
   search: z.string().default(''),
-  // filtro de período por data da venda (createdAt); superjson entrega Date
   from: z.date().nullish(),
   to: z.date().nullish(),
 });

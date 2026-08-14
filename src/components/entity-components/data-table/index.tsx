@@ -24,6 +24,7 @@ declare module '@tanstack/react-table' {
     align?: 'left' | 'center' | 'right';
     skeletonClassName?: string;
     expand?: boolean;
+    className?: string;
   }
 }
 
@@ -83,6 +84,7 @@ export function DataTable<TData>({
             <TableCell
               className={cn(
                 'px-4 py-4',
+                column.columnDef.meta?.className,
                 edgePadding(index, leafColumns.length)
               )}
               key={`${rowKey}-${column.id}`}
@@ -127,6 +129,7 @@ export function DataTable<TData>({
               'px-4 py-4 align-middle text-foreground text-sm',
               alignOf(cell.column.columnDef.meta?.align),
               cell.column.columnDef.meta?.expand && 'w-full',
+              cell.column.columnDef.meta?.className,
               edgePadding(index, cells.length)
             )}
             key={cell.id}
@@ -150,6 +153,7 @@ export function DataTable<TData>({
                     'h-12 whitespace-nowrap px-4 font-medium text-sm text-text-muted',
                     alignOf(header.column.columnDef.meta?.align),
                     header.column.columnDef.meta?.expand && 'w-full',
+                    header.column.columnDef.meta?.className,
                     edgePadding(index, headers.length)
                   )}
                   key={header.id}

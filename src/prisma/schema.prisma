@@ -51,6 +51,7 @@ model Organization {
   products       Product[]
   orders         Order[]
   customers      Customer[]
+  sellers        Seller[]
   stockMovements StockMovement[]
   Media          Media[]
 }
@@ -165,6 +166,10 @@ model Order {
   customerId String?
   customer   Customer? @relation(fields: [customerId], references: [id])
 
+  sellerId   String?
+  seller     Seller? @relation(fields: [sellerId], references: [id], onDelete: SetNull)
+  sellerName String?
+
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
@@ -184,6 +189,7 @@ model Order {
   @@unique([organizationId, orderNumber])
   @@index([organizationId, status])
   @@index([customerId])
+  @@index([organizationId, sellerId])
 }
 
 model OrderItem {
@@ -258,6 +264,23 @@ model Customer {
   updatedAt DateTime @updatedAt
 
   @@index([organizationId])
+}
+
+model Seller {
+  id     String  @id @default(uuid())
+  name   String
+  code   String?
+  active Boolean @default(true)
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  orders         Order[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([organizationId, code])
+  @@index([organizationId, active])
 }
 
 model StockMovement {

@@ -113,7 +113,11 @@ export const SalesList = () => {
     columnHelper.display({
       id: 'seller',
       header: 'Vendedor',
-      cell: ({ row }) => row.original.employee?.name ?? '—',
+      cell: ({ row }) =>
+        row.original.sellerName ??
+        row.original.seller?.name ??
+        row.original.employee?.name ??
+        '—',
     }),
 
     columnHelper.display({
@@ -154,8 +158,6 @@ export const SalesList = () => {
       id: 'actions',
       header: () => null,
       meta: { align: 'right', skeletonClassName: 'ml-auto w-8' },
-      // TODO: ligar às ações de detalhe/edição/cancelamento da venda quando
-      // essas telas existirem.
       cell: () => (
         <RowActions
           actions={[

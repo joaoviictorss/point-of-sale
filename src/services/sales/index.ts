@@ -102,6 +102,19 @@ export const salesRouter = createTRPCRouter({
         }
       }
 
+      let sellerName: string | undefined;
+      if (input.sellerId) {
+        const seller = await prisma.seller.findFirst({
+          where: { id: input.sellerId, organizationId, active: true },
+          select: { name: true },
+        });
+
+        if (!seller) {
+          throw errorHandler.notFound('Vendedor');
+        }
+        sellerName = seller.name;
+      }
+
       return await prisma.$transaction(async (tx) => {
         // Número sequencial legível, por organização
         const lastOrder = await tx.order.findFirst({
@@ -139,6 +152,8 @@ export const salesRouter = createTRPCRouter({
             employeeId,
             organizationId,
             customerId,
+            sellerId: input.sellerId,
+            sellerName,
             items: { create: itemsData },
             payments: {
               create: input.payments.map((payment) => ({
@@ -230,6 +245,7 @@ export const salesRouter = createTRPCRouter({
           include: {
             customer: { select: { id: true, name: true } },
             employee: { select: { id: true, name: true } },
+            seller: { select: { id: true, name: true } },
             payments: { select: { method: true } },
             _count: { select: { items: true } },
           },
@@ -273,6 +289,7 @@ export const salesRouter = createTRPCRouter({
           invoice: true,
           customer: true,
           employee: { select: { id: true, name: true, email: true } },
+          seller: { select: { id: true, name: true } },
         },
       });
 

@@ -55,6 +55,8 @@ type DataTableProps<TData> = {
   emptyMessage?: string;
   onRowClick?: (row: TData) => void;
   pagination?: DataTablePaginationState;
+  // abaixo de sm, substitui a tabela por uma lista de cards com esse layout
+  renderMobileCard?: (row: TData) => React.ReactNode;
 };
 
 export function DataTable<TData>({
@@ -64,6 +66,7 @@ export function DataTable<TData>({
   emptyMessage = 'Nenhum registro encontrado.',
   onRowClick,
   pagination,
+  renderMobileCard,
 }: DataTableProps<TData>) {
   const table = useReactTable({
     data,
@@ -141,9 +144,73 @@ export function DataTable<TData>({
     ));
   };
 
+  const renderMobileCards = () => {
+    if (!renderMobileCard) {
+      return null;
+    }
+
+    if (isFetching) {
+      return (
+        <div className="flex flex-col gap-3 p-4 sm:hidden">
+          {SKELETON_KEYS.map((key) => (
+            <div
+              className="h-[72px] animate-pulse rounded-md bg-secondary"
+              key={key}
+            />
+          ))}
+        </div>
+      );
+    }
+
+    const rows = table.getRowModel().rows;
+
+    if (rows.length === 0) {
+      return (
+        <div className="p-10 text-center text-muted-foreground text-sm sm:hidden">
+          {emptyMessage}
+        </div>
+      );
+    }
+
+    return (
+      <div className="flex flex-col divide-y divide-border sm:hidden">
+        {rows.map((row) => {
+          const card = renderMobileCard(row.original);
+
+          if (!onRowClick) {
+            return (
+              <div className="p-4" key={row.id}>
+                {card}
+              </div>
+            );
+          }
+
+          return (
+            // biome-ignore lint/a11y/useSemanticElements: card pode conter botões de ação (RowActions), <button> não aceita <button> aninhado
+            <div
+              className="cursor-pointer p-4"
+              key={row.id}
+              onClick={() => onRowClick(row.original)}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                  event.preventDefault();
+                  onRowClick(row.original);
+                }
+              }}
+              role="button"
+              tabIndex={0}
+            >
+              {card}
+            </div>
+          );
+        })}
+      </div>
+    );
+  };
+
   return (
     <div className="overflow-hidden rounded bg-card">
-      <Table>
+      <Table className={renderMobileCard ? 'hidden sm:table' : undefined}>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow className="hover:bg-transparent" key={headerGroup.id}>
@@ -171,6 +238,8 @@ export function DataTable<TData>({
         </TableHeader>
         <TableBody>{renderBody()}</TableBody>
       </Table>
+
+      {renderMobileCards()}
 
       {pagination ? (
         <DataTablePagination

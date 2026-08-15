@@ -12,6 +12,7 @@ import { toast } from 'sonner';
 import { Modal } from '@/components';
 import {
   DataTable,
+  type RowAction,
   RowActions,
 } from '@/components/entity-components/data-table';
 import { useOrganization } from '@/contexts/organization-context';
@@ -80,10 +81,30 @@ export const SellersList = ({ isLoading }: SellersListProps) => {
     );
   };
 
+  const rowActions = (seller: SellerItem): RowAction[] => [
+    {
+      label: 'Editar vendedor',
+      icon: PencilIcon,
+      onClick: () => setSellerToEdit(seller),
+    },
+    {
+      label: seller.active ? 'Arquivar vendedor' : 'Reativar vendedor',
+      icon: seller.active ? ArchiveBoxIcon : ArrowUturnLeftIcon,
+      onClick: () => toggleActive(seller),
+      disabled: updateSeller.isPending,
+    },
+    {
+      label: 'Excluir vendedor',
+      icon: TrashIcon,
+      onClick: () => setSellerToDelete(seller),
+      variant: 'destructive',
+    },
+  ];
+
   const columns = [
     columnHelper.accessor('name', {
       header: 'Vendedor',
-      meta: { className: 'min-w-[420px]' },
+      meta: { className: 'min-w-[220px]' },
       cell: ({ getValue }) => <span className="font-medium">{getValue()}</span>,
     }),
 
@@ -115,35 +136,7 @@ export const SellersList = ({ isLoading }: SellersListProps) => {
       id: 'actions',
       header: () => null,
       meta: { align: 'right', skeletonClassName: 'ml-auto w-8' },
-      cell: ({ row }) => {
-        const seller = row.original;
-
-        return (
-          <RowActions
-            actions={[
-              {
-                label: 'Editar vendedor',
-                icon: PencilIcon,
-                onClick: () => setSellerToEdit(seller),
-              },
-              {
-                label: seller.active
-                  ? 'Arquivar vendedor'
-                  : 'Reativar vendedor',
-                icon: seller.active ? ArchiveBoxIcon : ArrowUturnLeftIcon,
-                onClick: () => toggleActive(seller),
-                disabled: updateSeller.isPending,
-              },
-              {
-                label: 'Excluir vendedor',
-                icon: TrashIcon,
-                onClick: () => setSellerToDelete(seller),
-                variant: 'destructive',
-              },
-            ]}
-          />
-        );
-      },
+      cell: ({ row }) => <RowActions actions={rowActions(row.original)} />,
     }),
   ];
 
@@ -163,6 +156,22 @@ export const SellersList = ({ isLoading }: SellersListProps) => {
           totalPages: sellers.data.totalPages,
           onPageChange: (page) => setParams({ page }),
         }}
+        renderMobileCard={(seller) => (
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex min-w-0 flex-col gap-0.5">
+              <span className="truncate font-medium text-foreground text-sm">
+                {seller.name}
+              </span>
+              <span className="text-muted-foreground text-xs">
+                {seller.code ? `#${seller.code}` : 'Sem código'} ·{' '}
+                <span className={seller.active ? 'text-success' : ''}>
+                  {seller.active ? 'Ativo' : 'Arquivado'}
+                </span>
+              </span>
+            </div>
+            <RowActions actions={rowActions(seller)} />
+          </div>
+        )}
       />
 
       <SellerFormModal

@@ -63,8 +63,8 @@ export function CreateProductPage() {
   };
 
   return (
-    <div className="flex flex-1 flex-col gap-5 bg-gray-50 p-6">
-      <div className="flex items-center justify-between gap-6">
+    <div className="flex flex-1 flex-col gap-5 bg-gray-50 p-4 sm:p-6">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
         <div className="flex items-center gap-3">
           <Button
             aria-label="Voltar"
@@ -76,13 +76,14 @@ export function CreateProductPage() {
             <ArrowLeftIcon />
           </Button>
 
-          <h1 className="font-semibold text-2xl text-foreground tracking-tight">
+          <h1 className="font-semibold text-foreground text-xl tracking-tight sm:text-2xl">
             Novo produto
           </h1>
         </div>
 
         <div className="flex items-center gap-3">
           <Button
+            className="flex-1 sm:flex-none"
             disabled={createProduct.isPending}
             onClick={handleCancel}
             type="button"
@@ -92,6 +93,7 @@ export function CreateProductPage() {
           </Button>
 
           <Button
+            className="flex-1 sm:flex-none"
             disabled={createProduct.isPending}
             form="product-form"
             type="submit"

@@ -47,7 +47,7 @@ export const SellersFilters = () => {
         }
         value={params.status}
       >
-        <SelectTrigger>
+        <SelectTrigger className="w-full sm:w-fit">
           <SelectValue>{STATUS_LABEL[params.status]}</SelectValue>
         </SelectTrigger>
         <SelectContent>

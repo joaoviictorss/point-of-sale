@@ -13,6 +13,7 @@ import { useState } from 'react';
 import { Modal } from '@/components';
 import {
   DataTable,
+  type RowAction,
   RowActions,
 } from '@/components/entity-components/data-table';
 import { useOrganization } from '@/contexts/organization-context';
@@ -109,6 +110,25 @@ export const ProductsList = ({ isLoading }: ProductsListProps) => {
     setIsOpenDeleteModal(false);
   };
 
+  const rowActions = (product: ProductItem): RowAction[] => {
+    const goToProduct = () =>
+      router.push(`/${organizationSlug}/produtos/${product.id}`);
+
+    return [
+      { label: 'Ver detalhes', icon: EyeIcon, onClick: goToProduct },
+      { label: 'Editar produto', icon: PencilIcon, onClick: goToProduct },
+      {
+        label: 'Excluir produto',
+        icon: TrashIcon,
+        onClick: () => {
+          setSelectedProduct(product);
+          setIsOpenDeleteModal(true);
+        },
+        variant: 'destructive',
+      },
+    ];
+  };
+
   const columns = [
     columnHelper.accessor('code', {
       header: 'Código',
@@ -163,33 +183,7 @@ export const ProductsList = ({ isLoading }: ProductsListProps) => {
       id: 'actions',
       header: () => null,
       meta: { align: 'right', skeletonClassName: 'ml-auto w-8' },
-      cell: ({ row }) => {
-        const product = row.original;
-        const goToProduct = () =>
-          router.push(`/${organizationSlug}/produtos/${product.id}`);
-
-        return (
-          <RowActions
-            actions={[
-              { label: 'Ver detalhes', icon: EyeIcon, onClick: goToProduct },
-              {
-                label: 'Editar produto',
-                icon: PencilIcon,
-                onClick: goToProduct,
-              },
-              {
-                label: 'Excluir produto',
-                icon: TrashIcon,
-                onClick: () => {
-                  setSelectedProduct(product);
-                  setIsOpenDeleteModal(true);
-                },
-                variant: 'destructive',
-              },
-            ]}
-          />
-        );
-      },
+      cell: ({ row }) => <RowActions actions={rowActions(row.original)} />,
     }),
   ];
 
@@ -211,6 +205,30 @@ export const ProductsList = ({ isLoading }: ProductsListProps) => {
           totalPages: products.data.totalPages,
           onPageChange: (page) => setParams({ page }),
         }}
+        renderMobileCard={(product) => (
+          <div className="flex gap-3">
+            <ProductThumb product={product} />
+            <div className="flex min-w-0 flex-1 flex-col gap-1.5">
+              <div className="flex items-start justify-between gap-2">
+                <div className="min-w-0">
+                  <div className="truncate font-medium text-foreground text-sm">
+                    {product.name}
+                  </div>
+                  <div className="truncate text-muted-foreground text-xs">
+                    #{product.code} · {product.category ?? 'Sem categoria'}
+                  </div>
+                </div>
+                <RowActions actions={rowActions(product)} />
+              </div>
+              <div className="flex items-center justify-between text-sm">
+                <StockCell product={product} />
+                <span className="font-semibold tabular-nums">
+                  {applyCurrencyMask(product.salePrice)}
+                </span>
+              </div>
+            </div>
+          </div>
+        )}
       />
 
       <Modal

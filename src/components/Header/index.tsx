@@ -12,6 +12,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '../shadcn/dropdown-menu';
+import { SidebarTrigger } from '../shadcn/sidebar';
 
 export const Header = () => {
   const pathname = usePathname();
@@ -26,10 +27,13 @@ export const Header = () => {
   });
 
   return (
-    <header className="sticky top-0 z-10 flex h-[72px] w-full items-center justify-between border-border border-b bg-white px-6">
-      <span className="font-semibold text-2xl text-foreground tracking-tight">
-        {currentHeaderTitle ? currentHeaderTitle.headerTitle : 'VNS - Admin'}
-      </span>
+    <header className="sticky top-0 z-10 flex h-[72px] w-full items-center justify-between gap-3 border-border border-b bg-white px-4 sm:px-6">
+      <div className="flex min-w-0 items-center gap-3">
+        <SidebarTrigger className="md:hidden" />
+        <span className="truncate font-semibold text-foreground text-xl tracking-tight sm:text-2xl">
+          {currentHeaderTitle ? currentHeaderTitle.headerTitle : 'VNS - Admin'}
+        </span>
+      </div>
 
       <DropdownMenu>
         <DropdownMenuTrigger>

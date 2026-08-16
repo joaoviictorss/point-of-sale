@@ -8,6 +8,9 @@ const s3 = new S3Client({
     accessKeyId: env.AWS_ACCESS_KEY_ID,
     secretAccessKey: env.AWS_SECRET_ACCESS_KEY,
   },
+  ...(env.S3_ENDPOINT
+    ? { endpoint: env.S3_ENDPOINT, forcePathStyle: true }
+    : {}),
 });
 
 export async function uploadToS3(
@@ -31,7 +34,9 @@ export async function uploadToS3(
 
   await upload.done();
 
-  const url = `https://${env.S3_BUCKET_NAME}.s3.${env.AWS_REGION}.amazonaws.com/${key}`;
+  const url = env.S3_ENDPOINT
+    ? `${env.S3_ENDPOINT}/${env.S3_BUCKET_NAME}/${key}`
+    : `https://${env.S3_BUCKET_NAME}.s3.${env.AWS_REGION}.amazonaws.com/${key}`;
 
   return { url, key };
 }

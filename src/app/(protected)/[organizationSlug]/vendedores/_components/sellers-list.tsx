@@ -86,6 +86,7 @@ export const SellersList = ({ isLoading }: SellersListProps) => {
       label: 'Editar vendedor',
       icon: PencilIcon,
       onClick: () => setSellerToEdit(seller),
+      variant: 'warning',
     },
     {
       label: seller.active ? 'Arquivar vendedor' : 'Reativar vendedor',
@@ -153,8 +154,11 @@ export const SellersList = ({ isLoading }: SellersListProps) => {
         onRowClick={(seller) => setSellerToEdit(seller)}
         pagination={{
           page: sellers.data.page,
+          pageSize: sellers.data.pageSize,
+          totalCount: sellers.data.totalCount,
           totalPages: sellers.data.totalPages,
           onPageChange: (page) => setParams({ page }),
+          itemLabel: 'vendedores',
         }}
         renderMobileCard={(seller) => (
           <div className="flex items-center justify-between gap-3">

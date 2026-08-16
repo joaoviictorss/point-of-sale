@@ -48,3 +48,26 @@ export const useCreateSale = () => {
     })
   );
 };
+
+export const useCancelSale = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+  const { slug: organizationSlug } = useOrganization();
+
+  return useMutation(
+    trpc.sale.cancel.mutationOptions({
+      onSuccess: (data) => {
+        queryClient.invalidateQueries(
+          trpc.sale.getAllFromOrganization.queryOptions({ organizationSlug })
+        );
+        queryClient.invalidateQueries(
+          trpc.sale.getById.queryOptions({ organizationSlug, id: data.id })
+        );
+        // o cancelamento devolve estoque, então a listagem de produtos também muda
+        queryClient.invalidateQueries(
+          trpc.product.getAllFromOrganization.queryOptions({ organizationSlug })
+        );
+      },
+    })
+  );
+};

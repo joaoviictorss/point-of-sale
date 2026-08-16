@@ -81,17 +81,7 @@ export function CreateProductPage() {
           </h1>
         </div>
 
-        <div className="flex items-center gap-3">
-          <Button
-            className="flex-1 sm:flex-none"
-            disabled={createProduct.isPending}
-            onClick={handleCancel}
-            type="button"
-            variant="outline"
-          >
-            Cancelar
-          </Button>
-
+        <div className="flex items-center gap-3 hidden sm:flex">
           <Button
             className="flex-1 sm:flex-none"
             disabled={createProduct.isPending}
@@ -118,6 +108,15 @@ export function CreateProductPage() {
           </CardContent>
         </Card>
       </div>
+      <Button
+        className="flex-1 sm:flex-none sm:hidden"
+        disabled={createProduct.isPending}
+        form="product-form"
+        type="submit"
+      >
+        <CheckIcon className="size-4" />
+        {createProduct.isPending ? 'Salvando...' : 'Salvar produto'}
+      </Button>
     </div>
   );
 }

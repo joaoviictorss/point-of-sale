@@ -1,10 +1,7 @@
 'use client';
 
-import {
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  EllipsisHorizontalIcon,
-} from '@heroicons/react/24/outline';
+import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
+import { Button } from '@/components/shadcn';
 import { cn } from '@/lib/utils';
 
 const ELLIPSIS = 'ellipsis' as const;
@@ -40,75 +37,88 @@ export const getPageItems = (page: number, totalPages: number): PageItem[] => {
 
 type DataTablePaginationProps = {
   page: number;
+  pageSize: number;
+  totalCount: number;
   totalPages: number;
   onPageChange: (page: number) => void;
   disabled?: boolean;
+  itemLabel?: string;
 };
+
+const PILL_CLASSNAME = 'size-8 rounded-lg';
 
 export const DataTablePagination = ({
   page,
+  pageSize,
+  totalCount,
   totalPages,
   onPageChange,
   disabled,
+  itemLabel = 'itens',
 }: DataTablePaginationProps) => {
   if (totalPages <= 1) {
     return null;
   }
 
   const items = getPageItems(page, totalPages);
+  const rangeStart = totalCount === 0 ? 0 : (page - 1) * pageSize + 1;
+  const rangeEnd = Math.min(page * pageSize, totalCount);
 
   return (
     <nav
       aria-label="Paginação"
-      className="flex items-center justify-end gap-1 border-border border-t bg-muted/30 p-3"
+      className="flex items-center justify-between gap-4 border-border border-t px-5 py-3"
     >
-      <button
-        className="inline-flex items-center gap-1 rounded-md px-4 py-2 font-medium text-foreground text-sm transition-colors hover:bg-accent disabled:pointer-events-none disabled:opacity-50"
-        disabled={disabled || page <= 1}
-        onClick={() => onPageChange(page - 1)}
-        type="button"
-      >
-        <ChevronLeftIcon className="size-4" />
-        Página anterior
-      </button>
+      <span className="text-muted-foreground text-xs">
+        Mostrando {rangeStart}–{rangeEnd} de {totalCount} {itemLabel}
+      </span>
 
-      {items.map((item, index) =>
-        item === ELLIPSIS ? (
-          <span
-            className="flex size-10 items-center justify-center text-muted-foreground"
-            // biome-ignore lint/suspicious/noArrayIndexKey: reticências não têm id estável
-            key={`${ELLIPSIS}-${index}`}
-          >
-            <EllipsisHorizontalIcon className="size-4" />
-          </span>
-        ) : (
-          <button
-            aria-current={item === page ? 'page' : undefined}
-            className={cn(
-              'size-10 rounded-lg font-medium text-foreground text-sm transition-colors',
-              item === page
-                ? 'border border-border bg-background shadow-xs'
-                : 'hover:bg-accent'
-            )}
-            disabled={disabled}
-            key={item}
-            onClick={() => onPageChange(item)}
-            type="button"
-          >
-            {item}
-          </button>
-        )
-      )}
+      <div className="flex items-center gap-1">
+        <Button
+          disabled={disabled || page <= 1}
+          onClick={() => onPageChange(page - 1)}
+          size="sm"
+          type="button"
+          variant="outline"
+        >
+          <ChevronLeftIcon className="size-3.5" />
+        </Button>
 
-      <button
-        className="inline-flex items-center gap-1 rounded-md px-4 py-2 font-medium text-foreground text-sm transition-colors hover:bg-accent disabled:pointer-events-none disabled:opacity-50"
-        disabled={disabled || page >= totalPages}
-        onClick={() => onPageChange(page + 1)}
-        type="button"
-      >
-        Próxima
-        <ChevronRightIcon className="size-4" />
-      </button>
+        {items.map((item, index) =>
+          item === ELLIPSIS ? (
+            <span
+              className="flex size-8 items-center justify-center text-muted-foreground text-sm"
+              // biome-ignore lint/suspicious/noArrayIndexKey: reticências não têm id estável
+              key={`${ELLIPSIS}-${index}`}
+            >
+              …
+            </span>
+          ) : (
+            <Button
+              aria-current={item === page ? 'page' : undefined}
+              className={cn(PILL_CLASSNAME)}
+              disabled={disabled}
+              key={item}
+              onClick={() => onPageChange(item)}
+              size="icon"
+              type="button"
+              variant={item === page ? 'default' : 'ghost'}
+            >
+              {item}
+            </Button>
+          )
+        )}
+
+        <Button
+          disabled={disabled || page >= totalPages}
+          onClick={() => onPageChange(page + 1)}
+          size="sm"
+          type="button"
+          variant="outline"
+        >
+          <ChevronRightIcon className="size-3.5" />
+        </Button>
+      </div>
     </nav>
   );
 };

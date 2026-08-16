@@ -92,6 +92,15 @@ export const getSaleByIdSchema = z.object({
   id: z.string().uuid('ID inválido'),
 });
 
+export const cancelSaleSchema = z.object({
+  id: z.string().uuid('ID inválido'),
+  reason: z
+    .string()
+    .max(500, 'Motivo deve ter no máximo 500 caracteres')
+    .trim()
+    .optional(),
+});
+
 export type SaleItemInput = z.input<typeof saleItemSchema>;
 
 export type SalePaymentInput = z.input<typeof salePaymentSchema>;
@@ -105,3 +114,5 @@ export type GetAllSalesFromOrganizationSchema = z.infer<
 >;
 
 export type GetSaleByIdSchema = z.infer<typeof getSaleByIdSchema>;
+
+export type CancelSaleSchema = z.infer<typeof cancelSaleSchema>;

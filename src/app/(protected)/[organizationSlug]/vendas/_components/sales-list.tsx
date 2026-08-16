@@ -6,17 +6,22 @@ import {
   CreditCardIcon,
   CurrencyDollarIcon,
   EyeIcon,
+  NoSymbolIcon,
   PencilIcon,
-  TrashIcon,
 } from '@heroicons/react/24/outline';
 import type { OrderStatus, PaymentMethod } from '@prisma/client';
 import { createColumnHelper } from '@tanstack/react-table';
 import type { ComponentType, SVGProps } from 'react';
+import { useState } from 'react';
+import { toast } from 'sonner';
+import { Modal } from '@/components';
 import {
   DataTable,
+  type RowAction,
   RowActions,
 } from '@/components/entity-components/data-table';
-import { useSuspenseSales } from '@/hooks/sales/use-sales';
+import { useOrganization } from '@/contexts/organization-context';
+import { useCancelSale, useSuspenseSales } from '@/hooks/sales/use-sales';
 import { useSalesParams } from '@/hooks/sales/use-sales-params';
 import { applyCurrencyMask } from '@/utils/functions';
 import { SalesEmptyState } from './sales-empty-state';
@@ -87,8 +92,41 @@ function PaymentCell({ payments }: { payments: SaleItem['payments'] }) {
 }
 
 export const SalesList = () => {
+  const { slug: organizationSlug } = useOrganization();
   const sales = useSuspenseSales();
   const [params, setParams] = useSalesParams();
+  const cancelSale = useCancelSale();
+
+  const [saleToCancel, setSaleToCancel] = useState<SaleItem | null>(null);
+
+  const handleConfirmCancel = () => {
+    if (!saleToCancel) {
+      return;
+    }
+
+    cancelSale.mutate(
+      { organizationSlug, id: saleToCancel.id },
+      {
+        onSuccess: () => {
+          toast.success('Venda cancelada e estoque devolvido');
+          setSaleToCancel(null);
+        },
+        onError: (error) => toast.error(error.message),
+      }
+    );
+  };
+
+  const rowActions = (sale: SaleItem): RowAction[] => [
+    { label: 'Ver detalhes', icon: EyeIcon, variant: 'primary' },
+    { label: 'Editar venda', icon: PencilIcon, variant: 'warning' },
+    {
+      label: 'Cancelar venda',
+      icon: NoSymbolIcon,
+      onClick:
+        sale.status === 'CANCELLED' ? undefined : () => setSaleToCancel(sale),
+      variant: 'destructive',
+    },
+  ];
 
   const columns = [
     columnHelper.accessor('orderNumber', {
@@ -158,19 +196,7 @@ export const SalesList = () => {
       id: 'actions',
       header: () => null,
       meta: { align: 'right', skeletonClassName: 'ml-auto w-8' },
-      cell: () => (
-        <RowActions
-          actions={[
-            { label: 'Ver detalhes', icon: EyeIcon },
-            { label: 'Editar venda', icon: PencilIcon },
-            {
-              label: 'Excluir venda',
-              icon: TrashIcon,
-              variant: 'destructive',
-            },
-          ]}
-        />
-      ),
+      cell: ({ row }) => <RowActions actions={rowActions(row.original)} />,
     }),
   ];
 
@@ -191,20 +217,55 @@ export const SalesList = () => {
   }
 
   return (
-    <DataTable
-      columns={columns}
-      data={items}
-      emptyMessage={
-        hasPeriod
-          ? 'Nenhuma venda neste período.'
-          : 'Nenhuma venda encontrada para essa busca.'
-      }
-      isFetching={isFetching}
-      pagination={{
-        page: sales.data.page,
-        totalPages: sales.data.totalPages,
-        onPageChange: (page) => setParams({ page }),
-      }}
-    />
+    <>
+      <DataTable
+        columns={columns}
+        data={items}
+        emptyMessage={
+          hasPeriod
+            ? 'Nenhuma venda neste período.'
+            : 'Nenhuma venda encontrada para essa busca.'
+        }
+        isFetching={isFetching}
+        pagination={{
+          page: sales.data.page,
+          pageSize: sales.data.pageSize,
+          totalCount: sales.data.totalCount,
+          totalPages: sales.data.totalPages,
+          onPageChange: (page) => setParams({ page }),
+          itemLabel: 'vendas',
+        }}
+      />
+
+      <Modal
+        actions={[
+          {
+            label: 'Voltar',
+            onClick: () => setSaleToCancel(null),
+            variant: 'outline',
+            disabled: cancelSale.isPending,
+          },
+          {
+            label: 'Cancelar venda',
+            onClick: handleConfirmCancel,
+            variant: 'destructive',
+            disabled: cancelSale.isPending,
+            loading: cancelSale.isPending,
+          },
+        ]}
+        description={
+          saleToCancel
+            ? `A venda #${String(saleToCancel.orderNumber).padStart(3, '0')} será cancelada e os itens voltam para o estoque. Esta ação não pode ser desfeita.`
+            : 'Esta venda será cancelada e os itens voltam para o estoque.'
+        }
+        onOpenChange={(open) => {
+          if (!open) {
+            setSaleToCancel(null);
+          }
+        }}
+        open={Boolean(saleToCancel)}
+        title="Cancelar venda"
+      />
+    </>
   );
 };

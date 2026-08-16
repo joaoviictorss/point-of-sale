@@ -37,12 +37,16 @@ const ALIGN_CLASSNAME = {
 const SKELETON_KEYS = ['sk-0', 'sk-1', 'sk-2', 'sk-3', 'sk-4'];
 
 const edgePadding = (index: number, total: number) =>
-  cn(index === 0 && 'pl-6', index === total - 1 && 'pr-6');
+  cn(index === 0 && 'pl-5', index === total - 1 && 'pr-5');
 
 type DataTablePaginationState = {
   page: number;
+  pageSize: number;
+  totalCount: number;
   totalPages: number;
   onPageChange: (page: number) => void;
+  // substantivo usado no rótulo "Mostrando X–Y de Z {itemLabel}"
+  itemLabel?: string;
 };
 
 // biome-ignore lint/suspicious/noExplicitAny: exigido pela variância do TanStack
@@ -86,7 +90,7 @@ export function DataTable<TData>({
           {leafColumns.map((column, index) => (
             <TableCell
               className={cn(
-                'px-4 py-4',
+                'px-4 py-3.5',
                 column.columnDef.meta?.className,
                 edgePadding(index, leafColumns.length)
               )}
@@ -120,7 +124,7 @@ export function DataTable<TData>({
     return table.getRowModel().rows.map((row) => (
       <TableRow
         className={cn(
-          'transition-colors hover:bg-muted/50',
+          'border-border/60 transition-colors hover:bg-muted/50',
           onRowClick && 'cursor-pointer'
         )}
         key={row.id}
@@ -129,7 +133,7 @@ export function DataTable<TData>({
         {row.getVisibleCells().map((cell, index, cells) => (
           <TableCell
             className={cn(
-              'px-4 py-4 align-middle text-foreground text-sm',
+              'px-4 py-3.5 align-middle text-foreground text-sm',
               alignOf(cell.column.columnDef.meta?.align),
               cell.column.columnDef.meta?.expand && 'w-full',
               cell.column.columnDef.meta?.className,
@@ -209,7 +213,7 @@ export function DataTable<TData>({
   };
 
   return (
-    <div className="overflow-hidden rounded bg-card">
+    <div className="overflow-hidden rounded-xl border border-border bg-card">
       <Table className={renderMobileCard ? 'hidden sm:table' : undefined}>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
@@ -217,7 +221,7 @@ export function DataTable<TData>({
               {headerGroup.headers.map((header, index, headers) => (
                 <TableHead
                   className={cn(
-                    'h-12 whitespace-nowrap px-4 font-medium text-sm text-text-muted',
+                    'h-11 whitespace-nowrap px-4 font-medium text-text-muted text-xs',
                     alignOf(header.column.columnDef.meta?.align),
                     header.column.columnDef.meta?.expand && 'w-full',
                     header.column.columnDef.meta?.className,
@@ -244,8 +248,11 @@ export function DataTable<TData>({
       {pagination ? (
         <DataTablePagination
           disabled={isFetching}
+          itemLabel={pagination.itemLabel}
           onPageChange={pagination.onPageChange}
           page={pagination.page}
+          pageSize={pagination.pageSize}
+          totalCount={pagination.totalCount}
           totalPages={pagination.totalPages}
         />
       ) : null}

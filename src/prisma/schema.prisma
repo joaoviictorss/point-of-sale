@@ -290,6 +290,7 @@ model StockMovement {
   stockBefore Float
   stockAfter  Float
   reason      String?
+  unitCost    Int? // custo unitário no momento da entrada (centavos), só PURCHASE
 
   productId String
   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)

@@ -2,15 +2,13 @@
 
 import {
   ArrowLeftIcon,
-  CheckIcon,
-  TrashIcon,
+  CheckIcon
 } from '@heroicons/react/24/outline';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import { Modal } from '@/components';
 import { Button } from '@/components/shadcn';
 import { Card, CardContent } from '@/components/shadcn/card';
 import { useOrganization } from '@/contexts/organization-context';
@@ -34,7 +32,6 @@ interface EditProductPageProps {
 export function EditProductPage({ productId }: EditProductPageProps) {
   const router = useRouter();
   const { slug: organizationSlug } = useOrganization();
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const { data: product } = useSuspenseProductById(productId);
 
@@ -81,21 +78,6 @@ export function EditProductPage({ productId }: EditProductPageProps) {
     router.back();
   };
 
-  const handleConfirmDelete = () => {
-    deleteProduct.mutate(
-      { id: productId, organizationSlug },
-      {
-        onSuccess: () => {
-          toast.success('Produto excluído com sucesso');
-          router.push(`/${organizationSlug}/produtos`);
-        },
-        onError: (error) => {
-          toast.error(error.message);
-        },
-      }
-    );
-  };
-
   const isLoading = updateProduct.isPending || deleteProduct.isPending;
 
   return (
@@ -117,26 +99,7 @@ export function EditProductPage({ productId }: EditProductPageProps) {
           </h1>
         </div>
 
-        <div className="grid grid-cols-3 gap-3 sm:flex sm:items-center">
-          <Button
-            disabled={isLoading}
-            onClick={() => setIsDeleteModalOpen(true)}
-            type="button"
-            variant="destructive"
-          >
-            <TrashIcon className="size-4" />
-            Excluir
-          </Button>
-
-          <Button
-            disabled={isLoading}
-            onClick={handleCancel}
-            type="button"
-            variant="outline"
-          >
-            Cancelar
-          </Button>
-
+        <div className="hidden gap-3 sm:flex sm:items-center">
           <Button disabled={isLoading} form="product-form" type="submit">
             <CheckIcon className="size-4" />
             {updateProduct.isPending ? 'Salvando...' : 'Salvar produto'}
@@ -162,29 +125,11 @@ export function EditProductPage({ productId }: EditProductPageProps) {
         </Card>
       </div>
 
-      <Modal
-        actions={[
-          {
-            label: 'Cancelar',
-            onClick: () => setIsDeleteModalOpen(false),
-            variant: 'outline',
-            shouldRender: true,
-            disabled: deleteProduct.isPending,
-          },
-          {
-            label: 'Excluir',
-            onClick: handleConfirmDelete,
-            variant: 'destructive',
-            shouldRender: true,
-            disabled: deleteProduct.isPending,
-            loading: deleteProduct.isPending,
-          },
-        ]}
-        description="Tem certeza que deseja excluir este produto? Esta ação não pode ser desfeita."
-        onOpenChange={setIsDeleteModalOpen}
-        open={isDeleteModalOpen}
-        title="Excluir produto"
-      />
+      <Button disabled={isLoading} form="product-form" type="submit" className="flex-1 sm:flex-none sm:hidden">
+        <CheckIcon className="size-4" />
+        {updateProduct.isPending ? 'Salvando...' : 'Salvar produto'}
+      </Button>
+
     </div>
   );
 }

@@ -4,6 +4,7 @@ import { errorHandler } from '@/lib/error-handler';
 import { prisma } from '@/lib/prisma/client';
 import { createTRPCRouter, organizationProcedure } from '@/trpc/init';
 import {
+  cancelSaleSchema,
   createSaleSchema,
   getAllSalesFromOrganizationSchema,
   getSaleByIdSchema,
@@ -298,5 +299,61 @@ export const salesRouter = createTRPCRouter({
       }
 
       return order;
+    }),
+
+  cancel: organizationProcedure
+    .input(cancelSaleSchema)
+    .mutation(async ({ ctx, input }) => {
+      const { id: organizationId } = ctx.organization;
+      const canceledById = ctx.auth.userId;
+
+      const order = await prisma.order.findFirst({
+        where: { id: input.id, organizationId },
+        include: { items: true },
+      });
+
+      if (!order) {
+        throw errorHandler.notFound('Venda');
+      }
+
+      if (order.status === 'CANCELLED') {
+        throw errorHandler.conflict('Esta venda já foi cancelada');
+      }
+
+      return await prisma.$transaction(async (tx) => {
+        // Devolução de estoque: mesmo padrão atômico da baixa em `create`.
+        for (const item of order.items) {
+          // biome-ignore lint/nursery/noAwaitInLoop: operações transacionais devem ser sequenciais
+          const updated = await tx.product.update({
+            where: { id: item.productId },
+            data: { stock: { increment: item.quantity } },
+            select: { stock: true },
+          });
+
+          await tx.stockMovement.create({
+            data: {
+              type: 'RETURN',
+              quantity: item.quantity,
+              stockBefore: updated.stock - item.quantity,
+              stockAfter: updated.stock,
+              reason: input.reason,
+              productId: item.productId,
+              orderId: order.id,
+              createdById: canceledById,
+              organizationId,
+            },
+          });
+        }
+
+        return await tx.order.update({
+          where: { id: order.id },
+          data: {
+            status: 'CANCELLED',
+            canceledAt: new Date(),
+            cancelReason: input.reason,
+            canceledById,
+          },
+        });
+      });
     }),
 });

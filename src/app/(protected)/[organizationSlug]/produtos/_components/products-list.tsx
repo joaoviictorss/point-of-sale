@@ -1,12 +1,14 @@
 'use client';
 
 import {
+  ArrowsRightLeftIcon,
   EyeIcon,
   PencilIcon,
   PhotoIcon,
   TrashIcon,
 } from '@heroicons/react/24/outline';
 import { createColumnHelper } from '@tanstack/react-table';
+import type { VariantProps } from 'class-variance-authority';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -16,6 +18,7 @@ import {
   type RowAction,
   RowActions,
 } from '@/components/entity-components/data-table';
+import { Badge, type badgeVariants } from '@/components/shadcn';
 import { useOrganization } from '@/contexts/organization-context';
 import {
   useDeleteProduct,
@@ -23,6 +26,7 @@ import {
 } from '@/hooks/product/use-products';
 import { useProductsParams } from '@/hooks/product/use-products-params';
 import { applyCurrencyMask } from '@/utils/functions';
+import { NewMovementModal } from '../../estoque/_components/new-movement-modal';
 
 type ProductItem = ReturnType<
   typeof useSuspenseProducts
@@ -36,19 +40,24 @@ const UNIT_LABEL: Record<string, string> = {
   MILLILITERS: 'ml',
 };
 
-function getStockColor(p: ProductItem): string {
+type BadgeVariant = VariantProps<typeof badgeVariants>['variant'];
+
+function getStockStatus(p: ProductItem): {
+  label: string;
+  variant: BadgeVariant;
+} {
   const min = p.minStock ?? 0;
   const max = p.maxStock ?? 0;
   if (p.stock <= min) {
-    return 'text-destructive';
+    return { label: 'Repor agora', variant: 'destructive-soft' };
   }
   if (min > 0 && p.stock <= min * 2) {
-    return 'text-warning';
+    return { label: 'Estoque baixo', variant: 'warning' };
   }
   if (max > 0 && p.stock >= max) {
-    return 'text-primary';
+    return { label: 'Acima do máximo', variant: 'info' };
   }
-  return 'text-foreground';
+  return { label: 'Em estoque', variant: 'success' };
 }
 
 function ProductThumb({ product }: { product: ProductItem }) {
@@ -75,10 +84,15 @@ function ProductThumb({ product }: { product: ProductItem }) {
 function StockCell({ product }: { product: ProductItem }) {
   const unit = UNIT_LABEL[product.stockUnit] ?? product.stockUnit;
   return (
-    <span className={getStockColor(product)}>
+    <span>
       {product.stock} {unit}
     </span>
   );
+}
+
+function StatusCell({ product }: { product: ProductItem }) {
+  const status = getStockStatus(product);
+  return <Badge variant={status.variant}>{status.label}</Badge>;
 }
 
 const columnHelper = createColumnHelper<ProductItem>();
@@ -98,6 +112,9 @@ export const ProductsList = ({ isLoading }: ProductsListProps) => {
   const [selectedProduct, setSelectedProduct] = useState<ProductItem | null>(
     null
   );
+  const [productToAdjust, setProductToAdjust] = useState<ProductItem | null>(
+    null
+  );
 
   const handleConfirmDelete = async () => {
     if (!selectedProduct) {
@@ -115,8 +132,23 @@ export const ProductsList = ({ isLoading }: ProductsListProps) => {
       router.push(`/${organizationSlug}/produtos/${product.id}`);
 
     return [
-      { label: 'Ver detalhes', icon: EyeIcon, onClick: goToProduct },
-      { label: 'Editar produto', icon: PencilIcon, onClick: goToProduct },
+      {
+        label: 'Ver detalhes',
+        icon: EyeIcon,
+        onClick: goToProduct,
+        variant: 'primary',
+      },
+      {
+        label: 'Editar produto',
+        icon: PencilIcon,
+        onClick: goToProduct,
+        variant: 'warning',
+      },
+      {
+        label: 'Ajustar estoque',
+        icon: ArrowsRightLeftIcon,
+        onClick: () => setProductToAdjust(product),
+      },
       {
         label: 'Excluir produto',
         icon: TrashIcon,
@@ -130,20 +162,20 @@ export const ProductsList = ({ isLoading }: ProductsListProps) => {
   };
 
   const columns = [
-    columnHelper.accessor('code', {
-      header: 'Código',
-      cell: ({ getValue }) => (
-        <span className="font-medium">#{getValue()}</span>
-      ),
-    }),
-
     columnHelper.accessor('name', {
       header: 'Produto',
       meta: { expand: true },
       cell: ({ row }) => (
         <span className="inline-flex items-center gap-2.5">
           <ProductThumb product={row.original} />
-          {row.original.name}
+          <span className="flex flex-col gap-0.5">
+            <span className="font-medium text-foreground">
+              {row.original.name}
+            </span>
+            <span className="font-mono text-muted-foreground text-xs">
+              #{row.original.code}
+            </span>
+          </span>
         </span>
       ),
     }),
@@ -180,6 +212,13 @@ export const ProductsList = ({ isLoading }: ProductsListProps) => {
     }),
 
     columnHelper.display({
+      id: 'status',
+      header: 'Status',
+      meta: { skeletonClassName: 'w-24' },
+      cell: ({ row }) => <StatusCell product={row.original} />,
+    }),
+
+    columnHelper.display({
       id: 'actions',
       header: () => null,
       meta: { align: 'right', skeletonClassName: 'ml-auto w-8' },
@@ -202,8 +241,11 @@ export const ProductsList = ({ isLoading }: ProductsListProps) => {
         }
         pagination={{
           page: products.data.page,
+          pageSize: products.data.pageSize,
+          totalCount: products.data.totalCount,
           totalPages: products.data.totalPages,
           onPageChange: (page) => setParams({ page }),
+          itemLabel: 'produtos',
         }}
         renderMobileCard={(product) => (
           <div className="flex gap-3">
@@ -257,6 +299,25 @@ export const ProductsList = ({ isLoading }: ProductsListProps) => {
         onOpenChange={setIsOpenDeleteModal}
         open={isOpenDeleteModal}
         title="Excluir Produto"
+      />
+
+      <NewMovementModal
+        initialProduct={
+          productToAdjust
+            ? {
+                id: productToAdjust.id,
+                name: productToAdjust.name,
+                code: productToAdjust.code,
+                stock: productToAdjust.stock,
+              }
+            : null
+        }
+        onOpenChange={(open) => {
+          if (!open) {
+            setProductToAdjust(null);
+          }
+        }}
+        open={Boolean(productToAdjust)}
       />
     </>
   );

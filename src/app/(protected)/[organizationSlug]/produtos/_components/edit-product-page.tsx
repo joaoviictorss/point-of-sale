@@ -1,9 +1,6 @@
 'use client';
 
-import {
-  ArrowLeftIcon,
-  CheckIcon
-} from '@heroicons/react/24/outline';
+import { ArrowLeftIcon, CheckIcon } from '@heroicons/react/24/outline';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -125,11 +122,15 @@ export function EditProductPage({ productId }: EditProductPageProps) {
         </Card>
       </div>
 
-      <Button disabled={isLoading} form="product-form" type="submit" className="flex-1 sm:flex-none sm:hidden">
+      <Button
+        className='flex-1 sm:hidden sm:flex-none'
+        disabled={isLoading}
+        form="product-form"
+        type="submit"
+      >
         <CheckIcon className="size-4" />
         {updateProduct.isPending ? 'Salvando...' : 'Salvar produto'}
       </Button>
-
     </div>
   );
 }

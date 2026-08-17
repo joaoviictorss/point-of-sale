@@ -81,7 +81,7 @@ export function CreateProductPage() {
           </h1>
         </div>
 
-        <div className="flex items-center gap-3 hidden sm:flex">
+        <div className='hidden items-center gap-3 sm:flex'>
           <Button
             className="flex-1 sm:flex-none"
             disabled={createProduct.isPending}
@@ -109,7 +109,7 @@ export function CreateProductPage() {
         </Card>
       </div>
       <Button
-        className="flex-1 sm:flex-none sm:hidden"
+        className='flex-1 sm:hidden sm:flex-none'
         disabled={createProduct.isPending}
         form="product-form"
         type="submit"

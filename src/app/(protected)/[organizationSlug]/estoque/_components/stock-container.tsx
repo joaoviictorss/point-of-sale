@@ -11,9 +11,9 @@ export const StockContainer = ({ children }: { children: React.ReactNode }) => {
   return (
     <>
       <EntityContainer
-        createButtonOnClick={createDialog.openDialog}
-        createButtonText="Nova movimentação"
         filters={<StockMovementsFilters />}
+        primaryActionButtonOnClick={createDialog.openDialog}
+        primaryActionButtonText="Nova movimentação"
       >
         {children}
       </EntityContainer>

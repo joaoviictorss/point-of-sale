@@ -4,15 +4,20 @@ type EntityContainerProps = {
   children: React.ReactNode;
   filters?: React.ReactNode;
 } & (
-  | { createButtonText: string; createButtonOnClick: () => void }
-  | { createButtonText?: never; createButtonOnClick?: never }
-);
+    | { primaryActionButtonText: string; primaryActionButtonOnClick: () => void }
+    | { primaryActionButtonText?: never; primaryActionButtonOnClick?: never }
+  ) & (
+    | { secondaryActionButtonText: string; secondaryActionButtonOnClick: () => void }
+    | { secondaryActionButtonText?: never; secondaryActionButtonOnClick?: never }
+  );
 
 export const EntityContainer = ({
   children,
   filters,
-  createButtonText,
-  createButtonOnClick,
+  primaryActionButtonText,
+  primaryActionButtonOnClick,
+  secondaryActionButtonText,
+  secondaryActionButtonOnClick
 }: EntityContainerProps) => {
   return (
     <main className="flex flex-1 flex-col gap-6 p-4 sm:p-6">
@@ -20,15 +25,27 @@ export const EntityContainer = ({
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
           {filters}
         </div>
-        {createButtonText && createButtonOnClick && (
-          <Button
-            className="w-full sm:w-auto"
-            onClick={createButtonOnClick}
-            type="button"
-          >
-            {createButtonText}
-          </Button>
-        )}
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+          {secondaryActionButtonText && secondaryActionButtonOnClick && (
+            <Button
+              className="w-full sm:w-auto"
+              onClick={secondaryActionButtonOnClick}
+              variant={"outline"}
+            >
+              {secondaryActionButtonText}
+            </Button>
+          )}
+
+          {primaryActionButtonText && primaryActionButtonOnClick && (
+            <Button
+              className="w-full sm:w-auto"
+              onClick={primaryActionButtonOnClick}
+              type="button"
+            >
+              {primaryActionButtonText}
+            </Button>
+          )}
+        </div>
       </div>
 
       {children}

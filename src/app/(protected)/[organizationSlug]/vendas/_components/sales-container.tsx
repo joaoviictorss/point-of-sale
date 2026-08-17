@@ -11,11 +11,11 @@ export const SalesContainer = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <EntityContainer
-      createButtonOnClick={() =>
+      filters={<SalesFilters />}
+      primaryActionButtonOnClick={() =>
         router.push(`/${organizationSlug}/vendas/nova`)
       }
-      createButtonText="Iniciar nova venda"
-      filters={<SalesFilters />}
+      primaryActionButtonText="Iniciar nova venda"
     >
       {children}
     </EntityContainer>

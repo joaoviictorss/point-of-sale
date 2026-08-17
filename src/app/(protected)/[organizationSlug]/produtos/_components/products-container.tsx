@@ -15,11 +15,15 @@ export const ProductsContainer = ({
 
   return (
     <EntityContainer
-      createButtonOnClick={() =>
+      filters={<ProductsFilters />}
+      primaryActionButtonOnClick={() =>
         router.push(`/${organizationSlug}/produtos/novo`)
       }
-      createButtonText="Criar novo produto"
-      filters={<ProductsFilters />}
+      primaryActionButtonText="Criar novo produto"
+      secondaryActionButtonOnClick={() =>
+        router.push(`/${organizationSlug}/produtos/cadastro-em-lote`)
+      }
+      secondaryActionButtonText="Cadastrar em lote"
     >
       {children}
     </EntityContainer>

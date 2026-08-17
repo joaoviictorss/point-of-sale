@@ -15,9 +15,9 @@ export const SellersContainer = ({
   return (
     <>
       <EntityContainer
-        createButtonOnClick={createDialog.openDialog}
-        createButtonText="Criar novo vendedor"
         filters={<SellersFilters />}
+        primaryActionButtonOnClick={createDialog.openDialog}
+        primaryActionButtonText="Criar novo vendedor"
       >
         {children}
       </EntityContainer>

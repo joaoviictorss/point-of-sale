@@ -75,3 +75,25 @@ export const useDeleteProduct = () => {
     })
   );
 };
+
+export const useValidateImportRows = () => {
+  const trpc = useTRPC();
+
+  return useMutation(trpc.product.validateImportRows.mutationOptions());
+};
+
+export const useCreateProductsBatch = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+  const { slug: organizationSlug } = useOrganization();
+
+  return useMutation(
+    trpc.product.createBatch.mutationOptions({
+      onSuccess: () => {
+        queryClient.invalidateQueries(
+          trpc.product.getAllFromOrganization.queryOptions({ organizationSlug })
+        );
+      },
+    })
+  );
+};

@@ -6,6 +6,7 @@ import {
   organizationProcedure,
   protectedProcedure,
 } from '@/trpc/init';
+import { type ImportRowResult, parseImportRow } from './import-schemas';
 import {
   deleteProductSchema,
   getAllProductsFromOrganizationSchema,
@@ -205,5 +206,108 @@ export const productRouter = createTRPCRouter({
       return await prisma.product.delete({
         where: { id: input.id },
       });
+    }),
+
+  validateImportRows: organizationProcedure
+    .input(z.object({ rows: z.array(z.record(z.string(), z.unknown())) }))
+    .mutation(async ({ ctx, input }) => {
+      const { slug: organizationSlug } = ctx.organization;
+
+      const parsedRows = input.rows.map((row, index) =>
+        parseImportRow(row, index + 2)
+      );
+
+      const codeOccurrences = new Map<string, number>();
+      for (const { data } of parsedRows) {
+        if (data.code) {
+          codeOccurrences.set(
+            data.code,
+            (codeOccurrences.get(data.code) ?? 0) + 1
+          );
+        }
+      }
+
+      const codesInSheet = [...codeOccurrences.keys()];
+      const existingProducts = codesInSheet.length
+        ? await prisma.product.findMany({
+            where: { organizationSlug, code: { in: codesInSheet } },
+            select: { code: true },
+          })
+        : [];
+      const existingCodes = new Set(existingProducts.map((p) => p.code));
+
+      const results: ImportRowResult[] = parsedRows.map((row) => {
+        const errors = { ...row.errors };
+        const { code } = row.data;
+
+        if (code && !errors.code) {
+          if (existingCodes.has(code)) {
+            errors.code = 'Código já cadastrado nesta organização';
+          } else if ((codeOccurrences.get(code) ?? 0) > 1) {
+            errors.code = 'Código duplicado na planilha';
+          }
+        }
+
+        return {
+          ...row,
+          errors,
+          status:
+            Object.keys(errors).length === 0
+              ? ('valid' as const)
+              : ('invalid' as const),
+        };
+      });
+
+      return results;
+    }),
+
+  createBatch: organizationProcedure
+    .input(z.object({ products: z.array(productFormSchema) }))
+    .mutation(async ({ ctx, input }) => {
+      const { slug: organizationSlug } = ctx.organization;
+
+      if (input.products.length === 0) {
+        throw errorHandler.badRequest('Nenhum produto para cadastrar');
+      }
+
+      const codes = input.products.map((product) => product.code);
+      if (new Set(codes).size !== codes.length) {
+        throw errorHandler.conflict(
+          'Existem códigos duplicados entre os produtos enviados'
+        );
+      }
+
+      const existing = await prisma.product.findMany({
+        where: { organizationSlug, code: { in: codes } },
+        select: { code: true },
+      });
+
+      if (existing.length > 0) {
+        throw errorHandler.conflict(
+          `Os códigos já existem: ${existing.map((p) => p.code).join(', ')}`
+        );
+      }
+
+      const created = await prisma.$transaction(
+        input.products.map((product) =>
+          prisma.product.create({
+            data: {
+              name: product.name,
+              code: product.code,
+              costPrice: product.costPrice,
+              salePrice: product.salePrice,
+              category: product.category,
+              productType: product.productType,
+              stock: product.stock,
+              stockUnit: product.stockUnit,
+              minStock: product.minStock,
+              maxStock: product.maxStock,
+              organizationSlug,
+            },
+          })
+        )
+      );
+
+      return { count: created.length };
     }),
 });

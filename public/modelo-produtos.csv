@@ -1,0 +1,3 @@
+﻿codigo;nome;categoria;tipo de produto;preco de custo;preco de venda;estoque;unidade;estoque minimo;estoque maximo
+7891234567890;Café torrado e moído 500g;Mercearia;Unidade;8,50;12,40;24;Unidades;10;60
+7891234567891;Água mineral 1,5L;Bebidas;Unidade;1,50;3,90;60;Unidades;20;120

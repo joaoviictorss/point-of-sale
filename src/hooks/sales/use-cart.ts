@@ -1,3 +1,4 @@
+import type { ProductType, StockUnit } from '@prisma/client';
 import { useCallback, useMemo, useState } from 'react';
 
 export interface CartProduct {
@@ -8,35 +9,57 @@ export interface CartProduct {
   salePrice: number;
   stock: number;
   category?: string | null;
+  productType: ProductType;
+  stockUnit: StockUnit;
 }
 
 export interface CartItem extends CartProduct {
   quantity: number;
 }
 
+// produtos por peso/volume vendem fração (1,5 kg); por unidade, só inteiro
+const FRACTIONAL_STEP = 0.1;
+const QUANTITY_PRECISION = 3;
+
+function roundQuantity(value: number) {
+  const factor = 10 ** QUANTITY_PRECISION;
+  return Math.round(value * factor) / factor;
+}
+
+function stepFor(productType: ProductType) {
+  return productType === 'UNIT' ? 1 : FRACTIONAL_STEP;
+}
+
 export function useCart() {
   const [items, setItems] = useState<CartItem[]>([]);
 
-  const add = useCallback((product: CartProduct) => {
+  const add = useCallback((product: CartProduct, quantity = 1) => {
     setItems((current) => {
       const existing = current.find((item) => item.id === product.id);
 
       if (existing) {
         return current.map((item) =>
           item.id === product.id
-            ? { ...item, quantity: item.quantity + 1 }
+            ? { ...item, quantity: roundQuantity(item.quantity + quantity) }
             : item
         );
       }
 
-      return [...current, { ...product, quantity: 1 }];
+      return [...current, { ...product, quantity: roundQuantity(quantity) }];
     });
   }, []);
 
   const inc = useCallback((id: string) => {
     setItems((current) =>
       current.map((item) =>
-        item.id === id ? { ...item, quantity: item.quantity + 1 } : item
+        item.id === id
+          ? {
+              ...item,
+              quantity: roundQuantity(
+                item.quantity + stepFor(item.productType)
+              ),
+            }
+          : item
       )
     );
   }, []);
@@ -47,9 +70,8 @@ export function useCart() {
         if (item.id !== id) {
           return [item];
         }
-        return item.quantity - 1 <= 0
-          ? []
-          : [{ ...item, quantity: item.quantity - 1 }];
+        const next = roundQuantity(item.quantity - stepFor(item.productType));
+        return next <= 0 ? [] : [{ ...item, quantity: next }];
       })
     );
   }, []);
@@ -60,7 +82,8 @@ export function useCart() {
         if (item.id !== id) {
           return [item];
         }
-        return quantity <= 0 ? [] : [{ ...item, quantity }];
+        const next = roundQuantity(quantity);
+        return next <= 0 ? [] : [{ ...item, quantity: next }];
       })
     );
   }, []);
@@ -72,7 +95,11 @@ export function useCart() {
   const clear = useCallback(() => setItems([]), []);
 
   const subtotal = useMemo(
-    () => items.reduce((sum, item) => sum + item.salePrice * item.quantity, 0),
+    () =>
+      items.reduce(
+        (sum, item) => sum + Math.round(item.salePrice * item.quantity),
+        0
+      ),
     [items]
   );
 

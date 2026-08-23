@@ -1,7 +1,11 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { ArrowLeftIcon } from '@heroicons/react/24/outline';
+import { useRouter } from 'next/navigation';
+import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
+import { Button } from '@/components/shadcn';
+import { Card } from '@/components/shadcn/card';
 import { useOrganization } from '@/contexts/organization-context';
 import { useUser } from '@/contexts/user-context';
 import { useCart } from '@/hooks/sales/use-cart';
@@ -10,17 +14,19 @@ import { useSaleCatalog } from '@/hooks/sales/use-sale-catalog';
 import { useCreateSale } from '@/hooks/sales/use-sales';
 import { useActiveSellers } from '@/hooks/seller/use-sellers';
 import { removeCurrencyMask } from '@/utils/functions';
+import { CartItemsList } from './cart-items-list';
 import { CartPanel, type CustomerDraft } from './cart-panel';
 import {
   CheckoutModal,
   type CheckoutPayment,
   type ConfirmedSale,
 } from './checkout-modal';
-import { ProductCatalog } from './product-catalog';
+import { ProductQuickAdd } from './product-quick-add';
 
 const EMPTY_CUSTOMER: CustomerDraft = { name: '', phone: '', email: '' };
 
 export function NewSaleScreen() {
+  const router = useRouter();
   const { slug: organizationSlug } = useOrganization();
   const { user } = useUser();
   const cart = useCart();
@@ -64,12 +70,6 @@ export function NewSaleScreen() {
   );
   const discountValue = Math.min(rawDiscount, cart.subtotal);
   const total = cart.subtotal - discountValue;
-
-  const quantityById = useMemo(
-    () =>
-      Object.fromEntries(cart.items.map((item) => [item.id, item.quantity])),
-    [cart.items]
-  );
 
   const resetSale = () => {
     cart.clear();
@@ -150,37 +150,51 @@ export function NewSaleScreen() {
   };
 
   return (
-    <div className="flex min-h-0 flex-1 overflow-hidden bg-background">
-      <ProductCatalog
-        activeCategory={catalog.activeCategory}
-        categories={catalog.categories}
-        isFetching={catalog.isFetching}
-        onAdd={cart.add}
-        products={catalog.products}
-        quantityById={quantityById}
-        search={catalog.search}
-        searchInputRef={searchInputRef}
-        setActiveCategory={catalog.setActiveCategory}
-        setSearch={catalog.setSearch}
-      />
+    <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-hidden bg-gray-50 p-4 sm:p-6">
+      <div className="flex shrink-0 items-center gap-3">
+        <Button
+          aria-label="Voltar"
+          onClick={() => router.back()}
+          size="icon"
+          variant="outline"
+        >
+          <ArrowLeftIcon />
+        </Button>
+        <h1 className="font-semibold text-foreground text-xl tracking-tight sm:text-2xl">
+          Nova venda
+        </h1>
+      </div>
 
-      <CartPanel
-        cart={cart}
-        customer={customer}
-        discountInput={discountInput}
-        discountValue={discountValue}
-        notes={notes}
-        onCheckout={() => setCheckoutOpen(true)}
-        onCustomerChange={setCustomer}
-        onDiscountInputChange={setDiscountInput}
-        onNotesChange={setNotes}
-        onSelectSeller={handleSelectSeller}
-        selectedSellerId={sellerId}
-        sellerFallbackName={sellerFallbackName}
-        sellers={sellers}
-        sellersLoading={activeSellers.isLoading}
-        total={total}
-      />
+      <div className="grid min-h-0 flex-1 grid-cols-1 gap-4 overflow-y-auto lg:grid-cols-[minmax(0,1fr)_360px] lg:overflow-hidden">
+        <Card className="min-h-0 gap-3.5 overflow-hidden p-5">
+          <ProductQuickAdd
+            onAdd={cart.add}
+            products={catalog.products}
+            search={catalog.search}
+            searchInputRef={searchInputRef}
+            setSearch={catalog.setSearch}
+          />
+          <CartItemsList cart={cart} />
+        </Card>
+
+        <CartPanel
+          cart={cart}
+          customer={customer}
+          discountInput={discountInput}
+          discountValue={discountValue}
+          notes={notes}
+          onCheckout={() => setCheckoutOpen(true)}
+          onCustomerChange={setCustomer}
+          onDiscountInputChange={setDiscountInput}
+          onNotesChange={setNotes}
+          onSelectSeller={handleSelectSeller}
+          selectedSellerId={sellerId}
+          sellerFallbackName={sellerFallbackName}
+          sellers={sellers}
+          sellersLoading={activeSellers.isLoading}
+          total={total}
+        />
+      </div>
 
       <CheckoutModal
         isSubmitting={createSale.isPending}

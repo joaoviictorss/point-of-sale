@@ -5,15 +5,14 @@ import {
   ShoppingBag,
   StickyNote,
   Tag,
-  Trash2,
   UserPlus,
   X,
 } from 'lucide-react';
 import { useState } from 'react';
 import { Badge, Button, Input } from '@/components/shadcn';
+import { Card } from '@/components/shadcn/card';
 import type { UseCartReturn } from '@/hooks/sales/use-cart';
 import { applyCurrencyMask, removeCurrencyMask } from '@/utils/functions';
-import { QuantityStepper } from './quantity-stepper';
 import { type SellerOption, SellerSelect } from './seller-select';
 
 export interface CustomerDraft {
@@ -60,15 +59,15 @@ export function CartPanel({
   const empty = cart.count === 0;
 
   return (
-    <aside className="flex w-[360px] shrink-0 flex-col border-border border-l bg-card">
+    <Card className="min-h-0 gap-0 overflow-hidden p-0">
       <div className="flex flex-col gap-2.5 border-border border-b p-4">
         <div className="flex items-center justify-between">
           <span className="inline-flex items-center gap-2 font-semibold text-base text-foreground">
             <ShoppingBag className="size-[18px]" /> Venda atual
           </span>
-          {cart.count > 0 ? (
+          {cart.items.length > 0 ? (
             <Badge>
-              {cart.count} {cart.count === 1 ? 'item' : 'itens'}
+              {cart.items.length} {cart.items.length === 1 ? 'item' : 'itens'}
             </Badge>
           ) : null}
         </div>
@@ -81,55 +80,18 @@ export function CartPanel({
         />
       </div>
 
-      {/* items */}
-      <div className="flex flex-1 flex-col gap-3 overflow-y-auto p-4">
+      {/* cliente e observações */}
+      <div className="flex flex-1 flex-col gap-2.5 overflow-y-auto p-4">
         {empty ? (
-          <div className="flex flex-1 flex-col items-center justify-center gap-2 py-8 text-center text-muted-foreground">
-            <ShoppingBag className="size-8" />
-            <span className="text-sm">
-              Busque um produto
-              <br />
-              para adicionar à venda
-            </span>
-          </div>
+          <p className="text-muted-foreground text-sm">
+            Cliente e observações ficam disponíveis depois que a venda tiver
+            itens.
+          </p>
         ) : (
-          <div className="flex flex-col gap-2.5">
-            {cart.items.map((item) => (
-              <div
-                className="flex items-center gap-2.5 border-border border-b pb-2.5"
-                key={item.id}
-              >
-                <div className="min-w-0 flex-1">
-                  <div className="truncate font-medium text-foreground text-sm">
-                    {item.name}
-                  </div>
-                  <div className="text-muted-foreground text-xs">
-                    {applyCurrencyMask(item.salePrice)}
-                  </div>
-                </div>
-                <QuantityStepper
-                  onChange={(quantity) => cart.setQuantity(item.id, quantity)}
-                  onDec={() => cart.dec(item.id)}
-                  onInc={() => cart.inc(item.id)}
-                  quantity={item.quantity}
-                />
-                <div className="w-[68px] text-right font-semibold text-foreground text-sm tabular-nums">
-                  {applyCurrencyMask(item.salePrice * item.quantity)}
-                </div>
-                <button
-                  aria-label={`Remover ${item.name}`}
-                  className="text-muted-foreground transition-colors hover:text-error"
-                  onClick={() => cart.remove(item.id)}
-                  type="button"
-                >
-                  <Trash2 className="size-4" />
-                </button>
-              </div>
-            ))}
-
+          <>
             <ClienteBlock customer={customer} onChange={onCustomerChange} />
             <ObsBlock notes={notes} onChange={onNotesChange} />
-          </div>
+          </>
         )}
       </div>
 
@@ -172,7 +134,7 @@ export function CartPanel({
           <ArrowRight className="size-[18px]" />
         </Button>
       </div>
-    </aside>
+    </Card>
   );
 }
 

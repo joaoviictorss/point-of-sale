@@ -36,7 +36,7 @@ export async function GET(
     );
   }
 
-  redirect('/');
+  redirect('/comecar');
 }
 
 function connectUserToAccount(

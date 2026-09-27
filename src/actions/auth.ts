@@ -57,7 +57,7 @@ export async function signUp(_: SignUpFormState, formData: signUpSchema) {
   }
 
   await createSession(user.id);
-  redirect('/');
+  redirect('/comecar');
 }
 
 export async function signIn(_: SignInFormState, formData: signInSchema) {
@@ -80,7 +80,7 @@ export async function signIn(_: SignInFormState, formData: signInSchema) {
   }
 
   await createSession(user.id, keepConnected);
-  redirect('/');
+  redirect('/comecar');
 }
 
 export async function logout() {

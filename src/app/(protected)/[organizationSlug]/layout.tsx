@@ -22,7 +22,7 @@ export default async function Layout({
   const hasAccess = await hasAccessToOrganization(organizationSlug);
 
   if (!hasAccess) {
-    redirect('/');
+    redirect('/comecar');
   }
 
   return (

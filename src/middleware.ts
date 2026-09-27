@@ -2,7 +2,7 @@ import { cookies } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
 import { decrypt } from '@/lib/session';
 
-const protectedRoutes = ['/', '/estoque', '/relatorios'];
+const protectedRoutes = ['/comecar'];
 const publicRoutes = ['/sign-in', '/sign-up', '/reset-password'];
 const authRoutes = ['/sign-in', '/sign-up', '/reset-password'];
 
@@ -20,11 +20,11 @@ export default async function middleware(req: NextRequest) {
   }
 
   if (isPublicRoute && session?.userId) {
-    return NextResponse.redirect(new URL('/', req.nextUrl));
+    return NextResponse.redirect(new URL('/comecar', req.nextUrl));
   }
 
   if (isAuthRoute && !!session?.userId) {
-    return NextResponse.redirect(new URL('/', req.nextUrl));
+    return NextResponse.redirect(new URL('/comecar', req.nextUrl));
   }
 
   return NextResponse.next();
